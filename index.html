@@ -57,9 +57,30 @@
         // --- 主應用程式 ---
         const App = () => {
             const [activeTab, setActiveTab] = useState('form');
-            const [records, setRecords] = useState(Storage.getRecords());
-            const [templates, setTemplates] = useState(Storage.getTemplates());
             
+            // 自訂系統對話框狀態 (解決瀏覽器封鎖 confirm/alert 的問題)
+            const [dialog, setDialog] = useState({ isOpen: false, type: 'alert', title: '', message: '', onConfirm: null });
+            const showAlert = (message, title = '系統提示') => setDialog({ isOpen: true, type: 'alert', title, message, onConfirm: null });
+            const showConfirm = (message, onConfirm, title = '⚠️ 確認操作') => setDialog({ isOpen: true, type: 'confirm', title, message, onConfirm });
+            
+            // 強化：讀取資料時，若發現舊資料沒有 ID，自動補發一組，確保皆可被刪除
+            const [records, setRecords] = useState(() => {
+                const saved = Storage.getRecords();
+                return saved.map(r => r.id ? r : { ...r, id: Date.now().toString() + Math.random().toString(36).substr(2, 5) });
+            });
+            const [templates, setTemplates] = useState(() => {
+                const saved = Storage.getTemplates();
+                return saved.map(t => t.id ? t : { ...t, id: Date.now().toString() + Math.random().toString(36).substr(2, 5) });
+            });
+            
+            // 歷史區塊篩選狀態
+            const [filterMonth, setFilterMonth] = useState('');
+            const [filterItem, setFilterItem] = useState('');
+            const [selectedIds, setSelectedIds] = useState(new Set());
+            
+            // 追蹤當前選取的範本 ID，確保能精準鎖定並刪除
+            const [currentTemplateId, setCurrentTemplateId] = useState('');
+
             const [formData, setFormData] = useState({
                 date: new Date().toISOString().split('T')[0],
                 auditor: '', unit: '', target: '', score: '', notes: '', auditName: '一般綜合稽核'
@@ -82,7 +103,7 @@
                 }
             }, [checklist]);
 
-            // 解析檔案列邏輯
+            // --- 檔案與範本處理邏輯 ---
             const parseRowToItem = (cells) => {
                 if (cells.length < 2) return null;
                 const rowText = cells.join('');
@@ -126,7 +147,7 @@
                                 const item = parseRowToItem(cells);
                                 if (item) items.push(item);
                             });
-                        } catch (err) { alert('Word 解析失敗'); }
+                        } catch (err) { showAlert('Word 解析失敗', '⚠️ 解析錯誤'); }
                     } else if (fileExt === 'xlsx' || fileExt === 'xls') {
                         try {
                             const wb = window.XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
@@ -135,30 +156,46 @@
                                 const item = parseRowToItem(row.map(c => String(c || '')));
                                 if (item) items.push(item);
                             });
-                        } catch (err) { alert('Excel 解析失敗'); }
+                        } catch (err) { showAlert('Excel 解析失敗', '⚠️ 解析錯誤'); }
                     }
 
                     if (items.length > 0) {
-                        setTemplates(prev => [...prev, { id: Date.now().toString(), name: fileNameWithoutExt, items }]);
+                        const newTplId = Date.now().toString() + Math.random().toString(36).substr(2, 5);
+                        setTemplates(prev => [...prev, { id: newTplId, name: fileNameWithoutExt, items }]);
                         setChecklist(items);
+                        setCurrentTemplateId(newTplId);
                         setFormData(p => ({ ...p, auditName: fileNameWithoutExt }));
-                        alert('✅ 範本解析成功！已加入題庫。');
+                        showAlert('✅ 範本解析成功！已加入題庫。', '上傳成功');
                     } else {
-                        alert('⚠️ 未能辨識出評分項目。請確認檔案中有包含「配分數字」。');
+                        showAlert('⚠️ 未能辨識出評分項目。請確認檔案中有包含「配分數字」。', '格式錯誤');
                     }
                     setIsUploading(false);
+                    e.target.value = ''; // 重置 input 讓同檔可重傳
                 };
                 reader.readAsArrayBuffer(file);
             };
 
+            // 安全刪除範本
+            const handleDeleteTemplate = () => {
+                const currentTpl = templates.find(t => String(t.id) === String(currentTemplateId));
+                if (currentTpl) {
+                    showConfirm(`確定要從題庫中刪除「${currentTpl.name}」這個範本嗎？此操作無法復原。`, () => {
+                        setTemplates(prev => prev.filter(t => String(t.id) !== String(currentTemplateId)));
+                        setCurrentTemplateId('');
+                        setFormData(p => ({ ...p, auditName: '一般綜合稽核' }));
+                        setChecklist([]);
+                    });
+                }
+            };
+
             const handleSubmit = (e) => {
                 e.preventDefault();
-                if (!formData.target) return alert('請輸入受測對象姓名！');
-                const newRec = { ...formData, id: Date.now().toString(), checklist };
+                if (!formData.target) return showAlert('請輸入受測對象姓名！', '⚠️ 欄位未填');
+                const newRec = { ...formData, id: Date.now().toString() + Math.random().toString(36).substr(2, 5), checklist };
                 setRecords(prev => [newRec, ...prev]);
                 setFormData(p => ({ ...p, target: '', score: '', notes: '' }));
                 setChecklist(checklist.map(i => ({ ...i, score: i.maxScore, note: '' })));
-                alert('💾 紀錄已儲存！');
+                showAlert('💾 紀錄已儲存！', '儲存成功');
             };
 
             const handleReverseImport = (e) => {
@@ -169,22 +206,93 @@
                     try {
                         const wb = window.XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
                         const data = window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-                        const imported = data.map(row => ({
-                            id: Date.now() + Math.random().toString(),
+                        const imported = data.map((row, index) => ({
+                            id: Date.now().toString() + index + Math.random().toString(36).substr(2, 5),
                             date: row['稽核日期'] || row['日期'] || '',
                             auditName: row['稽核項目'] || row['項目'] || '匯入紀錄',
                             unit: row['受稽單位'] || row['單位'] || '',
-                            target: row['受測對象'] || row['姓名'] || '',
-                            auditor: row['稽核員'] || '',
+                            target: row['受測對象(姓名)'] || row['受測對象'] || row['姓名'] || '',
+                            auditor: row['稽核人員'] || row['稽核員'] || '',
                             score: Number(row['總評分'] || row['分數'] || 0),
                             notes: row['總結建議'] || '',
                             checklist: [] 
                         }));
                         setRecords(prev => [...imported, ...prev]);
-                        alert(`✅ 成功匯入 ${imported.length} 筆歷史紀錄！`);
-                    } catch (err) { alert('匯入失敗，請確認格式'); }
+                        showAlert(`✅ 成功匯入 ${imported.length} 筆歷史紀錄！`, '匯入成功');
+                    } catch (err) { showAlert('匯入失敗，請確認格式', '⚠️ 匯入錯誤'); }
+                    e.target.value = '';
                 };
                 reader.readAsArrayBuffer(file);
+            };
+
+            // --- 歷史紀錄篩選、勾選與安全刪除 ---
+            const uniqueMonths = useMemo(() => [...new Set(records.map(r => r.date.substring(0, 7)))].sort().reverse(), [records]);
+            const uniqueItems = useMemo(() => [...new Set(records.map(r => r.auditName))].sort(), [records]);
+
+            const filteredRecords = useMemo(() => {
+                return records.filter(r => {
+                    const matchM = filterMonth ? r.date.startsWith(filterMonth) : true;
+                    const matchI = filterItem ? r.auditName === filterItem : true;
+                    return matchM && matchI;
+                });
+            }, [records, filterMonth, filterItem]);
+
+            const handleSelectAll = (e) => {
+                if (e.target.checked) setSelectedIds(new Set(filteredRecords.map(r => r.id)));
+                else setSelectedIds(new Set());
+            };
+
+            const handleSelectOne = (id) => {
+                setSelectedIds(prev => {
+                    const next = new Set(prev);
+                    if (next.has(id)) next.delete(id); else next.add(id);
+                    return next;
+                });
+            };
+
+            // 強化：確保無論何種狀況都能順利刪除該筆資料
+            const handleDeleteRecord = (id) => {
+                showConfirm('確定要永久刪除此筆紀錄嗎？此操作無法復原。', () => {
+                    setRecords(prev => prev.filter(x => String(x.id) !== String(id)));
+                    setSelectedIds(prev => { 
+                        const next = new Set(prev); 
+                        next.delete(id); 
+                        return next; 
+                    });
+                });
+            };
+
+            const handleExportExcel = () => {
+                const targets = selectedIds.size > 0 
+                    ? records.filter(r => selectedIds.has(r.id)) 
+                    : filteredRecords;
+
+                if (targets.length === 0) return showAlert('沒有資料可匯出！', '⚠️ 匯出錯誤');
+
+                const data = targets.map(r => {
+                    const row = { 
+                        '稽核日期': r.date, 
+                        '稽核項目': r.auditName, 
+                        '受稽單位': r.unit, 
+                        '受測對象(姓名)': r.target, 
+                        '稽核人員': r.auditor, 
+                        '總評分': r.score 
+                    };
+                    (r.checklist || []).forEach((it, idx) => {
+                        row[`項${idx+1}_${it.name}`] = it.score;
+                        if (it.note) row[`項${idx+1}_備註`] = it.note;
+                    });
+                    row['總結建議'] = r.notes;
+                    row['受測者簽名確認'] = '';
+                    return row;
+                });
+                const ws = window.XLSX.utils.json_to_sheet(data);
+                const wb = window.XLSX.utils.book_new();
+                window.XLSX.utils.book_append_sheet(wb, ws, "稽核紀錄表");
+                
+                const monthLabel = filterMonth || '全部月份';
+                const itemLabel = filterItem || '全部項目';
+                window.XLSX.writeFile(wb, `稽核統計表_${monthLabel}_${itemLabel}.xlsx`);
             };
 
             return (
@@ -192,7 +300,7 @@
                     <nav className="bg-primary text-white p-4 shadow-lg sticky top-0 z-50 flex justify-between items-center">
                         <div className="flex flex-col">
                             <h1 className="font-bold text-lg tracking-tight">清福技術考稽核系統</h1>
-                            <span className="text-[9px] bg-white/20 px-2 py-0.5 rounded self-start uppercase">Stable V6.0</span>
+                            <span className="text-[9px] bg-white/20 px-2 py-0.5 rounded self-start uppercase">Stable V6.2</span>
                         </div>
                     </nav>
 
@@ -210,13 +318,23 @@
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                                         <div className="bg-blue-50 p-4 rounded-lg">
                                             <label className="block text-[10px] font-bold text-slate-500 mb-2 uppercase tracking-wider">選擇稽核標準範本</label>
-                                            <select value={templates.find(t => t.name === formData.auditName)?.id || ''} onChange={e => {
-                                                const t = templates.find(x => x.id === e.target.value);
-                                                if (t) { setChecklist(t.items.map(i => ({...i, score: i.maxScore, note: ''}))); setFormData({...formData, auditName: t.name}); }
-                                            }} className="w-full p-2.5 border rounded-lg bg-white outline-none font-medium shadow-sm">
-                                                <option value="">-- 手動 / 選擇題庫 --</option>
-                                                {templates.map(t => <option key={t.id} value={t.id}>{t.name} ({t.items.length}項)</option>)}
-                                            </select>
+                                            <div className="flex gap-2">
+                                                <select value={currentTemplateId} onChange={e => {
+                                                    const selectedId = e.target.value;
+                                                    setCurrentTemplateId(selectedId);
+                                                    const t = templates.find(x => x.id === selectedId);
+                                                    if (t) { setChecklist(t.items.map(i => ({...i, score: i.maxScore, note: ''}))); setFormData({...formData, auditName: t.name}); }
+                                                    else { setChecklist([]); setFormData({...formData, auditName: '一般綜合稽核'}); }
+                                                }} className="flex-1 p-2.5 border rounded-lg bg-white outline-none font-medium shadow-sm">
+                                                    <option value="">-- 手動 / 選擇題庫 --</option>
+                                                    {templates.map(t => <option key={t.id} value={t.id}>{t.name} ({t.items.length}項)</option>)}
+                                                </select>
+                                                {currentTemplateId && templates.some(t => t.id === currentTemplateId) && (
+                                                    <button type="button" onClick={handleDeleteTemplate} className="bg-red-100 text-red-600 px-3 rounded-lg hover:bg-red-200 transition-colors shadow-sm" title="刪除此範本">
+                                                        <IconTrash />
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                         <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center text-center bg-slate-50/50">
                                             <input type="file" id="up-tpl" className="hidden" onChange={handleFileUpload} accept=".docx, .xlsx, .xls" />
@@ -229,11 +347,11 @@
 
                                     <form onSubmit={handleSubmit} className="space-y-4">
                                         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                                            <div><label className="text-[10px] font-bold text-slate-400">日期</label><input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full p-2 border rounded text-sm" /></div>
-                                            <div><label className="text-[10px] font-bold text-slate-400">稽核員</label><input type="text" placeholder="姓名" value={formData.auditor} onChange={e => setFormData({...formData, auditor: e.target.value})} className="w-full p-2 border rounded text-sm" /></div>
-                                            <div><label className="text-[10px] font-bold text-slate-400">單位</label><input type="text" placeholder="單位" value={formData.unit} onChange={e => setFormData({...formData, unit: e.target.value})} className="w-full p-2 border rounded text-sm" /></div>
-                                            <div><label className="text-[10px] font-bold text-slate-400">受測者</label><input type="text" placeholder="姓名" value={formData.target} onChange={e => setFormData({...formData, target: e.target.value})} className="w-full p-2 border-2 border-primary rounded text-sm font-bold text-primary" /></div>
-                                            <div><label className="text-[10px] font-bold text-slate-400">總得分</label><input type="text" readOnly value={formData.score} className="w-full p-2 bg-slate-100 rounded text-sm font-black text-primary text-center" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400">稽核日期</label><input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full p-2 border rounded text-sm" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400">稽核人員</label><input type="text" placeholder="姓名" value={formData.auditor} onChange={e => setFormData({...formData, auditor: e.target.value})} className="w-full p-2 border rounded text-sm" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400">受稽單位</label><input type="text" placeholder="單位" value={formData.unit} onChange={e => setFormData({...formData, unit: e.target.value})} className="w-full p-2 border rounded text-sm" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400">受測對象(姓名)</label><input type="text" placeholder="姓名" value={formData.target} onChange={e => setFormData({...formData, target: e.target.value})} className="w-full p-2 border-2 border-primary rounded text-sm font-bold text-primary" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400">總評分</label><input type="text" readOnly value={formData.score} className="w-full p-2 bg-slate-100 rounded text-sm font-black text-primary text-center" /></div>
                                         </div>
 
                                         {checklist.length > 0 && (
@@ -263,27 +381,36 @@
 
                         {activeTab === 'history' && (
                             <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in">
-                                <div className="p-5 bg-slate-50 border-b border-slate-200 flex flex-wrap justify-between items-center gap-4">
-                                    <h2 className="font-bold text-slate-700">歷史紀錄歸檔庫</h2>
-                                    <div className="flex gap-2">
-                                        <input type="file" id="re-import" className="hidden" onChange={handleReverseImport} accept=".xlsx, .xls" />
-                                        <label htmlFor="re-import" className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-1.5 shadow-md hover:bg-blue-700 transition-colors"><IconImport /> 反向匯入 Excel</label>
-                                        <button onClick={() => {
-                                            const selected = records; // 暫時匯出全部
-                                            const data = selected.map(r => ({
-                                                '稽核日期': r.date, '受測對象': r.target, '稽核項目': r.auditName, '單位': r.unit, '總分': r.score, '稽核員': r.auditor, '總結建議': r.notes
-                                            }));
-                                            const ws = window.XLSX.utils.json_to_sheet(data);
-                                            const wb = window.XLSX.utils.book_new();
-                                            window.XLSX.utils.book_append_sheet(wb, ws, "稽核紀錄");
-                                            window.XLSX.writeFile(wb, `稽核總表匯出.xlsx`);
-                                        }} className="bg-green-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-1.5 shadow-md hover:bg-green-700 transition-colors"><IconDownload /> 匯出總表</button>
+                                <div className="p-5 bg-slate-50 border-b border-slate-200 flex flex-col gap-4">
+                                    <div className="flex flex-wrap justify-between items-center gap-4">
+                                        <h2 className="font-bold text-slate-700">歷史紀錄歸檔庫</h2>
+                                        <div className="flex gap-2">
+                                            <input type="file" id="re-import" className="hidden" onChange={handleReverseImport} accept=".xlsx, .xls" />
+                                            <label htmlFor="re-import" className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-1.5 shadow-md hover:bg-blue-700 transition-colors"><IconImport /> 反向匯入 Excel</label>
+                                            <button type="button" onClick={handleExportExcel} className="bg-green-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-1.5 shadow-md hover:bg-green-700 transition-colors"><IconDownload /> 匯出勾選/篩選表</button>
+                                        </div>
+                                    </div>
+                                    
+                                    {/* 新增篩選列 */}
+                                    <div className="flex flex-wrap gap-3 items-center">
+                                        <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} className="p-2 border border-slate-300 rounded-lg text-xs bg-white outline-none text-slate-600 font-medium">
+                                            <option value="">-- 全部月份 --</option>
+                                            {uniqueMonths.map(m => <option key={m} value={m}>{m}</option>)}
+                                        </select>
+                                        <select value={filterItem} onChange={e => setFilterItem(e.target.value)} className="p-2 border border-slate-300 rounded-lg text-xs bg-white outline-none max-w-[200px] text-slate-600 font-medium">
+                                            <option value="">-- 全部技術項目 --</option>
+                                            {uniqueItems.map(i => <option key={i} value={i}>{i}</option>)}
+                                        </select>
+                                        {selectedIds.size > 0 && <span className="text-xs text-primary font-bold ml-2 bg-blue-100 px-2 py-1 rounded-md">已勾選 {selectedIds.size} 筆</span>}
                                     </div>
                                 </div>
                                 <div className="overflow-x-auto">
                                     <table className="w-full text-left text-[11px]">
                                         <thead className="bg-slate-100 text-slate-500 font-bold uppercase tracking-wider">
                                             <tr>
+                                                <th className="p-4 w-12 text-center">
+                                                    <input type="checkbox" onChange={handleSelectAll} checked={filteredRecords.length > 0 && selectedIds.size === filteredRecords.length} className="cursor-pointer w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary" />
+                                                </th>
                                                 <th className="p-4">日期</th>
                                                 <th className="p-4">受測對象</th>
                                                 <th className="p-4">稽核項目</th>
@@ -292,17 +419,20 @@
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                            {records.length === 0 ? (
-                                                <tr><td colSpan="5" className="p-10 text-center text-slate-400">目前尚無考評紀錄</td></tr>
+                                            {filteredRecords.length === 0 ? (
+                                                <tr><td colSpan="6" className="p-10 text-center text-slate-400">目前尚無符合的考評紀錄</td></tr>
                                             ) : (
-                                                records.map(r => (
-                                                    <tr key={r.id} className="hover:bg-blue-50 transition-colors">
+                                                filteredRecords.map(r => (
+                                                    <tr key={r.id} className={`transition-colors ${selectedIds.has(r.id) ? 'bg-blue-50/50' : 'hover:bg-slate-50'}`}>
+                                                        <td className="p-4 text-center">
+                                                            <input type="checkbox" checked={selectedIds.has(r.id)} onChange={() => handleSelectOne(r.id)} className="cursor-pointer w-4 h-4 rounded border-gray-300 text-primary focus:ring-primary" />
+                                                        </td>
                                                         <td className="p-4 whitespace-nowrap text-slate-500 font-medium">{r.date}</td>
                                                         <td className="p-4 font-black text-primary">{r.target}</td>
-                                                        <td className="p-4 text-slate-600 font-medium">{r.auditName}</td>
+                                                        <td className="p-4 text-slate-600 font-medium max-w-[150px] truncate" title={r.auditName}>{r.auditName}</td>
                                                         <td className="p-4 text-center"><span className={`inline-block w-8 py-1 rounded-full font-black ${r.score < 80 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>{r.score}</span></td>
                                                         <td className="p-4 text-center">
-                                                            <button onClick={() => { if(confirm('確定要永久刪除此筆紀錄嗎？')) setRecords(records.filter(x => x.id !== r.id)); }} className="text-red-300 hover:text-red-500 transition-colors p-1"><IconTrash /></button>
+                                                            <button type="button" onClick={() => handleDeleteRecord(r.id)} className="text-red-300 hover:text-red-500 transition-colors p-1"><IconTrash /></button>
                                                         </td>
                                                     </tr>
                                                 ))
@@ -328,6 +458,28 @@
                             </div>
                         )}
                     </main>
+
+                    {/* 自訂對話框 Modal */}
+                    {dialog.isOpen && (
+                        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fade-in">
+                            <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full border border-slate-100">
+                                <h3 className="font-bold text-lg mb-3 text-slate-800">{dialog.title}</h3>
+                                <p className="text-slate-600 mb-6 text-sm leading-relaxed">{dialog.message}</p>
+                                <div className="flex justify-end gap-3">
+                                    {dialog.type === 'confirm' && (
+                                        <button onClick={() => setDialog({ ...dialog, isOpen: false })} className="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-colors text-sm">取消</button>
+                                    )}
+                                    <button onClick={() => {
+                                        if (dialog.type === 'confirm' && dialog.onConfirm) dialog.onConfirm();
+                                        setDialog({ ...dialog, isOpen: false });
+                                    }} className={`px-5 py-2.5 rounded-xl font-bold transition-colors text-sm ${dialog.type === 'confirm' ? 'bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/30' : 'bg-primary text-white hover:bg-blue-800 shadow-lg shadow-primary/30'}`}>
+                                        {dialog.type === 'confirm' ? '確定刪除' : '我知道了'}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     <footer className="p-8 text-center text-slate-300 text-[10px] font-medium tracking-widest uppercase">
                         &copy; 2026 Smart Audit System for Nursing Care | Cleen-Fu Edition
                     </footer>
