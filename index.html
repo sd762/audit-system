@@ -58,12 +58,12 @@
         const App = () => {
             const [activeTab, setActiveTab] = useState('form');
             
-            // 自訂系統對話框狀態 (解決瀏覽器封鎖 confirm/alert 的問題)
+            // 自訂系統對話框狀態
             const [dialog, setDialog] = useState({ isOpen: false, type: 'alert', title: '', message: '', onConfirm: null });
             const showAlert = (message, title = '系統提示') => setDialog({ isOpen: true, type: 'alert', title, message, onConfirm: null });
             const showConfirm = (message, onConfirm, title = '⚠️ 確認操作') => setDialog({ isOpen: true, type: 'confirm', title, message, onConfirm });
             
-            // 強化：讀取資料時，若發現舊資料沒有 ID，自動補發一組，確保皆可被刪除
+            // 讀取資料
             const [records, setRecords] = useState(() => {
                 const saved = Storage.getRecords();
                 return saved.map(r => r.id ? r : { ...r, id: Date.now().toString() + Math.random().toString(36).substr(2, 5) });
@@ -73,14 +73,13 @@
                 return saved.map(t => t.id ? t : { ...t, id: Date.now().toString() + Math.random().toString(36).substr(2, 5) });
             });
             
-            // 歷史區塊篩選狀態
+            // 歷史區塊狀態
             const [filterMonth, setFilterMonth] = useState('');
             const [filterItem, setFilterItem] = useState('');
             const [selectedIds, setSelectedIds] = useState(new Set());
             
-            // 追蹤當前選取的範本 ID，確保能精準鎖定並刪除
+            // 範本管理狀態
             const [currentTemplateId, setCurrentTemplateId] = useState('');
-
             const [formData, setFormData] = useState({
                 date: new Date().toISOString().split('T')[0],
                 auditor: '', unit: '', target: '', score: '', notes: '', auditName: '一般綜合稽核'
@@ -103,7 +102,7 @@
                 }
             }, [checklist]);
 
-            // --- 檔案與範本處理邏輯 ---
+            // --- 檔案與範本處理 ---
             const parseRowToItem = (cells) => {
                 if (cells.length < 2) return null;
                 const rowText = cells.join('');
@@ -151,7 +150,7 @@
                     } else if (fileExt === 'xlsx' || fileExt === 'xls') {
                         try {
                             const wb = window.XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
-                            const rows = window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
+                            const rows = window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: false, defval: '' });
                             rows.forEach(row => {
                                 const item = parseRowToItem(row.map(c => String(c || '')));
                                 if (item) items.push(item);
@@ -170,12 +169,11 @@
                         showAlert('⚠️ 未能辨識出評分項目。請確認檔案中有包含「配分數字」。', '格式錯誤');
                     }
                     setIsUploading(false);
-                    e.target.value = ''; // 重置 input 讓同檔可重傳
+                    e.target.value = '';
                 };
                 reader.readAsArrayBuffer(file);
             };
 
-            // 安全刪除範本
             const handleDeleteTemplate = () => {
                 const currentTpl = templates.find(t => String(t.id) === String(currentTemplateId));
                 if (currentTpl) {
@@ -198,6 +196,38 @@
                 showAlert('💾 紀錄已儲存！', '儲存成功');
             };
 
+            // --- 強化：智慧日期格式化引擎 ---
+            // 解決 Excel 讀取時產生的「2024/4/24」、「45398」等格式錯亂問題，統一轉換為 YYYY-MM-DD
+            const formatExcelDate = (raw) => {
+                const rawStr = String(raw || '').trim();
+                if (!rawStr) return new Date().toISOString().split('T')[0];
+
+                // 處理 YYYY/M/D 或 YYYY-M-D 的情況
+                if (/^\d{1,4}[-/]\d{1,2}[-/]\d{1,4}$/.test(rawStr)) {
+                    const parts = rawStr.split(/[-/]/);
+                    let y = parts[0], m = parts[1], d = parts[2];
+                    
+                    // 如果年份在後面 (例如 M/D/YYYY)
+                    if (d.length === 4) {
+                        y = parts[2]; m = parts[0]; d = parts[1];
+                    }
+                    
+                    // 補零
+                    m = m.padStart(2, '0');
+                    d = d.padStart(2, '0');
+                    return `${y}-${m}-${d}`;
+                }
+
+                // 處理其他文字格式 (只取前10碼，例如 2024-04-24T10:00:00)
+                const safeDate = rawStr.replace(/\//g, '-').substring(0, 10);
+                if (safeDate.length === 10 && /^\d{4}-\d{2}-\d{2}$/.test(safeDate)) {
+                    return safeDate;
+                }
+
+                // 無法辨識的格式，退回今日日期以防系統崩潰
+                return new Date().toISOString().split('T')[0];
+            };
+
             const handleReverseImport = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -205,34 +235,41 @@
                 reader.onload = (ev) => {
                     try {
                         const wb = window.XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
-                        const data = window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-                        const imported = data.map((row, index) => ({
-                            id: Date.now().toString() + index + Math.random().toString(36).substr(2, 5),
-                            date: row['稽核日期'] || row['日期'] || '',
-                            auditName: row['稽核項目'] || row['項目'] || '匯入紀錄',
-                            unit: row['受稽單位'] || row['單位'] || '',
-                            target: row['受測對象(姓名)'] || row['受測對象'] || row['姓名'] || '',
-                            auditor: row['稽核人員'] || row['稽核員'] || '',
-                            score: Number(row['總評分'] || row['分數'] || 0),
-                            notes: row['總結建議'] || '',
-                            checklist: [] 
-                        }));
+                        // 加入 dateNF 強制格式轉換
+                        const data = window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { raw: false, dateNF: 'yyyy-mm-dd', defval: '' });
+                        
+                        const imported = data.map((row, index) => {
+                            const rawDate = row['稽核日期'] || row['日期'] || '';
+                            const fmtDate = formatExcelDate(rawDate);
+
+                            return {
+                                id: Date.now().toString() + index + Math.random().toString(36).substr(2, 5),
+                                date: fmtDate,
+                                auditName: String(row['稽核項目'] || row['項目'] || '匯入紀錄'),
+                                unit: String(row['受稽單位'] || row['單位'] || ''),
+                                target: String(row['受測對象(姓名)'] || row['受測對象'] || row['姓名'] || ''),
+                                auditor: String(row['稽核人員'] || row['稽核員'] || ''),
+                                score: Number(row['總評分'] || row['分數'] || 0),
+                                notes: String(row['總結建議'] || ''),
+                                checklist: [] 
+                            };
+                        });
                         setRecords(prev => [...imported, ...prev]);
-                        showAlert(`✅ 成功匯入 ${imported.length} 筆歷史紀錄！`, '匯入成功');
-                    } catch (err) { showAlert('匯入失敗，請確認格式', '⚠️ 匯入錯誤'); }
+                        showAlert(`✅ 成功匯入 ${imported.length} 筆歷史紀錄！\n日期格式已自動校正。`, '匯入成功');
+                    } catch (err) { showAlert('匯入失敗，請確認 Excel 格式。', '⚠️ 匯入錯誤'); }
                     e.target.value = '';
                 };
                 reader.readAsArrayBuffer(file);
             };
 
-            // --- 歷史紀錄篩選、勾選與安全刪除 ---
-            const uniqueMonths = useMemo(() => [...new Set(records.map(r => r.date.substring(0, 7)))].sort().reverse(), [records]);
-            const uniqueItems = useMemo(() => [...new Set(records.map(r => r.auditName))].sort(), [records]);
+            // --- 歷史紀錄管理 ---
+            const uniqueMonths = useMemo(() => [...new Set(records.map(r => String(r.date || '').substring(0, 7)))].sort().reverse(), [records]);
+            const uniqueItems = useMemo(() => [...new Set(records.map(r => String(r.auditName || '')))].sort(), [records]);
 
             const filteredRecords = useMemo(() => {
                 return records.filter(r => {
-                    const matchM = filterMonth ? r.date.startsWith(filterMonth) : true;
-                    const matchI = filterItem ? r.auditName === filterItem : true;
+                    const matchM = filterMonth ? String(r.date || '').startsWith(filterMonth) : true;
+                    const matchI = filterItem ? String(r.auditName || '') === filterItem : true;
                     return matchM && matchI;
                 });
             }, [records, filterMonth, filterItem]);
@@ -250,15 +287,20 @@
                 });
             };
 
-            // 強化：確保無論何種狀況都能順利刪除該筆資料
+            // 單筆刪除
             const handleDeleteRecord = (id) => {
                 showConfirm('確定要永久刪除此筆紀錄嗎？此操作無法復原。', () => {
                     setRecords(prev => prev.filter(x => String(x.id) !== String(id)));
-                    setSelectedIds(prev => { 
-                        const next = new Set(prev); 
-                        next.delete(id); 
-                        return next; 
-                    });
+                    setSelectedIds(prev => { const next = new Set(prev); next.delete(id); return next; });
+                });
+            };
+
+            // 新增：批次刪除
+            const handleBatchDelete = () => {
+                if (selectedIds.size === 0) return;
+                showConfirm(`確定要永久刪除這 ${selectedIds.size} 筆紀錄嗎？此操作無法復原。`, () => {
+                    setRecords(prev => prev.filter(x => !selectedIds.has(x.id)));
+                    setSelectedIds(new Set()); // 清空已選取
                 });
             };
 
@@ -286,7 +328,50 @@
                     row['受測者簽名確認'] = '';
                     return row;
                 });
+                
+                // 新增：如果匯出人數大於 1，就在資料底部新增一列「平均總分」
+                const hasMultiple = targets.length > 1;
+                if (hasMultiple) {
+                    data.push({
+                        '稽核日期': '',
+                        '稽核項目': '',
+                        '受稽單位': '',
+                        '受測對象(姓名)': '',
+                        '稽核人員': '平均總分',
+                        '總評分': '' // 將由下方的 Excel 函數動態計算
+                    });
+                }
+
                 const ws = window.XLSX.utils.json_to_sheet(data);
+                
+                // ===== 寫入 Excel 函數 =====
+                const range = window.XLSX.utils.decode_range(ws['!ref']);
+                for (let R = 1; R <= range.e.r; ++R) {
+                    if (hasMultiple && R === range.e.r) {
+                        // 處理最後一列「平均總分」的 AVERAGE 函數
+                        const cell_ref = window.XLSX.utils.encode_cell({c: 5, r: R}); // 總評分在 F 欄 (索引 5)
+                        const start_avg = window.XLSX.utils.encode_cell({c: 5, r: 1}); // 從 F2 開始 (0 是標題列)
+                        const end_avg = window.XLSX.utils.encode_cell({c: 5, r: R - 1}); // 到 F 的上一列
+                        
+                        if (!ws[cell_ref]) ws[cell_ref] = { t: 'n', v: 0 };
+                        ws[cell_ref].t = 'n';
+                        ws[cell_ref].f = `AVERAGE(${start_avg}:${end_avg})`; // 寫入 Excel 的 AVERAGE 公式
+                    } else {
+                        // 一般考評資料列：確保有足夠的欄位才寫入 SUM 函數
+                        if (range.e.c >= 6) {
+                            const cell_ref = window.XLSX.utils.encode_cell({c: 5, r: R}); 
+                            const start_cell = window.XLSX.utils.encode_cell({c: 6, r: R}); // 項目從 G 欄 (索引 6) 開始
+                            const end_cell = window.XLSX.utils.encode_cell({c: Math.max(6, range.e.c - 2), r: R}); // 扣除最後的「總結」與「簽名」
+                            
+                            if (ws[cell_ref]) {
+                                ws[cell_ref].t = 'n'; // 強制設為數字類型
+                                ws[cell_ref].f = `SUM(${start_cell}:${end_cell})`; // 寫入 Excel 的 SUM 公式
+                            }
+                        }
+                    }
+                }
+                // ==========================================
+
                 const wb = window.XLSX.utils.book_new();
                 window.XLSX.utils.book_append_sheet(wb, ws, "稽核紀錄表");
                 
@@ -300,7 +385,7 @@
                     <nav className="bg-primary text-white p-4 shadow-lg sticky top-0 z-50 flex justify-between items-center">
                         <div className="flex flex-col">
                             <h1 className="font-bold text-lg tracking-tight">清福技術考稽核系統</h1>
-                            <span className="text-[9px] bg-white/20 px-2 py-0.5 rounded self-start uppercase">Stable V6.2</span>
+                            <span className="text-[9px] bg-white/20 px-2 py-0.5 rounded self-start uppercase">Stable V6.4</span>
                         </div>
                     </nav>
 
@@ -385,13 +470,20 @@
                                     <div className="flex flex-wrap justify-between items-center gap-4">
                                         <h2 className="font-bold text-slate-700">歷史紀錄歸檔庫</h2>
                                         <div className="flex gap-2">
+                                            {/* 新增：刪除勾選項目的按鈕，只有在有勾選時才會出現 */}
+                                            {selectedIds.size > 0 && (
+                                                <button type="button" onClick={handleBatchDelete} className="bg-red-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-1.5 shadow-md hover:bg-red-700 transition-colors mr-2">
+                                                    <IconTrash /> 刪除勾選 ({selectedIds.size})
+                                                </button>
+                                            )}
+                                            
                                             <input type="file" id="re-import" className="hidden" onChange={handleReverseImport} accept=".xlsx, .xls" />
-                                            <label htmlFor="re-import" className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-1.5 shadow-md hover:bg-blue-700 transition-colors"><IconImport /> 反向匯入 Excel</label>
+                                            <label htmlFor="re-import" className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-1.5 shadow-md hover:bg-blue-700 transition-colors"><IconImport /> 匯入報表</label>
                                             <button type="button" onClick={handleExportExcel} className="bg-green-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-1.5 shadow-md hover:bg-green-700 transition-colors"><IconDownload /> 匯出勾選/篩選表</button>
                                         </div>
                                     </div>
                                     
-                                    {/* 新增篩選列 */}
+                                    {/* 篩選列 */}
                                     <div className="flex flex-wrap gap-3 items-center">
                                         <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} className="p-2 border border-slate-300 rounded-lg text-xs bg-white outline-none text-slate-600 font-medium">
                                             <option value="">-- 全部月份 --</option>
@@ -401,7 +493,6 @@
                                             <option value="">-- 全部技術項目 --</option>
                                             {uniqueItems.map(i => <option key={i} value={i}>{i}</option>)}
                                         </select>
-                                        {selectedIds.size > 0 && <span className="text-xs text-primary font-bold ml-2 bg-blue-100 px-2 py-1 rounded-md">已勾選 {selectedIds.size} 筆</span>}
                                     </div>
                                 </div>
                                 <div className="overflow-x-auto">
@@ -452,8 +543,27 @@
                                 <div className="bg-white p-10 rounded-3xl border border-slate-200 shadow-sm">
                                     <p className="text-xs text-slate-400 font-bold uppercase mb-2 tracking-widest">全年度平均成績</p>
                                     <p className="text-6xl font-black text-primary">
-                                        {records.length > 0 ? (records.reduce((a,c)=>a+c.score,0)/records.length).toFixed(1) : 0}
+                                        {records.length > 0 ? (records.reduce((a,c)=>a+Number(c.score || 0),0)/records.length).toFixed(1) : 0}
                                     </p>
+                                </div>
+                                <div className="md:col-span-2 bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+                                    <h3 className="font-bold text-slate-700 mb-4 border-b pb-2 text-left">每月績效趨勢</h3>
+                                    <div className="space-y-3">
+                                        {Object.entries(records.reduce((acc, r) => {
+                                            const m = String(r.date || '').substring(0, 7);
+                                            if(!acc[m]) acc[m] = {s:0, c:0};
+                                            acc[m].s += Number(r.score || 0); acc[m].c += 1;
+                                            return acc;
+                                        }, {})).sort((a,b) => b[0].localeCompare(a[0])).map(([month, data]) => (
+                                            <div key={month} className="flex justify-between items-center bg-slate-50 p-3 rounded-xl">
+                                                <span className="font-bold text-slate-600">{month || '無日期'}</span>
+                                                <div className="flex gap-6 items-center">
+                                                    <span className="text-xs text-slate-400">{data.c} 筆紀錄</span>
+                                                    <span className={`text-sm font-black ${(data.s/data.c) < 80 ? 'text-red-500' : 'text-green-600'}`}>{(data.s/data.c).toFixed(1)} 分</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         )}
