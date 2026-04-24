@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>技術稽核系統 - 清福</title>
+    <!-- 引入核心套件 (使用 crossorigin 避免 Script Error) -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js" crossorigin></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin></script>
+    <!-- Firebase SDK (僅在需要雲端功能時加載) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" crossorigin></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" crossorigin></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" crossorigin></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: { colors: { primary: '#1e40af', secondary: '#3b82f6' } }
+            }
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased">
+    <div id="root">
+        <div class="flex flex-col items-center justify-center min-h-screen text-slate-400">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+            系統載入中，請稍候...
+        </div>
+    </div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef } = React;
+
+        // --- Firebase 安全初始化配置 ---
+        const firebaseConfig = {
+            apiKey: "", // 若無金鑰，系統將自動切換為在地端儲存模式
+            authDomain: "default.firebaseapp.com",
+            projectId: "default"
+        };
+        const appId = 'tech-audit-v4';
+
+        let db = null;
+        let auth = null;
+
+        // 只有在提供有效 apiKey 時才啟動 Firebase，避免報錯
+        if (firebaseConfig.apiKey && firebaseConfig.apiKey.length > 10) {
+            try {
+                if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+                auth = firebase.auth();
+                db = firebase.firestore();
+            } catch (e) {
+                console.warn("Firebase 初始化失敗，切換為本地模式", e);
+            }
+        }
+
+        // --- 本地儲存管理 ---
+        const Storage = {
+            saveRecords: (data) => localStorage.setItem('audit_records_v5', JSON.stringify(data)),
+            getRecords: () => JSON.parse(localStorage.getItem('audit_records_v5') || '[]'),
+            saveTemplates: (data) => localStorage.setItem('audit_templates_v5', JSON.stringify(data)),
+            getTemplates: () => JSON.parse(localStorage.getItem('audit_templates_v5') || '[]')
+        };
+
+        // --- 圖示組件 ---
+        const IconForm = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>;
+        const IconHistory = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M12 7v5l4 2"/></svg>;
+        const IconChart = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="14" rx="1"/><rect width="4" height="12" x="15" y="9" rx="1"/></svg>;
+        const IconTrash = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>;
+        const IconDownload = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
+
+        const App = () => {
+            const [activeTab, setActiveTab] = useState('form');
+            const [records, setRecords] = useState(Storage.getRecords());
+            const [templates, setTemplates] = useState(Storage.getTemplates());
+            const [isCloud, setIsCloud] = useState(!!db);
+            
+            const [formData, setFormData] = useState({
+                date: new Date().toISOString().split('T')[0],
+                auditor: '', unit: '', target: '', score: '', notes: '', auditName: '一般綜合稽核'
+            });
+            const [checklist, setChecklist] = useState([]);
+            const [isUploading, setIsUploading] = useState(false);
+
+            useEffect(() => {
+                if (!isCloud) Storage.saveRecords(records);
+            }, [records, isCloud]);
+
+            useEffect(() => {
+                if (!isCloud) Storage.saveTemplates(templates);
+            }, [templates, isCloud]);
+
+            useEffect(() => {
+                if (checklist.length > 0) {
+                    const valid = checklist.filter(i => i.score >= 0);
+                    if (valid.length > 0) {
+                        const max = valid.reduce((a, c) => a + c.maxScore, 0);
+                        const cur = valid.reduce((a, c) => a + c.score, 0);
+                        setFormData(p => ({ ...p, score: max > 0 ? Math.round((cur/max)*100) : 0 }));
+                    }
+                }
+            }, [checklist]);
+
+            const handleFileUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                setIsUploading(true);
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    const wb = window.XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
+                    const rows = window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1 });
+                    const items = rows.map(r => {
+                        const name = String(r[0] || '').trim();
+                        const maxScore = parseInt(r[1]);
+                        if (name && !isNaN(maxScore)) return { name, maxScore, score: maxScore, note: '' };
+                        return null;
+                    }).filter(i => i);
+
+                    if (items.length > 0) {
+                        const tplName = file.name.split('.')[0];
+                        const newTpl = { id: Date.now().toString(), name: tplName, items };
+                        setTemplates(prev => [...prev, newTpl]);
+                        setChecklist(items);
+                        setFormData(p => ({ ...p, auditName: tplName }));
+                        alert('✅ 範本解析成功！');
+                    }
+                    setIsUploading(false);
+                };
+                reader.readAsArrayBuffer(file);
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!formData.target) return alert('請輸入受測對象姓名！');
+                const newRec = { ...formData, id: Date.now().toString(), checklist };
+                setRecords(prev => [newRec, ...prev]);
+                setFormData(p => ({ ...p, target: '', score: '', notes: '' }));
+                setChecklist(checklist.map(i => ({ ...i, score: i.maxScore, note: '' })));
+                alert('💾 稽核紀錄已儲存！');
+            };
+
+            const handleExportExcel = (selected) => {
+                const data = selected.map(r => {
+                    const row = { '稽核日期': r.date, '稽核項目': r.auditName, '受稽單位': r.unit, '受測對象': r.target, '稽核員': r.auditor, '總評分': r.score };
+                    (r.checklist || []).forEach((it, idx) => {
+                        row[`項${idx+1}_${it.name}`] = it.score;
+                        if (it.note) row[`項${idx+1}_備註`] = it.note;
+                    });
+                    row['總結建議'] = r.notes;
+                    row['受測者簽名'] = '';
+                    return row;
+                });
+                const ws = window.XLSX.utils.json_to_sheet(data);
+                const wb = window.XLSX.utils.book_new();
+                window.XLSX.utils.book_append_sheet(wb, ws, "稽核紀錄");
+                window.XLSX.writeFile(wb, `稽核報表_${new Date().toISOString().split('T')[0]}.xlsx`);
+            };
+
+            return (
+                <div className="min-h-screen flex flex-col">
+                    <nav className="bg-primary text-white p-4 shadow-lg sticky top-0 z-50 flex justify-between items-center">
+                        <div>
+                            <h1 className="font-bold text-lg">清福三館技術稽核系統</h1>
+                            <span className="text-[9px] bg-white/20 px-2 py-0.5 rounded ml-2 uppercase">Local Mode</span>
+                        </div>
+                    </nav>
+
+                    <main className="max-w-4xl mx-auto w-full p-4 flex-1">
+                        <div className="flex gap-1 mb-6 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
+                            <button onClick={() => setActiveTab('form')} className={`flex-1 py-3 rounded-lg font-bold flex items-center justify-center gap-2 ${activeTab === 'form' ? 'bg-primary text-white shadow-lg' : 'text-slate-400'}`}><IconForm /> 評核</button>
+                            <button onClick={() => setActiveTab('history')} className={`flex-1 py-3 rounded-lg font-bold flex items-center justify-center gap-2 ${activeTab === 'history' ? 'bg-primary text-white shadow-lg' : 'text-slate-400'}`}><IconHistory /> 紀錄</button>
+                            <button onClick={() => setActiveTab('chart')} className={`flex-1 py-3 rounded-lg font-bold flex items-center justify-center gap-2 ${activeTab === 'chart' ? 'bg-primary text-white shadow-lg' : 'text-slate-400'}`}><IconChart /> 分析</button>
+                        </div>
+
+                        {activeTab === 'form' && (
+                            <div className="space-y-6 animate-fade-in">
+                                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                        <div className="bg-blue-50 p-4 rounded-lg">
+                                            <label className="block text-[10px] font-bold text-slate-500 mb-2 uppercase">選擇稽核項目</label>
+                                            <select value={templates.find(t => t.name === formData.auditName)?.id || ''} onChange={e => {
+                                                const t = templates.find(x => x.id === e.target.value);
+                                                if (t) { setChecklist(t.items.map(i => ({...i, score: i.maxScore, note: ''}))); setFormData({...formData, auditName: t.name}); }
+                                            }} className="w-full p-2.5 border rounded-lg bg-white outline-none">
+                                                <option value="">-- 手動填寫 --</option>
+                                                {templates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                            </select>
+                                        </div>
+                                        <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center text-center">
+                                            <input type="file" id="up" className="hidden" onChange={handleFileUpload} />
+                                            <label htmlFor="up" className="cursor-pointer bg-white border px-6 py-2 rounded-lg text-sm font-bold shadow-sm">匯入 Excel 範本</label>
+                                        </div>
+                                    </div>
+
+                                    <form onSubmit={handleSubmit} className="space-y-4">
+                                        <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                                            <div><label className="text-[10px] font-bold text-slate-400">日期</label><input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full p-2 border rounded text-sm" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400">稽核員</label><input type="text" placeholder="姓名" value={formData.auditor} onChange={e => setFormData({...formData, auditor: e.target.value})} className="w-full p-2 border rounded text-sm" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400">單位</label><input type="text" placeholder="單位" value={formData.unit} onChange={e => setFormData({...formData, unit: e.target.value})} className="w-full p-2 border rounded text-sm" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400">對象</label><input type="text" placeholder="姓名" value={formData.target} onChange={e => setFormData({...formData, target: e.target.value})} className="w-full p-2 border-2 border-primary rounded text-sm font-bold text-primary" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400">得分</label><input type="text" readOnly value={formData.score} className="w-full p-2 bg-slate-100 rounded text-sm font-black text-primary" /></div>
+                                        </div>
+
+                                        {checklist.length > 0 && (
+                                            <div className="mt-4 space-y-3 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
+                                                {checklist.map((it, idx) => (
+                                                    <div key={idx} className="bg-slate-50 p-4 rounded-xl border flex flex-col gap-3 shadow-sm">
+                                                        <div className="flex justify-between items-start gap-2">
+                                                            <span className="text-sm font-medium leading-tight">{idx+1}. {it.name}</span>
+                                                            <div className="flex gap-1 shrink-0">
+                                                                <button type="button" onClick={() => { const nl = [...checklist]; nl[idx].score = it.maxScore; setChecklist(nl); }} className={`px-3 py-1.5 text-[10px] font-bold border rounded-lg ${it.score === it.maxScore ? 'bg-green-600 text-white border-green-600' : 'bg-white'}`}>符合</button>
+                                                                <button type="button" onClick={() => { const nl = [...checklist]; nl[idx].score = 0; setChecklist(nl); }} className={`px-3 py-1.5 text-[10px] font-bold border rounded-lg ${it.score === 0 ? 'bg-red-600 text-white border-red-600' : 'bg-white'}`}>不符</button>
+                                                                <input type="number" max={it.maxScore} value={it.score} onChange={e => { const nl = [...checklist]; nl[idx].score = parseInt(e.target.value) || 0; setChecklist(nl); }} className="w-12 text-center border rounded-lg text-xs" />
+                                                            </div>
+                                                        </div>
+                                                        <input type="text" placeholder="備註..." value={it.note} onChange={e => { const nl = [...checklist]; nl[idx].note = e.target.value; setChecklist(nl); }} className="w-full p-2 text-[11px] bg-white rounded-lg outline-none" />
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                        <textarea placeholder="總結建議" value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} className="w-full p-3 border rounded-xl text-sm" rows="2"></textarea>
+                                        <button type="submit" className="w-full bg-primary text-white py-4 rounded-2xl font-bold shadow-xl">儲存考評紀錄</button>
+                                    </form>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'history' && (
+                            <div className="bg-white rounded-xl border shadow-sm overflow-hidden animate-fade-in">
+                                <div className="p-4 bg-slate-50 border-b flex justify-between items-center">
+                                    <h2 className="font-bold text-sm text-slate-600">已存檔稽核紀錄</h2>
+                                    <button onClick={() => handleExportExcel(records)} className="bg-green-600 text-white px-4 py-1.5 rounded-lg text-[10px] font-bold flex items-center gap-1 shadow-sm"><IconDownload /> 匯出 Excel</button>
+                                </div>
+                                <div className="overflow-x-auto">
+                                    <table className="w-full text-left text-[11px]">
+                                        <thead className="bg-slate-100 text-slate-500 font-bold uppercase tracking-wider">
+                                            <tr>
+                                                <th className="p-4">日期</th>
+                                                <th className="p-4">對象</th>
+                                                <th className="p-4">項目</th>
+                                                <th className="p-4 text-center">分數</th>
+                                                <th className="p-4 text-center">操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody className="divide-y divide-slate-100">
+                                            {records.map(r => (
+                                                <tr key={r.id} className="hover:bg-slate-50">
+                                                    <td className="p-4 text-slate-500">{r.date}</td>
+                                                    <td className="p-4 font-bold text-primary">{r.target}</td>
+                                                    <td className="p-4 text-slate-600">{r.auditName}</td>
+                                                    <td className="p-4 text-center"><span className={`font-black ${r.score < 80 ? 'text-red-500' : 'text-green-600'}`}>{r.score}</span></td>
+                                                    <td className="p-4 text-center">
+                                                        <button onClick={() => { if(confirm('確定刪除？')) setRecords(records.filter(x => x.id !== r.id)); }} className="text-red-300 hover:text-red-500"><IconTrash /></button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'chart' && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-fade-in text-center mt-10">
+                                <div className="bg-white p-10 rounded-2xl border shadow-sm">
+                                    <p className="text-xs text-slate-400 font-bold uppercase mb-2">總稽核件數</p>
+                                    <p className="text-5xl font-black text-slate-800">{records.length}</p>
+                                </div>
+                                <div className="bg-white p-10 rounded-2xl border shadow-sm">
+                                    <p className="text-xs text-slate-400 font-bold uppercase mb-2">平均成績</p>
+                                    <p className="text-5xl font-black text-primary">
+                                        {records.length > 0 ? (records.reduce((a,c)=>a+c.score,0)/records.length).toFixed(1) : 0}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                    </main>
+                    <footer className="p-8 text-center text-slate-300 text-[10px] font-medium tracking-widest uppercase">
+                        &copy; 2026 Smart Audit System for Nursing Care
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
