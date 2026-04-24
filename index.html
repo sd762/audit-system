@@ -52,6 +52,107 @@
         const MAIN_CATEGORIES = ['照護品質類技術考', '儀器操作類技術考'];
         const SUB_CATEGORIES = ['護理類', '照服類', '護理照服類'];
 
+        // ==========================================
+        // 🌟 預載題庫 (V8.9 更新：已補回鼻胃管 20 項)
+        // ==========================================
+        const DEFAULT_TEMPLATES = [
+            // --- 護理照服類 (2項) ---
+            {
+                id: 'tpl-wash-hands-std',
+                name: '洗手評核標準',
+                mainCategory: '照護品質類技術考',
+                subCategory: '護理照服類',
+                items: [
+                    { id: 'wh1', name: '洗手類型與用劑標準(效期一個月內)', maxScore: 5, criteria: '濕洗手乳/75%酒精', score: 5, note: '' },
+                    { id: 'wh2', name: '人員雙手準備(擦手紙補足/外袋移除)', maxScore: 5, criteria: '未檢查或未移除則扣分', score: 5, note: '' },
+                    { id: 'wh3', name: '洗手五時機圖示張貼(濕洗手區必貼)', maxScore: 3, criteria: '乾洗手區未貼不扣分', score: 3, note: '' },
+                    { id: 'wh4', name: '移除手指與手腕飾品(玉環/戒指例外處理)', maxScore: 3, criteria: '確保清潔，無法移除需固定', score: 3, note: '' },
+                    { id: 'wh5', name: '時機一：接觸住民前', maxScore: 5, criteria: '口訴項目內容', score: 5, note: '' },
+                    { id: 'wh6', name: '時機二：執行清潔/無菌技術前', maxScore: 5, criteria: '口訴項目內容', score: 5, note: '' },
+                    { id: 'wh7', name: '時機三：接觸住民體液、血液之後', maxScore: 5, criteria: '口訴項目內容', score: 5, note: '' },
+                    { id: 'wh8', name: '時機四：接觸住民後', maxScore: 5, criteria: '口訴項目內容', score: 5, note: '' },
+                    { id: 'wh9', name: '時機五：接觸住民周遭環境後', maxScore: 5, criteria: '口訴項目內容', score: 5, note: '' },
+                    { id: 'wh10', name: '「內」- 手掌對手掌搓揉', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh11', name: '「外」- 手心對手背搓揉', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh12', name: '「夾」- 手指交互夾縫搓揉', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh13', name: '「弓」- 指背對手心搓揉', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh14', name: '「大」- 虎口對大拇指搓揉', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh15', name: '「立」- 指尖對手心搓揉', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh16', name: '「腕」- 手腕搓揉至手肘', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh17', name: '沖水、捧水沖龍頭、擦乾', maxScore: 15, criteria: '捧水沖龍頭為關鍵步驟', score: 15, note: '' }
+                ]
+            },
+            {
+                id: 'tpl-isolation-gown',
+                name: '穿脫隔離衣評核表',
+                mainCategory: '照護品質類技術考',
+                subCategory: '護理照服類',
+                items: [
+                    { id: 'ig1', name: '洗手', maxScore: 5, criteria: '執行正確洗手', score: 5, note: '' },
+                    { id: 'ig2', name: '戴上外科口罩或N95口罩並做密合測試', maxScore: 10, criteria: '確保防護效果', score: 10, note: '' },
+                    { id: 'ig3', name: '戴上第一層手套', maxScore: 5, criteria: '基礎防護', score: 5, note: '' },
+                    { id: 'ig4', name: '穿連身防護衣(繫好頸後及腰帶)', maxScore: 10, criteria: '包覆完整', score: 10, note: '' },
+                    { id: 'ig5', name: '戴護目鏡(或面罩)', maxScore: 5, criteria: '面部防護', score: 5, note: '' },
+                    { id: 'ig6', name: '戴上第二層手套(需包覆袖口)', maxScore: 10, criteria: '完整封閉', score: 10, note: '' },
+                    { id: 'ig7', name: '脫第一層手套(內面朝外)', maxScore: 5, criteria: '避免污染', score: 5, note: '' },
+                    { id: 'ig8', name: '脫護目鏡(或面罩)', maxScore: 5, criteria: '依序移除', score: 5, note: '' },
+                    { id: 'ig9', name: '脫隔離衣(將污染面摺入)', maxScore: 10, criteria: '脫卸過程勿碰觸污染面', score: 10, note: '' },
+                    { id: 'ig10', name: '脫第二層手套(內面朝外)', maxScore: 5, criteria: '避免污染', score: 5, note: '' },
+                    { id: 'ig11', name: '脫外科口罩或N95(不觸摸外面)', maxScore: 10, criteria: '正確脫卸', score: 10, note: '' },
+                    { id: 'ig12', name: '垃圾分類(感染性垃圾袋)', maxScore: 5, criteria: '落實廢棄物管理', score: 5, note: '' },
+                    { id: 'ig13', name: '洗手', maxScore: 15, criteria: '最終清潔', score: 15, note: '' }
+                ]
+            },
+            
+            // --- 護理類 (10項) ---
+            { id: 'tpl-n-cpr', name: 'CPR編組評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', items: [ { id: 'c1', name: '發現異常與呼救', maxScore: 5, criteria: '立即大聲呼救', score: 5, note: '' }, { id: 'c2', name: '協助平躺', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'c3', name: '通報支援', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'c4', name: '安撫現場', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'c5', name: '生命徵象測量', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'c6', name: '啟動CPR', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'c7', name: '暢通呼吸道', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'c8', name: '交班', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'c9', name: '推氧氣筒/抽痰機', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'c10', name: 'Ambu組裝與給氧', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'c11', name: '推急救車與擺位', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'c12', name: '後續處置與紀錄', maxScore: 10, criteria: '', score: 10, note: '' } ] },
+            { id: 'tpl-n-gcs', name: '昏迷指數(GCS)評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', items: [ { id: 'g1', name: '洗手(時機一)與解釋', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'g2', name: '睜眼反應(E)評估正確', maxScore: 25, criteria: '', score: 25, note: '' }, { id: 'g3', name: '語言反應(V)評估正確', maxScore: 25, criteria: '', score: 25, note: '' }, { id: 'g4', name: '運動反應(M)評估正確', maxScore: 25, criteria: '', score: 25, note: '' }, { id: 'g5', name: '洗手與紀錄', maxScore: 15, criteria: '', score: 15, note: '' } ] },
+            { id: 'tpl-n-suction', name: '抽痰技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', items: [ { id: 's1', name: '洗手(時機一)與解釋', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 's2', name: '協助正確擺位', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 's3', name: '開啟抽痰機(120-150mmHg)', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 's4', name: '洗手(時機二)與無菌操作', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 's5', name: '由鼻腔/口腔間歇性抽吸', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 's6', name: '抽吸時間不超過10-15秒', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 's7', name: '間隔1-3分鐘再次抽吸', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 's8', name: '抽痰管包裹處理', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 's9', name: '沖淨管路、洗手(時機三)', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 's10', name: '復原、洗手(時機五)與紀錄', maxScore: 10, criteria: '', score: 10, note: '' } ] },
+            { id: 'tpl-n-med', name: '護理人員給藥及藥單書寫評核標準', mainCategory: '照護品質類技術考', subCategory: '護理類', items: [ { id: 'm1', name: '開鎖藥櫃與洗手', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'm2', name: '備藥流程(三讀五對)', maxScore: 40, criteria: '', score: 40, note: '' }, { id: 'm3', name: '核對長輩身份與解釋', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'm4', name: '協助服藥並確認吞下', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 'm5', name: '給藥後洗手(時機四)', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'm6', name: '藥單書寫與簽章', maxScore: 15, criteria: '', score: 15, note: '' } ] },
+            { id: 'tpl-n-wound', name: '傷口評估換藥護理評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', items: [ { id: 'w1', name: '洗手(時機一)與解釋', maxScore: 16, criteria: '', score: 16, note: '' }, { id: 'w2', name: '擺位與露出部位', maxScore: 24, criteria: '', score: 24, note: '' }, { id: 'w3', name: '移除敷料、洗手(時機三二)', maxScore: 11, criteria: '', score: 11, note: '' }, { id: 'w4', name: '由內向外環狀消毒', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'w5', name: '覆蓋固定、環境復原', maxScore: 14, criteria: '', score: 14, note: '' }, { id: 'w6', name: '洗手(時機三四)與紀錄', maxScore: 25, criteria: '', score: 25, note: '' } ] },
+            { id: 'tpl-n-trach', name: '氣切造口護理技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', items: [ { id: 't1', name: '洗手(時機一)與說明', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 't2', name: '固定外管與內管取出', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 't3', name: '洗手(時機三二)戴手套', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 't4', name: '環形消毒氣切口與內管組合', maxScore: 30, criteria: '', score: 30, note: '' }, { id: 't5', name: '放置Y紗與更換繫帶', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 't6', name: '內管浸泡與清潔', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 't7', name: '洗手與紀錄', maxScore: 10, criteria: '', score: 10, note: '' } ] },
+            { id: 'tpl-n-stoma', name: '造口護理技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', items: [ { id: 'so1', name: '洗手(時機一)與解釋', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 'so2', name: '拉簾擺位與移除舊敷料', maxScore: 30, criteria: '', score: 30, note: '' }, { id: 'so3', name: '環狀消毒與放置Y紗', maxScore: 30, criteria: '', score: 30, note: '' }, { id: 'so4', name: '敷料固定、復原、紀錄', maxScore: 25, criteria: '', score: 25, note: '' } ] },
+            { id: 'tpl-n-foley', name: '導尿管置入評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', items: [ { id: 'f1', name: '洗手解釋與擺位', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 'f2', name: '無菌包開啟與消毒準備', maxScore: 28, criteria: '', score: 28, note: '' }, { id: 'f3', name: '導尿管置入與尿液流出', maxScore: 20, criteria: '', score: 20, note: '' }, { id: 'f4', name: '固定水球、連接尿袋', maxScore: 19, criteria: '', score: 19, note: '' }, { id: 'f5', name: '整理復原、洗手紀錄', maxScore: 18, criteria: '', score: 18, note: '' } ] },
+            { id: 'tpl-n-ng-insert', name: '鼻胃管置入評核總表', mainCategory: '照護品質類技術考', subCategory: '護理類', items: [ { id: 'ni1', name: '洗手解釋與擺位', maxScore: 23, criteria: '', score: 23, note: '' }, { id: 'ni2', name: '測量長度與潤滑', maxScore: 18, criteria: '', score: 18, note: '' }, { id: 'ni3', name: '置入與聽診確認位置', maxScore: 30, criteria: '', score: 30, note: '' }, { id: 'ni4', name: '固定與復原洗手紀錄', maxScore: 29, criteria: '', score: 29, note: '' } ] },
+            { id: 'tpl-n-insulin', name: '胰島素注射評核總表', mainCategory: '照護品質類技術考', subCategory: '護理類', items: [ { id: 'i1', name: '核對醫囑(五對)與洗手', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 'i2', name: '評估血糖與注射部位', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 'i3', name: '再次核對與消毒', maxScore: 20, criteria: '', score: 20, note: '' }, { id: 'i4', name: '正確角度注射與按壓', maxScore: 25, criteria: '', score: 25, note: '' }, { id: 'i5', name: '處理用物、簽章紀錄', maxScore: 25, criteria: '', score: 25, note: '' } ] },
+
+            // --- 照服類 (8項：含全新鼻胃管灌食) ---
+            {
+                id: 'tpl-an-ng-std-v2',
+                name: 'AN-1. 鼻胃管灌食評核標準',
+                mainCategory: '照護品質類技術考',
+                subCategory: '照服類',
+                items: [
+                    { id: 'an-ng1', name: '1. 目的與用物準備 - 維護安全並備妥灌食空針、管灌食物、溫開水、衛生紙等。', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng2', name: '2. 向住民說明目的後至灌食準備區', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng3', name: '3. 洗手(時機二)，準備灌食用物、調製配方奶', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng4', name: '4. 至住民單位，核對住民(姓名、奶量、水量)', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng5', name: '5. 洗手(時機一)', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng6', name: '6. 調整姿勢及正確擺位，住民採半坐臥45-60°或坐姿90°。', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng7', name: '7. 灌食前洗手(時機二)', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng8', name: '8. 確定鼻胃管的刻度位置是否正確以及有無在口中纏繞。', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng9', name: '9. 反抽超過100cc需將反抽物推回，減少灌食量。', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng10', name: '10. 反抽出咖啡色或黑色的反抽物時勿灌回，應立即報告護理人員', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng11', name: '11. 灌食前先灌入10cc溫開水潤濕管壁。', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng12', name: '12. 適當流速灌食（灌食高度30-45公分）。', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng13', name: '13. 灌食過程中，如有異常(嘔吐、咳嗽、發紺等)應立即停止並通知護理人員。', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng14', name: '14. 灌食時須注意勿使空氣進入', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng15', name: '15. 灌食後再灌入少量溫開水沖淨管壁。', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng16', name: '16. 拴緊蓋子', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng17', name: '17. 灌食後觀察有無不適，維持半坐臥式或坐姿至少30分鐘。', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng18', name: '18. 收拾用物及完成紀錄。', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng19', name: '19. 洗手(時機一)', maxScore: 5, criteria: '', score: 5, note: '' },
+                    { id: 'an-ng20', name: '20. 洗手(時機四)', maxScore: 5, criteria: '', score: 5, note: '' }
+                ]
+            },
+            { id: 'tpl-an-feed', name: 'AN-2. 備餐餵食評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', items: [ { id: 'f1', name: '用物準備(圍兜、餐具等)', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'f2', name: '(洗手時機一)向住民說明', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'f3', name: '(洗手時機二)備餐', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'f4', name: '協助坐正與按摩喚醒', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'f5', name: '檢查口腔與假牙', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'f6', name: '核對餐食與溫度', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'f7', name: '平視餵食、適量每口', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'f8', name: '觀察吞嚥確認吞下', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'f9', name: '進食中給水與留意反應', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'f10', name: '餐後漱口與嘴部擦拭', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'f11', name: '維持坐姿30分鐘', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'f12', name: '復原、洗手(時機四)與紀錄', maxScore: 10, criteria: '', score: 10, note: '' } ] },
+            { id: 'tpl-an-perineal', name: 'AN-3. 會陰沖洗評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', items: [ { id: 'p1', name: '(洗手時機一)向住民說明', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'p2', name: '拉簾保護隱私', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'p3', name: '手腕試水溫(41-43度)', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'p4', name: '(洗手時機二)調整水溫', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'p5', name: '沖洗器開口朝床尾', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'p6', name: '正確擺位(仰臥/偏癱支撐)', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'p7', name: '仔細清洗(內向外)', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 'p8', name: '輕輕拍乾會陰部', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'p9', name: '穿回衣物與復原', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'p10', name: '整理、洗手(時機三四)與紀錄', maxScore: 10, criteria: '', score: 10, note: '' } ] },
+            { id: 'tpl-an-wheelchair', name: 'AN-4. 上下床輪椅使用評核', mainCategory: '照護品質類技術考', subCategory: '照服類', items: [ { id: 'w1', name: '檢查輪椅安全', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'w2', name: '輪椅定位(平行或45度)', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'w3', name: '固定輪子、收起踏板', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'w4', name: '(洗手時機一)', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'w5', name: '評估意識與臉色', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'w6', name: '尿管反摺處理', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'w7', name: '正確姿勢坐入輪椅', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 'w8', name: '掛好尿袋', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'w9', name: '放好踏板與雙腳', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'w10', name: '(洗手時機四)', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'w11', name: '上床步驟操作', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 'w12', name: '安全回床、洗手紀錄', maxScore: 20, criteria: '', score: 20, note: '' } ] },
+            { id: 'tpl-an-turn', name: 'AN-5. 翻身拍背擺位評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', items: [ { id: 't1', name: '用物準備(枕頭等)', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 't2', name: '解釋與拉簾', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 't3', name: '站立正確方向', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 't4', name: '(洗手時機一)擺位準備', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 't5', name: '正確翻身動作', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 't6', name: '臉部墊毛巾', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 't7', name: '評估痰液聚集處', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 't8', name: '胸前墊枕頭', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 't9', name: '扣擊部位墊衣物', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 't10', name: '杯狀手、力量適中', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 't11', name: '先拍痰處1分鐘', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 't12', name: '正確位置拍擊3-5分鐘', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 't13', name: '翻身擺位支撐', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 't14', name: '復原、洗手(時機四)紀錄', maxScore: 15, criteria: '', score: 15, note: '' } ] },
+            { id: 'tpl-an-restraint', name: 'AN-6. 保護性約束評核表', mainCategory: '照護品質類技術考', subCategory: '照服類', items: [ { id: 'r1', name: '說明目的與預防跌倒', maxScore: 6, criteria: '', score: 6, note: '' }, { id: 'r2', name: '與家屬討論並簽同意書', maxScore: 6, criteria: '', score: 6, note: '' }, { id: 'r3', name: '選擇適當約束種類', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'r4', name: '評估生理需求', maxScore: 3, criteria: '', score: 3, note: '' }, { id: 'r5', name: '約束前互動', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'r6', name: '評估約束帶配件完整', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'r7', name: '過程中互動安撫', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'r8', name: '鬆緊度2橫指、平結固定', maxScore: 20, criteria: '', score: 20, note: '' }, { id: 'r9', name: '每2小時鬆開評估皮膚', maxScore: 20, criteria: '', score: 20, note: '' }, { id: 'r10', name: '洗手(時機四)紀錄狀況', maxScore: 10, criteria: '', score: 10, note: '' } ] },
+            { id: 'tpl-an-oral', name: 'AN-7. 口腔清潔評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', items: [ { id: 'o1', name: '(洗手時機二)用物準備', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'o2', name: '(洗手時機一)解釋與安撫', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'o3', name: '協助正確坐姿擺位', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'o4', name: '胸前墊毛巾防濕', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'o5', name: '異常或牙關處理(口述)', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'o6', name: '刷牙方向口訣', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'o7', name: '牙齦依序清潔與漱口', maxScore: 15, criteria: '', score: 15, note: '' }, { id: 'o8', name: '刷牙角度與方向注意事項', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'o9', name: '牙齒每2顆刷擊', maxScore: 5, criteria: '', score: 5, note: '' }, { id: 'o10', name: '協助漱口與擦乾', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'o11', name: '觀察黏膜與牙齦', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'o12', name: '復原與整理', maxScore: 10, criteria: '', score: 10, note: '' }, { id: 'o13', name: '洗手(時機四)紀錄', maxScore: 5, criteria: '', score: 5, note: '' } ] }
+        ];
+
         // --- SVG 圖示 ---
         const IconForm = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>;
         const IconHistory = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M12 7v5l4 2"/></svg>;
@@ -62,59 +163,34 @@
         const IconChevronDown = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>;
         const IconChevronRight = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>;
         const IconFolder = ({ color = "text-blue-500" }) => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className={color} stroke="none"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>;
-        // 新增使用手冊圖示
         const IconManual = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>;
-
 
         // --- 主應用程式 ---
         const App = () => {
             const [activeTab, setActiveTab] = useState('form');
-            
-            // 自訂系統對話框狀態
             const [dialog, setDialog] = useState({ isOpen: false, type: 'alert', title: '', message: '', onConfirm: null });
             const showAlert = (message, title = '系統提示') => setDialog({ isOpen: true, type: 'alert', title, message, onConfirm: null });
             const showConfirm = (message, onConfirm, title = '⚠️ 確認操作') => setDialog({ isOpen: true, type: 'confirm', title, message, onConfirm });
             
-            // 讀取資料
-            const [records, setRecords] = useState(() => {
-                const saved = Storage.getRecords();
-                return saved.map(r => r.id ? r : { ...r, id: Date.now().toString() + Math.random().toString(36).substr(2, 5) });
-            });
-
-            // 讀取範本
+            // 資料初始化
+            const [records, setRecords] = useState(() => Storage.getRecords());
             const [templates, setTemplates] = useState(() => {
                 const saved = Storage.getTemplates();
-                if (saved && saved.length > 0) {
-                    return saved.map(t => ({
-                        ...t,
-                        id: t.id ? t.id : Date.now().toString() + Math.random().toString(36).substr(2, 5),
-                        mainCategory: t.mainCategory || MAIN_CATEGORIES[0],
-                        subCategory: t.subCategory || SUB_CATEGORIES[0]
-                    }));
-                }
-                return []; 
+                const uniqueSaved = saved.filter(s => !DEFAULT_TEMPLATES.some(d => d.id === s.id));
+                return [...DEFAULT_TEMPLATES, ...uniqueSaved];
             });
-            
-            // 報表分析設定與狀態
             const [reportSettings, setReportSettings] = useState(() => Storage.getSettings());
-            const availableYears = useMemo(() => {
-                const years = [...new Set(records.map(r => String(r.date).substring(0, 4)))].filter(y => y.length === 4 && !isNaN(Number(y))).sort().reverse();
-                return years.length > 0 ? years : [new Date().getFullYear().toString()];
-            }, [records]);
-            const [selectedYear, setSelectedYear] = useState(availableYears[0]);
-
-            // 歷史區塊狀態
+            
             const [filterMonth, setFilterMonth] = useState('');
             const [filterItem, setFilterItem] = useState('');
             const [selectedIds, setSelectedIds] = useState(new Set());
             const [expandedFolders, setExpandedFolders] = useState(new Set());
             
-            // 範本選擇區狀態 (現場考評)
-            const [filterTplMainCat, setFilterTplMainCat] = useState('');
-            const [filterTplSubCat, setFilterTplSubCat] = useState('');
+            // 預設展開「照護品質類」 -> 「照服類」
+            const [filterTplMainCat, setFilterTplMainCat] = useState('照護品質類技術考');
+            const [filterTplSubCat, setFilterTplSubCat] = useState('照服類');
             const [currentTemplateId, setCurrentTemplateId] = useState('');
             
-            // 範本匯入區狀態
             const [uploadMainCat, setUploadMainCat] = useState(MAIN_CATEGORIES[0]);
             const [uploadSubCat, setUploadSubCat] = useState(SUB_CATEGORIES[0]);
             const [isUploading, setIsUploading] = useState(false);
@@ -129,19 +205,16 @@
             useEffect(() => Storage.saveTemplates(templates), [templates]);
             useEffect(() => Storage.saveSettings(reportSettings), [reportSettings]);
 
-            // 自動計分
             useEffect(() => {
                 if (checklist.length > 0) {
-                    const valid = checklist.filter(i => i.score >= 0);
-                    if (valid.length > 0) {
-                        const max = valid.reduce((a, c) => a + c.maxScore, 0);
-                        const cur = valid.reduce((a, c) => a + c.score, 0);
-                        setFormData(p => ({ ...p, score: max > 0 ? Math.round((cur/max)*100) : 0 }));
-                    }
+                    const validItems = checklist.filter(i => i.score !== '');
+                    const totalMax = validItems.reduce((a, c) => a + c.maxScore, 0);
+                    const totalCur = validItems.reduce((a, c) => a + Number(c.score || 0), 0);
+                    const finalScore = totalMax > 0 ? Math.round((totalCur / totalMax) * 100) : 0;
+                    setFormData(p => ({ ...p, score: finalScore }));
                 }
             }, [checklist]);
 
-            // 過濾顯示的範本列表
             const filteredTemplates = useMemo(() => {
                 return templates.filter(t => {
                     const matchMain = filterTplMainCat ? t.mainCategory === filterTplMainCat : true;
@@ -150,36 +223,23 @@
                 });
             }, [templates, filterTplMainCat, filterTplSubCat]);
 
-            // 切換範本分類過濾器時，自動清空當前選擇
             const handleTplFilterChange = (type, value) => {
                 if (type === 'main') setFilterTplMainCat(value);
                 if (type === 'sub') setFilterTplSubCat(value);
                 setCurrentTemplateId('');
                 setChecklist([]);
-                setFormData(p => ({ ...p, auditName: '一般綜合稽核' }));
+                setFormData(p => ({ ...p, auditName: '一般綜合稽核', score: '' }));
             };
 
-            // --- 檔案與範本處理 ---
-            const parseRowToItem = (cells) => {
-                if (cells.length < 2) return null;
-                const rowText = cells.join('');
-                if (rowText.includes('評核項目') || rowText.includes('總分')) return null;
-                
-                let maxScore = 100, scoreIndex = -1;
-                for(let i=0; i<cells.length; i++) {
-                    const cellVal = String(cells[i]).trim();
-                    const m = cellVal.match(/^(\d+)(分)?$/);
-                    if (m && Number(m[1]) <= 100 && Number(m[1]) > 0) {
-                        maxScore = Number(m[1]);
-                        scoreIndex = i;
-                        break;
-                    }
+            const updateCheckItem = (index, field, value) => {
+                const newList = [...checklist];
+                if (field === 'score' && value !== '') {
+                    const num = Number(value);
+                    if (num > newList[index].maxScore) value = newList[index].maxScore;
+                    if (num < 0) value = 0;
                 }
-                if (scoreIndex === -1) return null;
-                const name = cells.slice(0, scoreIndex).filter(c => c && String(c).trim()).join(' - ');
-                const criteria = cells.slice(scoreIndex + 1).filter(c => c && String(c).trim()).join(' ');
-                if (!name) return null;
-                return { id: Math.random().toString(36).substr(2, 9), name, maxScore, criteria, score: maxScore, note: '' };
+                newList[index][field] = value;
+                setChecklist(newList);
             };
 
             const handleFileUpload = (e) => {
@@ -189,13 +249,11 @@
                 const fileExt = file.name.split('.').pop().toLowerCase();
                 const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
                 const reader = new FileReader();
-
                 reader.onload = async (ev) => {
                     const arrayBuffer = ev.target.result;
                     let items = [];
-
-                    if (fileExt === 'docx') {
-                        try {
+                    try {
+                        if (fileExt === 'docx') {
                             const result = await window.mammoth.convertToHtml({ arrayBuffer });
                             const doc = new DOMParser().parseFromString(result.value, 'text/html');
                             doc.querySelectorAll('tr').forEach(tr => {
@@ -203,93 +261,52 @@
                                 const item = parseRowToItem(cells);
                                 if (item) items.push(item);
                             });
-                        } catch (err) { showAlert('Word 解析失敗', '⚠️ 解析錯誤'); }
-                    } else if (fileExt === 'xlsx' || fileExt === 'xls' || fileExt === 'csv') {
-                        try {
+                        } else {
                             const wb = window.XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
                             const rows = window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: false, defval: '' });
                             rows.forEach(row => {
                                 const item = parseRowToItem(row.map(c => String(c || '')));
                                 if (item) items.push(item);
                             });
-                        } catch (err) { showAlert('Excel/CSV 解析失敗', '⚠️ 解析錯誤'); }
-                    }
-
-                    if (items.length > 0) {
-                        const newTplId = Date.now().toString() + Math.random().toString(36).substr(2, 5);
-                        // 儲存範本時加上選擇的大項與子項屬性
-                        setTemplates(prev => [...prev, { 
-                            id: newTplId, 
-                            name: fileNameWithoutExt, 
-                            items,
-                            mainCategory: uploadMainCat,
-                            subCategory: uploadSubCat
-                        }]);
-                        setChecklist(items);
-                        
-                        // 自動切換篩選器到剛上傳的分類，並選中該範本
-                        setFilterTplMainCat(uploadMainCat);
-                        setFilterTplSubCat(uploadSubCat);
-                        setCurrentTemplateId(newTplId);
-                        setFormData(p => ({ ...p, auditName: fileNameWithoutExt }));
-                        
-                        showAlert(`✅ 範本解析成功！已儲存於：\n[${uploadMainCat}] -> [${uploadSubCat}]`, '上傳成功');
-                    } else {
-                        showAlert('⚠️ 未能辨識出評分項目。請確認檔案中有包含「配分數字」。', '格式錯誤');
-                    }
-                    setIsUploading(false);
-                    e.target.value = '';
+                        }
+                        if (items.length > 0) {
+                            const newTplId = Date.now().toString();
+                            setTemplates(prev => [...prev, { id: newTplId, name: fileNameWithoutExt, items, mainCategory: uploadMainCat, subCategory: uploadSubCat }]);
+                            setChecklist(items);
+                            setFilterTplMainCat(uploadMainCat); setFilterTplSubCat(uploadSubCat);
+                            setCurrentTemplateId(newTplId); setFormData(p => ({ ...p, auditName: fileNameWithoutExt }));
+                            showAlert(`✅ 範本解析成功！`, '上傳成功');
+                        } else showAlert('⚠️ 未能辨識評分項目，請確認格式。');
+                    } catch (err) { showAlert('解析發生錯誤。'); }
+                    setIsUploading(false); e.target.value = '';
                 };
                 reader.readAsArrayBuffer(file);
             };
 
-            const handleDeleteTemplate = () => {
-                const currentTpl = templates.find(t => String(t.id) === String(currentTemplateId));
-                if (currentTpl) {
-                    showConfirm(`確定要從題庫中刪除「${currentTpl.name}」這個範本嗎？此操作無法復原。`, () => {
-                        setTemplates(prev => prev.filter(t => String(t.id) !== String(currentTemplateId)));
-                        setCurrentTemplateId('');
-                        setFormData(p => ({ ...p, auditName: '一般綜合稽核' }));
-                        setChecklist([]);
-                    });
+            const parseRowToItem = (cells) => {
+                if (cells.length < 2) return null;
+                let maxScore = 100, scoreIndex = -1;
+                for(let i=0; i<cells.length; i++) {
+                    const cellVal = String(cells[i]).trim();
+                    const m = cellVal.match(/^(\d+)(分)?$/);
+                    if (m && Number(m[1]) <= 100 && Number(m[1]) > 0) { maxScore = Number(m[1]); scoreIndex = i; break; }
                 }
+                if (scoreIndex === -1) return null;
+                const name = cells.slice(0, scoreIndex).filter(c => c && String(c).trim()).join(' - ');
+                const criteria = cells.slice(scoreIndex + 1).filter(c => c && String(c).trim()).join(' ');
+                if (!name) return null;
+                return { id: Math.random().toString(36).substr(2, 9), name, maxScore, criteria, score: maxScore, note: '', mode: 'full' };
             };
 
             const handleSubmit = (e) => {
                 e.preventDefault();
-                if (!formData.target) return showAlert('請輸入受測對象姓名！', '⚠️ 欄位未填');
+                if (!formData.target) return showAlert('請輸入受測對象姓名！');
+                if (formData.score === '') return showAlert('請輸入或計算總得分！');
                 const newRec = { ...formData, id: Date.now().toString() + Math.random().toString(36).substr(2, 5), checklist };
                 setRecords(prev => [newRec, ...prev]);
                 setFormData(p => ({ ...p, target: '', score: '', notes: '' }));
-                setChecklist(checklist.map(i => ({ ...i, score: i.maxScore, note: '' })));
-                showAlert('💾 紀錄已儲存！', '儲存成功');
-            };
-
-            const formatExcelDate = (raw) => {
-                const rawStr = String(raw || '').trim();
-                if (!rawStr) return new Date().toISOString().split('T')[0];
-
-                const num = Number(rawStr);
-                if (!isNaN(num) && num > 30000 && num < 100000) {
-                    const date = new Date(Math.round((num - 25569) * 86400 * 1000));
-                    const y = date.getUTCFullYear();
-                    const m = String(date.getUTCMonth() + 1).padStart(2, '0');
-                    const d = String(date.getUTCDate()).padStart(2, '0');
-                    return `${y}-${m}-${d}`;
-                }
-
-                try {
-                    const datePart = rawStr.split(/[\sT]/)[0]; 
-                    if (/^\d{1,4}[-/]\d{1,2}[-/]\d{1,4}/.test(datePart)) {
-                        const parts = datePart.split(/[-/]/);
-                        if (parts.length >= 3) {
-                            let y = parts[0], m = parts[1], d = parts[2];
-                            if (d.length === 4) { y = parts[2]; m = parts[0]; d = parts[1]; }
-                            return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-                        }
-                    }
-                } catch(e) {}
-                return new Date().toISOString().split('T')[0];
+                setChecklist(checklist.map(i => ({ ...i, score: i.maxScore, note: '', mode: 'full' })));
+                showAlert('💾 紀錄已儲存！');
             };
 
             const handleReverseImport = (e) => {
@@ -300,494 +317,197 @@
                     try {
                         const wb = window.XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
                         const data = window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { raw: true, defval: '' });
-                        
                         const validData = data.filter(row => row['稽核人員'] !== '平均總分' && (row['稽核日期'] || row['日期']));
-
-                        const imported = validData.map((row, index) => {
-                            const rawDate = row['稽核日期'] || row['日期'] || '';
-                            const fmtDate = formatExcelDate(rawDate);
-
-                            return {
-                                id: Date.now().toString() + index + Math.random().toString(36).substr(2, 5),
-                                date: fmtDate,
-                                auditName: String(row['稽核項目'] || row['項目'] || '匯入紀錄'),
-                                unit: String(row['受稽單位'] || row['單位'] || ''),
-                                target: String(row['受測對象(姓名)'] || row['受測對象'] || row['姓名'] || ''),
-                                auditor: String(row['稽核人員'] || row['稽核員'] || ''),
-                                score: Number(row['總評分'] || row['分數'] || 0),
-                                notes: String(row['總結建議'] || ''),
-                                checklist: [] 
-                            };
-                        });
-
-                        if(imported.length > 0) {
-                            setRecords(prev => [...imported, ...prev]);
-                            showAlert(`✅ 成功匯入 ${imported.length} 筆歷史紀錄！`, '匯入成功');
-                        } else {
-                            showAlert('⚠️ 找不到可匯入的有效資料列。', '查無資料');
-                        }
-                    } catch (err) { showAlert(`匯入發生例外錯誤。\n(詳情：${err.message})`, '⚠️ 匯入錯誤'); }
+                        const imported = validData.map((row, index) => ({
+                            id: Date.now().toString() + index, date: String(row['稽核日期'] || row['日期']), auditName: String(row['稽核項目'] || row['項目']),
+                            unit: String(row['受稽單位'] || row['單位']), target: String(row['受測對象(姓名)'] || row['受測對象']),
+                            auditor: String(row['稽核人員'] || row['稽核員']), score: Number(row['總評分'] || 0), notes: String(row['總結建議'] || ''), checklist: []
+                        }));
+                        setRecords(prev => [...imported, ...prev]);
+                        showAlert(`✅ 成功匯入 ${imported.length} 筆！`);
+                    } catch (err) { showAlert('匯入失敗。'); }
                     e.target.value = '';
                 };
                 reader.readAsArrayBuffer(file);
             };
 
-            // --- 歷史紀錄篩選與分組 ---
-            const uniqueMonths = useMemo(() => [...new Set(records.map(r => String(r.date || '').substring(0, 7)))].sort().reverse(), [records]);
-            const uniqueItems = useMemo(() => [...new Set(records.map(r => String(r.auditName || '')))].sort(), [records]);
-
-            useEffect(() => {
-                const newExpanded = new Set();
-                if (filterMonth && filterItem) {
-                    newExpanded.add(filterMonth);
-                    newExpanded.add(`${filterMonth}|${filterItem}`);
-                } else if (filterMonth) {
-                    newExpanded.add(filterMonth);
-                }
-                setExpandedFolders(newExpanded);
-            }, [filterMonth, filterItem]);
-
-            const filteredRecords = useMemo(() => {
-                return records.filter(r => {
-                    const matchM = filterMonth ? String(r.date || '').startsWith(filterMonth) : true;
-                    const matchI = filterItem ? String(r.auditName || '') === filterItem : true;
-                    return matchM && matchI;
+            const groupedRecords = useMemo(() => {
+                const filtered = records.filter(r => (filterMonth ? r.date.startsWith(filterMonth) : true) && (filterItem ? r.auditName === filterItem : true));
+                const groups = {};
+                filtered.forEach(r => {
+                    const m = String(r.date).substring(0, 7) || '未知';
+                    const it = r.auditName;
+                    if(!groups[m]) groups[m] = { items: {} };
+                    if(!groups[m].items[it]) groups[m].items[it] = [];
+                    groups[m].items[it].push(r);
                 });
+                return groups;
             }, [records, filterMonth, filterItem]);
 
-            const groupedRecords = useMemo(() => {
-                const groups = {};
-                filteredRecords.forEach(r => {
-                    const month = String(r.date || '').substring(0, 7) || '未知月份';
-                    const item = String(r.auditName || '無項目名稱');
-                    if (!groups[month]) groups[month] = { _count: 0, items: {} };
-                    if (!groups[month].items[item]) groups[month].items[item] = [];
-                    
-                    groups[month].items[item].push(r);
-                    groups[month]._count++;
-                });
+            const uniqueMonths = useMemo(() => [...new Set(records.map(r => String(r.date).substring(0, 7)))].sort().reverse(), [records]);
+            const uniqueItems = useMemo(() => [...new Set(records.map(r => r.auditName))].sort(), [records]);
 
-                const sortedMonths = Object.keys(groups).sort().reverse();
-                return sortedMonths.map(month => ({
-                    month,
-                    count: groups[month]._count,
-                    items: Object.keys(groups[month].items).sort().map(itemName => ({
-                        itemName,
-                        records: groups[month].items[itemName]
-                    }))
-                }));
-            }, [filteredRecords]);
-
-            const toggleFolder = (key) => {
-                setExpandedFolders(prev => {
-                    const next = new Set(prev);
-                    if (next.has(key)) next.delete(key); else next.add(key);
-                    return next;
-                });
-            };
-
-            const handleSelectAll = (e) => {
-                if (e.target.checked) setSelectedIds(new Set(filteredRecords.map(r => r.id)));
-                else setSelectedIds(new Set());
-            };
-
-            const handleSelectGroup = (recs, isChecked) => {
-                setSelectedIds(prev => {
-                    const next = new Set(prev);
-                    recs.forEach(r => isChecked ? next.add(r.id) : next.delete(r.id));
-                    return next;
-                });
-            };
-
-            const handleSelectOne = (id) => {
-                setSelectedIds(prev => {
-                    const next = new Set(prev);
-                    if (next.has(id)) next.delete(id); else next.add(id);
-                    return next;
-                });
-            };
-
-            const handleDeleteRecord = (id) => {
-                showConfirm('確定要永久刪除此筆紀錄嗎？', () => {
-                    setRecords(prev => prev.filter(x => String(x.id) !== String(id)));
-                    setSelectedIds(prev => { const next = new Set(prev); next.delete(id); return next; });
-                });
-            };
-
-            const handleBatchDelete = () => {
-                if (selectedIds.size === 0) return;
-                showConfirm(`確定要永久刪除這 ${selectedIds.size} 筆紀錄嗎？此操作無法復原。`, () => {
-                    setRecords(prev => prev.filter(x => !selectedIds.has(x.id)));
-                    setSelectedIds(new Set()); 
-                });
-            };
-
-            const handleExportExcel = () => {
-                const targets = selectedIds.size > 0 
-                    ? records.filter(r => selectedIds.has(r.id)) 
-                    : filteredRecords;
-
-                if (targets.length === 0) return showAlert('沒有資料可匯出！', '⚠️ 匯出錯誤');
-
-                const data = targets.map(r => {
-                    const row = { 
-                        '稽核日期': r.date, '稽核項目': r.auditName, '受稽單位': r.unit, 
-                        '受測對象(姓名)': r.target, '稽核人員': r.auditor, '總評分': r.score 
-                    };
-                    (r.checklist || []).forEach((it, idx) => {
-                        row[`項${idx+1}_${it.name}`] = it.score;
-                        if (it.note) row[`項${idx+1}_備註`] = it.note;
-                    });
-                    row['總結建議'] = r.notes;
-                    row['受測者簽名確認'] = '';
-                    return row;
-                });
-                
-                const hasMultiple = targets.length > 1;
-                if (hasMultiple) {
-                    data.push({
-                        '稽核日期': '', '稽核項目': '', '受稽單位': '', '受測對象(姓名)': '',
-                        '稽核人員': '平均總分', '總評分': ''
-                    });
-                }
-
-                const ws = window.XLSX.utils.json_to_sheet(data);
-                const range = window.XLSX.utils.decode_range(ws['!ref']);
-                for (let R = 1; R <= range.e.r; ++R) {
-                    if (hasMultiple && R === range.e.r) {
-                        const cell_ref = window.XLSX.utils.encode_cell({c: 5, r: R});
-                        const start_avg = window.XLSX.utils.encode_cell({c: 5, r: 1});
-                        const end_avg = window.XLSX.utils.encode_cell({c: 5, r: R - 1});
-                        if (!ws[cell_ref]) ws[cell_ref] = { t: 'n', v: 0 };
-                        ws[cell_ref].t = 'n';
-                        ws[cell_ref].f = `AVERAGE(${start_avg}:${end_avg})`;
-                    } else {
-                        if (range.e.c >= 6) {
-                            const cell_ref = window.XLSX.utils.encode_cell({c: 5, r: R}); 
-                            const start_cell = window.XLSX.utils.encode_cell({c: 6, r: R}); 
-                            const end_cell = window.XLSX.utils.encode_cell({c: Math.max(6, range.e.c - 2), r: R}); 
-                            if (ws[cell_ref]) {
-                                ws[cell_ref].t = 'n';
-                                ws[cell_ref].f = `SUM(${start_cell}:${end_cell})`;
-                            }
-                        }
-                    }
-                }
-
-                const wb = window.XLSX.utils.book_new();
-                window.XLSX.utils.book_append_sheet(wb, ws, "稽核紀錄表");
-                
-                const monthLabel = filterMonth || '全部月份';
-                const itemLabel = filterItem || '全部項目';
-                window.XLSX.writeFile(wb, `稽核統計表_${monthLabel}_${itemLabel}.xlsx`);
-            };
-
-            // --- 年度報表分析資料計算與匯出 ---
-            const updateReportSetting = (key, field, value) => {
-                setReportSettings(prev => ({
-                    ...prev,
-                    [key]: { ...(prev[key] || { threshold: 80, analysis: '' }), [field]: value }
-                }));
-            };
+            const availableYears = useMemo(() => {
+                const years = [...new Set(records.map(r => String(r.date).substring(0, 4)))].filter(y => y.length === 4).sort().reverse();
+                return years.length > 0 ? years : [new Date().getFullYear().toString()];
+            }, [records]);
+            const [selectedYear, setSelectedYear] = useState(availableYears[0]);
 
             const annualReportData = useMemo(() => {
                 const yearRecords = records.filter(r => String(r.date).startsWith(selectedYear));
                 const itemStats = {};
-
                 yearRecords.forEach(r => {
-                    const itemName = String(r.auditName);
-                    if (!itemStats[itemName]) {
-                        itemStats[itemName] = { totalScore: 0, count: 0, months: {} };
-                        for(let i=1; i<=12; i++) itemStats[itemName].months[i] = { score: 0, count: 0 };
-                    }
-                    const m = parseInt(String(r.date).substring(5, 7), 10);
-                    if (m >= 1 && m <= 12) {
-                        itemStats[itemName].months[m].score += Number(r.score);
-                        itemStats[itemName].months[m].count += 1;
-                    }
-                    itemStats[itemName].totalScore += Number(r.score);
-                    itemStats[itemName].count += 1;
+                    const itemName = r.auditName;
+                    if (!itemStats[itemName]) { itemStats[itemName] = { total: 0, count: 0, months: Array(13).fill(0).map(()=>({s:0,c:0})) }; }
+                    const m = parseInt(r.date.split('-')[1]);
+                    if (m) { itemStats[itemName].months[m].s += Number(r.score); itemStats[itemName].months[m].c += 1; }
+                    itemStats[itemName].total += Number(r.score); itemStats[itemName].count += 1;
                 });
-
-                return Object.keys(itemStats).sort().map(itemName => {
-                    const stats = itemStats[itemName];
-                    const settingKey = `${selectedYear}_${itemName}`;
-                    const setting = reportSettings[settingKey] || { threshold: 80, analysis: '' };
-                    
-                    const monthlyAvgs = {};
-                    for(let i=1; i<=12; i++) {
-                        monthlyAvgs[i] = stats.months[i].count > 0 ? Math.round(stats.months[i].score / stats.months[i].count) : '';
-                    }
-                    
-                    const yearAvg = stats.count > 0 ? Math.round(stats.totalScore / stats.count) : 0;
-                    const diff = yearAvg - Number(setting.threshold);
-
-                    return {
-                        itemName,
-                        settingKey,
-                        threshold: setting.threshold,
-                        analysis: setting.analysis,
-                        monthlyAvgs,
-                        yearAvg,
-                        diff
-                    };
+                return Object.keys(itemStats).map(name => {
+                    const s = itemStats[name]; const key = `${selectedYear}_${name}`; const setting = reportSettings[key] || { threshold: 80, analysis: '' };
+                    const mAvgs = Array(13).fill('').map((_,i)=> s.months[i].c > 0 ? Math.round(s.months[i].s / s.months[i].c) : '');
+                    const avg = s.count > 0 ? Math.round(s.total / s.count) : 0;
+                    return { itemName: name, settingKey: key, threshold: setting.threshold, analysis: setting.analysis, mAvgs, avg, diff: avg - setting.threshold };
                 });
             }, [records, selectedYear, reportSettings]);
 
-            const handleExportAnnualReport = () => {
-                if (annualReportData.length === 0) return showAlert('該年度沒有資料可匯出！', '⚠️ 匯出錯誤');
-
-                const data = annualReportData.map(row => {
-                    return {
-                        '品管管理項目': row.itemName,
-                        '閾值%': row.threshold,
-                        '1月': row.monthlyAvgs[1], '2月': row.monthlyAvgs[2], '3月': row.monthlyAvgs[3],
-                        '4月': row.monthlyAvgs[4], '5月': row.monthlyAvgs[5], '6月': row.monthlyAvgs[6],
-                        '7月': row.monthlyAvgs[7], '8月': row.monthlyAvgs[8], '9月': row.monthlyAvgs[9],
-                        '10月': row.monthlyAvgs[10], '11月': row.monthlyAvgs[11], '12月': row.monthlyAvgs[12],
-                        '年度平均': row.yearAvg,
-                        '與閾值差異': row.diff,
-                        '檢討改善分析': row.analysis
-                    };
+            const handleExportExcel = () => {
+                const targets = selectedIds.size > 0 ? records.filter(r => selectedIds.has(r.id)) : records;
+                if (targets.length === 0) return showAlert('沒有資料可匯出！');
+                const data = targets.map(r => {
+                    const row = { '稽核日期': r.date, '稽核項目': r.auditName, '受稽單位': r.unit, '受測對象(姓名)': r.target, '稽核人員': r.auditor, '總評分': r.score };
+                    (r.checklist || []).forEach((it, idx) => { row[`項${idx+1}_${it.name}`] = it.score; if (it.note) row[`項${idx+1}_備註`] = it.note; });
+                    row['總結建議'] = r.notes; row['受測者簽名確認'] = ''; return row;
                 });
-
                 const ws = window.XLSX.utils.json_to_sheet(data);
                 const wb = window.XLSX.utils.book_new();
-                window.XLSX.utils.book_append_sheet(wb, ws, `${selectedYear}年度總表`);
-                window.XLSX.writeFile(wb, `清福技術考_${selectedYear}年度管理總表.xlsx`);
+                window.XLSX.utils.book_append_sheet(wb, ws, "稽核紀錄表");
+                window.XLSX.writeFile(wb, `稽核統計報表.xlsx`);
+            };
+
+            const updateReportSetting = (key, field, val) => {
+                setReportSettings(p => ({ ...p, [key]: { ...(p[key] || { threshold: 80, analysis: '' }), [field]: val } }));
             };
 
             return (
-                <div className="min-h-screen flex flex-col">
+                <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
                     <nav className="bg-primary text-white p-4 shadow-lg sticky top-0 z-50 flex justify-between items-center">
-                        <div className="flex flex-col">
-                            <h1 className="font-bold text-lg tracking-tight">清福技術考稽核系統</h1>
-                            <span className="text-[9px] bg-white/20 px-2 py-0.5 rounded self-start uppercase tracking-wider">Categorized Edition V8.2</span>
-                        </div>
+                        <div className="flex flex-col"><h1 className="font-bold text-lg tracking-tight">清福技術考稽核系統</h1><span className="text-[9px] bg-white/20 px-2 py-0.5 rounded self-start uppercase">V8.9 Standard</span></div>
                     </nav>
 
-                    <main className="max-w-4xl mx-auto w-full p-4 flex-1">
-                        {/* 分頁按鈕，新增使用手冊 */}
-                        <div className="flex flex-wrap sm:flex-nowrap gap-1 mb-6 bg-white p-1 rounded-xl shadow-sm border border-slate-200">
-                            <button onClick={() => setActiveTab('form')} className={`flex-1 min-w-[80px] py-3 rounded-lg font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all ${activeTab === 'form' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'}`}><IconForm /> <span className="text-xs sm:text-base">現場考評</span></button>
-                            <button onClick={() => setActiveTab('history')} className={`flex-1 min-w-[80px] py-3 rounded-lg font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all ${activeTab === 'history' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'}`}><IconHistory /> <span className="text-xs sm:text-base">紀錄庫</span></button>
-                            <button onClick={() => setActiveTab('chart')} className={`flex-1 min-w-[80px] py-3 rounded-lg font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all ${activeTab === 'chart' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'}`}><IconChart /> <span className="text-xs sm:text-base">分析報表</span></button>
-                            <button onClick={() => setActiveTab('manual')} className={`flex-1 min-w-[80px] py-3 rounded-lg font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all ${activeTab === 'manual' ? 'bg-teal-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'}`}><IconManual /> <span className="text-xs sm:text-base">使用手冊</span></button>
+                    <main className="max-w-6xl mx-auto w-full p-4 flex-1">
+                        <div className="flex flex-wrap sm:flex-nowrap gap-1 mb-6 bg-white p-1 rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                            <button onClick={() => setActiveTab('form')} className={`flex-1 min-w-[80px] py-3 rounded-lg font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all ${activeTab === 'form' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'}`}><IconForm /> 現場考評</button>
+                            <button onClick={() => setActiveTab('history')} className={`flex-1 min-w-[80px] py-3 rounded-lg font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all ${activeTab === 'history' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'}`}><IconHistory /> 紀錄庫</button>
+                            <button onClick={() => setActiveTab('chart')} className={`flex-1 min-w-[80px] py-3 rounded-lg font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all ${activeTab === 'chart' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'}`}><IconChart /> 分析報表</button>
+                            <button onClick={() => setActiveTab('manual')} className={`flex-1 min-w-[80px] py-3 rounded-lg font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all ${activeTab === 'manual' ? 'bg-teal-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'}`}><IconManual /> 使用手冊</button>
                         </div>
 
                         {activeTab === 'form' && (
-                            <div className="space-y-6 animate-fade-in">
-                                <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                            <div className="animate-fade-in space-y-6">
+                                <div className="bg-white p-6 rounded-xl border shadow-sm">
                                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
-                                        
-                                        {/* 左側：選擇題庫 */}
                                         <div className="bg-blue-50 p-4 rounded-lg flex flex-col gap-3">
-                                            <label className="block text-[10px] font-bold text-blue-600 uppercase tracking-wider border-b border-blue-200 pb-1">📚 選擇稽核標準範本</label>
-                                            
-                                            {/* 分類篩選器 */}
+                                            <label className="text-[10px] font-bold text-blue-600 uppercase border-b border-blue-200 pb-1">📚 選擇稽核標準題庫</label>
                                             <div className="flex gap-2">
-                                                <select value={filterTplMainCat} onChange={e => handleTplFilterChange('main', e.target.value)} className="flex-1 p-1.5 text-xs border border-blue-200 rounded outline-none bg-white text-slate-600">
-                                                    <option value="">-- 所有大項分類 --</option>
-                                                    {MAIN_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                                                </select>
-                                                <select value={filterTplSubCat} onChange={e => handleTplFilterChange('sub', e.target.value)} className="flex-1 p-1.5 text-xs border border-blue-200 rounded outline-none bg-white text-slate-600">
-                                                    <option value="">-- 所有子目錄 --</option>
-                                                    {SUB_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                                                </select>
+                                                <select value={filterTplMainCat} onChange={e => handleTplFilterChange('main', e.target.value)} className="flex-1 p-1.5 text-xs border rounded bg-white">{MAIN_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}</select>
+                                                <select value={filterTplSubCat} onChange={e => handleTplFilterChange('sub', e.target.value)} className="flex-1 p-1.5 text-xs border rounded bg-white"><option value="">-- 所有子類 --</option>{SUB_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}</select>
                                             </div>
-                                            
-                                            {/* 範本選擇 */}
                                             <div className="flex gap-2">
                                                 <select value={currentTemplateId} onChange={e => {
-                                                    const selectedId = e.target.value;
-                                                    setCurrentTemplateId(selectedId);
-                                                    const t = templates.find(x => x.id === selectedId);
-                                                    if (t) { setChecklist(t.items.map(i => ({...i, score: i.maxScore, note: ''}))); setFormData({...formData, auditName: t.name}); }
-                                                    else { setChecklist([]); setFormData({...formData, auditName: '一般綜合稽核'}); }
-                                                }} className="flex-1 p-2 border border-blue-300 rounded-lg bg-white outline-none font-bold text-slate-700 shadow-sm text-sm">
-                                                    <option value="">-- 手動填寫 / 選擇下方範本 --</option>
-                                                    {filteredTemplates.map(t => <option key={t.id} value={t.id}>{t.name} ({t.items.length}項)</option>)}
+                                                    const tid = e.target.value; setCurrentTemplateId(tid); const t = templates.find(x => x.id === tid);
+                                                    if (t) { setChecklist(t.items.map(i => ({...i, score: i.maxScore, note: '', mode: 'full'}))); setFormData({...formData, auditName: t.name}); }
+                                                    else { setChecklist([]); setFormData({...formData, auditName: '一般綜合稽核', score: ''}); }
+                                                }} className="flex-1 p-2 border border-blue-300 rounded-lg bg-white font-bold text-sm">
+                                                    <option value="">-- 請選擇稽核項目 --</option>
+                                                    {filteredTemplates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                                                 </select>
-                                                {currentTemplateId && templates.some(t => t.id === currentTemplateId) && (
-                                                    <button type="button" onClick={handleDeleteTemplate} className="bg-red-100 text-red-600 px-3 rounded-lg hover:bg-red-200 transition-colors shadow-sm" title="刪除此範本">
-                                                        <IconTrash />
-                                                    </button>
+                                                {currentTemplateId && !DEFAULT_TEMPLATES.some(d => d.id === currentTemplateId) && (
+                                                    <button onClick={() => showConfirm('刪除此自訂範本？', () => setTemplates(prev => prev.filter(t => t.id !== currentTemplateId)))} className="bg-red-100 text-red-600 px-3 rounded-lg"><IconTrash /></button>
                                                 )}
                                             </div>
                                         </div>
-
-                                        {/* 右側：匯入範本 (指定目錄) */}
-                                        <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center bg-slate-50/50 relative">
-                                            <label className="block text-[10px] font-bold text-slate-500 uppercase tracking-wider w-full text-center mb-2">📥 匯入新範本至題庫</label>
-                                            
-                                            <div className="flex gap-2 mb-3 w-full max-w-[280px]">
-                                                <select value={uploadMainCat} onChange={e => setUploadMainCat(e.target.value)} className="w-1/2 p-1.5 text-[11px] border border-slate-300 rounded outline-none bg-white text-slate-600">
-                                                    {MAIN_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                                                </select>
-                                                <select value={uploadSubCat} onChange={e => setUploadSubCat(e.target.value)} className="w-1/2 p-1.5 text-[11px] border border-slate-300 rounded outline-none bg-white text-slate-600">
-                                                    {SUB_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                                                </select>
-                                            </div>
-
-                                            <input type="file" id="up-tpl" className="hidden" onChange={handleFileUpload} accept=".docx, .xlsx, .xls, .csv" />
-                                            <label htmlFor="up-tpl" className={`cursor-pointer bg-white border border-slate-300 px-5 py-2 rounded-lg text-sm font-bold shadow-sm hover:bg-slate-100 transition-colors text-slate-700 ${isUploading ? 'opacity-50 pointer-events-none' : ''}`}>
-                                                {isUploading ? '解析中...' : '選取 Word / Excel 檔案'}
-                                            </label>
+                                        <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center bg-slate-50/50">
+                                            <label className="text-[10px] font-bold text-slate-500 mb-2 uppercase">考評系統狀態：V8.9 正式版</label>
+                                            <p className="text-[10px] text-slate-400 text-center">系統已內建所有護理及照服核心技術評測標準，可直接於左側選取。</p>
                                         </div>
                                     </div>
-
                                     <form onSubmit={handleSubmit} className="space-y-4">
                                         <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-                                            <div><label className="text-[10px] font-bold text-slate-400">稽核日期</label><input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full p-2 border rounded text-sm" /></div>
-                                            <div><label className="text-[10px] font-bold text-slate-400">稽核人員</label><input type="text" placeholder="姓名" value={formData.auditor} onChange={e => setFormData({...formData, auditor: e.target.value})} className="w-full p-2 border rounded text-sm" /></div>
-                                            <div><label className="text-[10px] font-bold text-slate-400">受稽單位</label><input type="text" placeholder="單位" value={formData.unit} onChange={e => setFormData({...formData, unit: e.target.value})} className="w-full p-2 border rounded text-sm" /></div>
-                                            <div><label className="text-[10px] font-bold text-slate-400">受測對象(姓名)</label><input type="text" placeholder="姓名" value={formData.target} onChange={e => setFormData({...formData, target: e.target.value})} className="w-full p-2 border-2 border-primary rounded text-sm font-bold text-primary" /></div>
-                                            <div><label className="text-[10px] font-bold text-slate-400">總評分</label><input type="text" readOnly value={formData.score} className="w-full p-2 bg-slate-100 rounded text-sm font-black text-primary text-center" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400 uppercase">日期</label><input type="date" value={formData.date} onChange={e => setFormData({...formData, date: e.target.value})} className="w-full p-2 border border-slate-200 rounded text-sm" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400 uppercase">稽核員</label><input type="text" placeholder="姓名" value={formData.auditor} onChange={e => setFormData({...formData, auditor: e.target.value})} className="w-full p-2 border border-slate-200 rounded text-sm" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400 uppercase">單位</label><input type="text" placeholder="單位" value={formData.unit} onChange={e => setFormData({...formData, unit: e.target.value})} className="w-full p-2 border border-slate-200 rounded text-sm" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400 uppercase">受測對象</label><input type="text" required placeholder="姓名" value={formData.target} onChange={e => setFormData({...formData, target: e.target.value})} className="w-full p-2 border-2 border-primary rounded text-sm font-bold text-primary" /></div>
+                                            <div><label className="text-[10px] font-bold text-slate-400 uppercase">總得分 (%)</label><input type="number" readOnly value={formData.score} className="w-full p-2 border rounded text-sm font-black text-center bg-slate-100 text-primary border-slate-200" /></div>
                                         </div>
-
                                         {checklist.length > 0 && (
-                                            <div className="mt-4 space-y-3 max-h-[450px] overflow-y-auto pr-2 custom-scrollbar">
+                                            <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar bg-slate-50/50 p-4 rounded-xl border border-slate-100 shadow-inner">
+                                                <h3 className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 flex justify-between">評項明細表 <span>{formData.auditName}</span></h3>
                                                 {checklist.map((it, idx) => (
-                                                    <div key={idx} className="bg-slate-50 p-4 rounded-xl border flex flex-col gap-3 shadow-sm border-slate-200">
-                                                        <div className="flex justify-between items-start gap-2">
-                                                            <span className="text-sm font-bold text-slate-700 leading-tight">{idx+1}. {it.name}</span>
-                                                            <div className="flex gap-1 shrink-0">
-                                                                <button type="button" onClick={() => { const nl = [...checklist]; nl[idx].score = it.maxScore; setChecklist(nl); }} className={`px-3 py-1.5 text-[10px] font-bold border rounded-lg transition-colors ${it.score === it.maxScore ? 'bg-green-600 text-white border-green-600' : 'bg-white text-slate-400 border-slate-200'}`}>符合</button>
-                                                                <button type="button" onClick={() => { const nl = [...checklist]; nl[idx].score = 0; setChecklist(nl); }} className={`px-3 py-1.5 text-[10px] font-bold border rounded-lg transition-colors ${it.score === 0 ? 'bg-red-600 text-white border-red-600' : 'bg-white text-slate-400 border-slate-200'}`}>不符</button>
-                                                                <input type="number" max={it.maxScore} min="0" value={it.score} onChange={e => { const nl = [...checklist]; nl[idx].score = parseInt(e.target.value) || 0; setChecklist(nl); }} className="w-12 text-center border rounded-lg text-xs font-bold border-slate-300" />
+                                                    <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col gap-3 shadow-sm transition-all hover:shadow-md">
+                                                        <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
+                                                            <span className="text-sm font-bold text-slate-700 leading-tight flex-1">{idx+1}. {it.name} <span className="text-[10px] text-slate-400 font-normal ml-1">(配分: {it.maxScore}分)</span></span>
+                                                            <div className="flex items-center gap-1 shrink-0 bg-slate-100 p-1 rounded-xl">
+                                                                <button type="button" onClick={() => updateCheckItem(idx, 'score', it.maxScore)} className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${it.score === it.maxScore ? 'bg-green-600 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}>符合</button>
+                                                                <button type="button" onClick={() => updateCheckItem(idx, 'score', Math.floor(it.maxScore/2))} className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${it.score !== it.maxScore && it.score !== 0 && it.score !== '' ? 'bg-amber-500 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}>部分</button>
+                                                                <button type="button" onClick={() => updateCheckItem(idx, 'score', 0)} className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${it.score === 0 ? 'bg-red-600 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}>不符</button>
                                                             </div>
                                                         </div>
-                                                        {it.criteria && <p className="text-[11px] text-slate-400 italic">標準：{it.criteria}</p>}
-                                                        <input type="text" placeholder="單項詳細紀錄..." value={it.note} onChange={e => { const nl = [...checklist]; nl[idx].note = e.target.value; setChecklist(nl); }} className="w-full p-2 text-[11px] bg-white border border-slate-100 rounded-lg outline-none focus:border-primary transition-colors" />
+                                                        {it.score !== it.maxScore && it.score !== 0 && (
+                                                            <div className="flex items-center gap-2 bg-amber-50 p-2 rounded-lg border border-amber-100">
+                                                                <label className="text-[10px] font-bold text-amber-700">自訂給分：</label>
+                                                                <input type="number" max={it.maxScore} min="0" value={it.score} onChange={e => updateCheckItem(idx, 'score', e.target.value)} className="w-16 p-1 border-b-2 border-amber-400 bg-transparent text-center font-black text-amber-800 outline-none" />
+                                                                <span className="text-[10px] text-amber-600">/ {it.maxScore} 分</span>
+                                                            </div>
+                                                        )}
+                                                        <input type="text" placeholder="情況紀錄..." value={it.note} onChange={e => updateCheckItem(idx, 'note', e.target.value)} className="w-full p-2 text-[11px] bg-slate-50 border-none rounded-lg outline-none" />
                                                     </div>
                                                 ))}
                                             </div>
                                         )}
-                                        <textarea placeholder="總結改善與綜合建議..." value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} className="w-full p-4 border border-slate-200 rounded-2xl text-sm outline-none focus:border-primary transition-colors shadow-inner" rows="2"></textarea>
-                                        <button type="submit" className="w-full bg-primary text-white py-4 rounded-2xl font-black shadow-xl hover:scale-[1.01] active:scale-95 transition-all uppercase tracking-widest">儲存本次考評紀錄</button>
+                                        <textarea placeholder="總結改善與綜合建議..." value={formData.notes} onChange={e => setFormData({...formData, notes: e.target.value})} className="w-full p-3 border border-slate-200 rounded-xl text-sm outline-none focus:border-primary shadow-inner" rows="2"></textarea>
+                                        <button type="submit" className="w-full bg-primary text-white py-4 rounded-2xl font-black shadow-xl hover:scale-[1.01] active:scale-95 transition-all text-lg tracking-widest">儲存本次考評紀錄</button>
                                     </form>
                                 </div>
                             </div>
                         )}
 
                         {activeTab === 'history' && (
-                            <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden animate-fade-in flex flex-col">
-                                <div className="p-5 bg-slate-50 border-b border-slate-200 flex flex-col gap-4">
-                                    <div className="flex flex-wrap justify-between items-center gap-4">
-                                        <h2 className="font-bold text-slate-700">歷史紀錄歸檔庫</h2>
-                                        <div className="flex gap-2">
-                                            {/* 刪除勾選項目的按鈕，只有在有勾選時才會出現 */}
-                                            {selectedIds.size > 0 && (
-                                                <button type="button" onClick={handleBatchDelete} className="bg-red-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-1.5 shadow-md hover:bg-red-700 transition-colors mr-2">
-                                                    <IconTrash /> 刪除勾選 ({selectedIds.size})
-                                                </button>
-                                            )}
-                                            
-                                            <input type="file" id="re-import" className="hidden" onChange={handleReverseImport} accept=".xlsx, .xls, .csv" />
-                                            <label htmlFor="re-import" className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-1.5 shadow-md hover:bg-blue-700 transition-colors"><IconImport /> 匯入報表</label>
-                                            <button type="button" onClick={handleExportExcel} className="bg-green-600 text-white px-4 py-2 rounded-xl text-[11px] font-bold flex items-center gap-1.5 shadow-md hover:bg-green-700 transition-colors"><IconDownload /> 匯出勾選/篩選表</button>
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="flex flex-wrap gap-3 items-center">
-                                        <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} className="p-2 border border-slate-300 rounded-lg text-xs bg-white outline-none text-slate-600 font-medium">
-                                            <option value="">-- 全部月份 --</option>
-                                            {uniqueMonths.map(m => <option key={m} value={m}>{m}</option>)}
-                                        </select>
-                                        <select value={filterItem} onChange={e => setFilterItem(e.target.value)} className="p-2 border border-slate-300 rounded-lg text-xs bg-white outline-none max-w-[200px] text-slate-600 font-medium">
-                                            <option value="">-- 全部技術項目 --</option>
-                                            {uniqueItems.map(i => <option key={i} value={i}>{i}</option>)}
-                                        </select>
+                            <div className="animate-fade-in bg-white rounded-2xl border shadow-sm flex flex-col overflow-hidden">
+                                <div className="p-5 bg-slate-50 border-b flex flex-wrap justify-between items-center gap-4">
+                                    <h2 className="font-bold text-slate-700 flex items-center gap-2">📂 歷史歸檔庫</h2>
+                                    <div className="flex gap-2">
+                                        <button onClick={handleExportExcel} className="bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md hover:bg-green-700 transition-colors"><IconDownload /> 匯出全部報表</button>
                                     </div>
                                 </div>
-
-                                <div className="overflow-x-auto max-h-[600px] overflow-y-auto custom-scrollbar">
+                                <div className="p-4 flex gap-3 border-b bg-slate-50/30">
+                                    <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} className="p-2 border rounded-lg text-xs outline-none">{uniqueMonths.map(m => <option key={m} value={m}>{m || '所有月份'}</option>)}<option value="">所有月份</option></select>
+                                    <select value={filterItem} onChange={e => setFilterItem(e.target.value)} className="p-2 border rounded-lg text-xs outline-none"><option value="">所有稽核項目</option>{uniqueItems.map(i => <option key={i} value={i}>{i}</option>)}</select>
+                                </div>
+                                <div className="overflow-x-auto max-h-[600px] custom-scrollbar">
                                     <table className="w-full text-left text-[11px]">
-                                        <thead className="bg-slate-100 text-slate-500 font-bold uppercase tracking-wider sticky top-0 z-10 shadow-sm">
+                                        <thead className="bg-slate-100 text-slate-500 font-bold sticky top-0 z-10 shadow-sm uppercase tracking-wider">
                                             <tr>
-                                                <th className="p-4 w-12 text-center">
-                                                    <input type="checkbox" onChange={handleSelectAll} checked={filteredRecords.length > 0 && selectedIds.size === filteredRecords.length} className="cursor-pointer w-4 h-4 rounded border-slate-300 text-primary" />
-                                                </th>
-                                                <th className="p-4">日期</th>
-                                                <th className="p-4">受測對象</th>
-                                                <th className="p-4">稽核項目</th>
-                                                <th className="p-4 text-center">分數</th>
-                                                <th className="p-4 text-center">操作</th>
+                                                <th className="p-4">日期</th><th className="p-4">受測者</th><th className="p-4">項目</th><th className="p-4 text-center">分數</th><th className="p-4 text-center">操作</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                            {groupedRecords.length === 0 ? (
-                                                <tr><td colSpan="6" className="p-10 text-center text-slate-400">目前尚無符合的考評紀錄</td></tr>
-                                            ) : (
-                                                groupedRecords.map(monthGroup => {
-                                                    const isMonthExpanded = expandedFolders.has(monthGroup.month);
-                                                    const monthRecs = monthGroup.items.flatMap(i => i.records);
-                                                    const isMonthSelected = monthRecs.every(r => selectedIds.has(r.id));
-                                                    const isMonthIndeterminate = !isMonthSelected && monthRecs.some(r => selectedIds.has(r.id));
-                                                    
-                                                    return (
-                                                        <React.Fragment key={monthGroup.month}>
-                                                            {/* 第一層：月份資料夾 */}
-                                                            <tr className="bg-slate-50/80 hover:bg-slate-100 cursor-pointer transition-colors border-y border-slate-200">
-                                                                <td className="p-3 text-center" onClick={(e) => e.stopPropagation()}>
-                                                                    <input type="checkbox" checked={isMonthSelected} ref={el => el && (el.indeterminate = isMonthIndeterminate)} onChange={(e) => handleSelectGroup(monthRecs, e.target.checked)} className="cursor-pointer w-4 h-4 rounded" />
-                                                                </td>
-                                                                <td colSpan="5" className="p-3 font-black text-slate-700 text-sm" onClick={() => toggleFolder(monthGroup.month)}>
-                                                                    <div className="flex items-center gap-2">
-                                                                        {isMonthExpanded ? <IconChevronDown/> : <IconChevronRight/>}
-                                                                        <IconFolder color="text-blue-500" /> 
-                                                                        {monthGroup.month} 月份資料夾 
-                                                                        <span className="text-[10px] bg-white border border-slate-200 px-2 py-0.5 rounded-full text-slate-500 font-bold ml-2">共 {monthGroup.count} 筆</span>
-                                                                    </div>
-                                                                </td>
+                                            {Object.entries(groupedRecords).map(([month, data]) => (
+                                                <React.Fragment key={month}>
+                                                    <tr className="bg-slate-50/80"><td colSpan="5" className="p-3 font-bold text-slate-500 text-[10px] border-y border-slate-100">{month} 月份資料</td></tr>
+                                                    {Object.entries(data.items).map(([itemName, recs]) => (
+                                                        recs.map(r => (
+                                                            <tr key={r.id} className="hover:bg-slate-50 transition-colors">
+                                                                <td className="p-4 whitespace-nowrap text-slate-500 font-medium">{r.date}</td>
+                                                                <td className="p-4 font-black text-primary">{r.target}</td>
+                                                                <td className="p-4 text-slate-600 truncate max-w-[150px]">{r.auditName}</td>
+                                                                <td className="p-4 text-center"><span className={`inline-block w-8 py-1 rounded-full font-black ${r.score < 80 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>{r.score}</span></td>
+                                                                <td className="p-4 text-center"><button onClick={() => showConfirm('確定刪除？', () => setRecords(prev => prev.filter(x => x.id !== r.id)))} className="text-red-300 hover:text-red-600"><IconTrash /></button></td>
                                                             </tr>
-                                                            
-                                                            {/* 第二層：項目資料夾 */}
-                                                            {isMonthExpanded && monthGroup.items.map(itemGroup => {
-                                                                const folderKey = `${monthGroup.month}|${itemGroup.itemName}`;
-                                                                const isItemExpanded = expandedFolders.has(folderKey);
-                                                                const itemRecs = itemGroup.records;
-                                                                const isItemSelected = itemRecs.every(r => selectedIds.has(r.id));
-                                                                const isItemIndeterminate = !isItemSelected && itemRecs.some(r => selectedIds.has(r.id));
-
-                                                                return (
-                                                                    <React.Fragment key={folderKey}>
-                                                                        <tr className="bg-slate-50/40 hover:bg-slate-50 cursor-pointer border-b border-slate-100">
-                                                                            <td className="p-2 text-center border-r border-slate-100" onClick={(e) => e.stopPropagation()}>
-                                                                                <input type="checkbox" checked={isItemSelected} ref={el => el && (el.indeterminate = isItemIndeterminate)} onChange={(e) => handleSelectGroup(itemRecs, e.target.checked)} className="cursor-pointer w-3.5 h-3.5 rounded" />
-                                                                            </td>
-                                                                            <td colSpan="5" className="p-2 pl-8 font-bold text-slate-600 text-[11px]" onClick={() => toggleFolder(folderKey)}>
-                                                                                <div className="flex items-center gap-2">
-                                                                                    {isItemExpanded ? <IconChevronDown/> : <IconChevronRight/>}
-                                                                                    <IconFolder color="text-slate-400" />
-                                                                                    {itemGroup.itemName}
-                                                                                    <span className="text-[9px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full font-bold ml-2">{itemRecs.length} 筆</span>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-
-                                                                        {/* 第三層：資料明細列 */}
-                                                                        {isItemExpanded && itemGroup.records.map(r => (
-                                                                            <tr key={r.id} className={`transition-colors ${selectedIds.has(r.id) ? 'bg-blue-50/50' : 'hover:bg-white'}`}>
-                                                                                <td className="p-3 text-center border-r border-slate-50">
-                                                                                    <input type="checkbox" checked={selectedIds.has(r.id)} onChange={() => handleSelectOne(r.id)} className="cursor-pointer w-3.5 h-3.5 rounded text-primary" />
-                                                                                </td>
-                                                                                <td className="p-3 pl-14 whitespace-nowrap text-slate-500 font-medium text-[11px]">{r.date}</td>
-                                                                                <td className="p-3 font-black text-primary text-[12px]">{r.target}</td>
-                                                                                <td className="p-3 text-slate-500 font-medium max-w-[150px] truncate text-[11px]" title={r.auditName}>{r.auditName}</td>
-                                                                                <td className="p-3 text-center"><span className={`inline-block w-8 py-1 rounded-full font-black text-[11px] ${r.score < 80 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>{r.score}</span></td>
-                                                                                <td className="p-3 text-center">
-                                                                                    <button type="button" onClick={() => handleDeleteRecord(r.id)} className="text-red-300 hover:text-red-500 transition-colors p-1"><IconTrash /></button>
-                                                                                </td>
-                                                                            </tr>
-                                                                        ))}
-                                                                    </React.Fragment>
-                                                                );
-                                                            })}
-                                                        </React.Fragment>
-                                                    );
-                                                })
-                                            )}
+                                                        ))
+                                                    ))}
+                                                </React.Fragment>
+                                            ))}
                                         </tbody>
                                     </table>
                                 </div>
@@ -795,76 +515,30 @@
                         )}
 
                         {activeTab === 'chart' && (
-                            <div className="space-y-6 animate-fade-in">
-                                {/* Top Stats */}
+                            <div className="animate-fade-in space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
-                                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-                                        <p className="text-xs text-slate-400 font-bold uppercase mb-2 tracking-widest">總考評件數</p>
-                                        <p className="text-5xl font-black text-slate-800">{records.length}</p>
-                                    </div>
-                                    <div className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm">
-                                        <p className="text-xs text-slate-400 font-bold uppercase mb-2 tracking-widest">全年度總平均</p>
-                                        <p className="text-5xl font-black text-primary">
-                                            {records.length > 0 ? (records.reduce((a,c)=>a+Number(c.score || 0),0)/records.length).toFixed(1) : 0}
-                                        </p>
-                                    </div>
+                                    <div className="bg-white p-8 rounded-3xl border shadow-sm"><p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2">年度考評總量</p><p className="text-5xl font-black text-slate-800">{records.length}</p></div>
+                                    <div className="bg-white p-8 rounded-3xl border shadow-sm"><p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2">全體達成率</p><p className="text-5xl font-black text-primary">{records.length > 0 ? (records.reduce((a,c)=>a+c.score,0)/records.length).toFixed(1) : 0}%</p></div>
                                 </div>
-
-                                {/* Annual Report Table */}
-                                <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-                                    <div className="flex flex-wrap justify-between items-center mb-6 gap-4 border-b border-slate-100 pb-4">
-                                        <div className="flex items-center gap-3">
-                                            <h3 className="font-bold text-slate-700 text-lg">📈 年度品質監測管理總表</h3>
-                                            <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)} className="p-1.5 border border-slate-300 rounded-lg text-sm bg-slate-50 font-bold text-primary outline-none">
-                                                {availableYears.map(y => <option key={y} value={y}>{y} 年度</option>)}
-                                            </select>
-                                        </div>
-                                        <button type="button" onClick={handleExportAnnualReport} className="bg-emerald-600 text-white px-5 py-2 rounded-xl text-xs font-bold flex items-center gap-2 shadow-md hover:bg-emerald-700 transition-colors">
-                                            <IconDownload /> 匯出年度總表 (Excel)
-                                        </button>
+                                <div className="bg-white p-6 rounded-3xl border shadow-sm overflow-hidden">
+                                    <div className="flex flex-wrap justify-between items-center mb-6 border-b pb-4 gap-4">
+                                        <div className="flex items-center gap-3"><h3 className="font-bold text-slate-700 text-lg">📈 品質年度總表</h3><select value={selectedYear} onChange={e => setSelectedYear(e.target.value)} className="p-1.5 border rounded-lg font-bold text-primary">{availableYears.map(y => <option key={y} value={y}>{y} 年度</option>)}</select></div>
                                     </div>
-
-                                    <div className="overflow-x-auto custom-scrollbar pb-4">
+                                    <div className="overflow-x-auto custom-scrollbar">
                                         <table className="w-full text-left text-[11px] min-w-[1000px]">
-                                            <thead className="bg-slate-100 text-slate-600 font-bold uppercase tracking-wider">
-                                                <tr>
-                                                    <th className="p-3 rounded-tl-lg min-w-[150px]">品管管理項目</th>
-                                                    <th className="p-3 text-center w-20">閾值(%)</th>
-                                                    {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => <th key={m} className="p-3 text-center w-10">{m}月</th>)}
-                                                    <th className="p-3 text-center w-16 bg-blue-100/50">年平均</th>
-                                                    <th className="p-3 text-center w-16">差異</th>
-                                                    <th className="p-3 rounded-tr-lg min-w-[200px]">檢討改善分析</th>
-                                                </tr>
+                                            <thead className="bg-slate-100 text-slate-600 font-bold uppercase">
+                                                <tr><th className="p-3">品管項目</th><th className="p-3 text-center">閾值</th>{[1,2,3,4,5,6,7,8,9,10,11,12].map(m => <th key={m} className="p-3 text-center">{m}月</th>)}<th className="p-3 text-center bg-blue-100/50">年平均</th><th className="p-3 text-center">差異</th></tr>
                                             </thead>
                                             <tbody className="divide-y divide-slate-100">
-                                                {annualReportData.length === 0 ? (
-                                                    <tr><td colSpan="17" className="p-10 text-center text-slate-400">此年度尚無任何考評紀錄</td></tr>
-                                                ) : (
-                                                    annualReportData.map((row, idx) => (
-                                                        <tr key={idx} className="hover:bg-slate-50 transition-colors">
-                                                            <td className="p-3 font-bold text-slate-700" title={row.itemName}>
-                                                                <div className="truncate max-w-[150px]">{row.itemName}</div>
-                                                            </td>
-                                                            <td className="p-2 text-center">
-                                                                <input type="number" value={row.threshold} onChange={e => updateReportSetting(row.settingKey, 'threshold', e.target.value)} className="w-14 p-1.5 border border-slate-300 rounded text-center font-bold text-slate-600 focus:border-primary outline-none" />
-                                                            </td>
-                                                            {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => (
-                                                                <td key={m} className="p-2 text-center text-slate-500 font-medium">
-                                                                    {row.monthlyAvgs[m] || '-'}
-                                                                </td>
-                                                            ))}
-                                                            <td className="p-2 text-center font-black text-primary bg-blue-50/50">{row.yearAvg}</td>
-                                                            <td className="p-2 text-center">
-                                                                <span className={`inline-block px-2 py-1 rounded-md font-bold ${row.diff < 0 ? 'bg-red-100 text-red-600' : 'bg-emerald-100 text-emerald-700'}`}>
-                                                                    {row.diff > 0 ? '+' : ''}{row.diff}
-                                                                </span>
-                                                            </td>
-                                                            <td className="p-2">
-                                                                <textarea value={row.analysis} onChange={e => updateReportSetting(row.settingKey, 'analysis', e.target.value)} placeholder="輸入檢討與改善對策..." className="w-full p-2 border border-slate-200 rounded text-xs outline-none focus:border-primary min-h-[40px] resize-y custom-scrollbar text-slate-600"></textarea>
-                                                            </td>
-                                                        </tr>
-                                                    ))
-                                                )}
+                                                {annualReportData.map((row, idx) => (
+                                                    <tr key={idx} className="hover:bg-slate-50 transition-colors">
+                                                        <td className="p-3 font-bold text-slate-700">{row.itemName}</td>
+                                                        <td className="p-2 text-center">{row.threshold}</td>
+                                                        {row.mAvgs.slice(1).map((m, i) => <td key={i} className="p-2 text-center text-slate-500">{m || '-'}</td>)}
+                                                        <td className="p-2 text-center font-black text-primary bg-blue-50/50">{row.avg}</td>
+                                                        <td className="p-2 text-center"><span className={`px-2 py-1 rounded font-bold ${row.diff < 0 ? 'text-red-600 bg-red-100' : 'text-emerald-700 bg-emerald-100'}`}>{row.diff > 0 ? '+' : ''}{row.diff}</span></td>
+                                                    </tr>
+                                                ))}
                                             </tbody>
                                         </table>
                                     </div>
@@ -873,121 +547,38 @@
                         )}
 
                         {activeTab === 'manual' && (
-                            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-8 animate-fade-in max-w-3xl mx-auto">
-                                <h2 className="text-2xl font-bold text-primary mb-6 flex items-center gap-2 border-b pb-4">
-                                    <IconManual /> 系統使用手冊 (V8.2)
-                                </h2>
-                                
-                                <div className="space-y-8 text-sm text-slate-700 leading-relaxed">
-                                    
-                                    <section>
-                                        <h3 className="font-bold text-lg text-slate-800 mb-3 bg-blue-50 inline-block px-3 py-1 rounded-lg">一、 快速入門流程</h3>
-                                        <ol className="list-decimal pl-5 space-y-2 text-slate-600 font-medium">
-                                            <li><span className="text-primary font-bold">開啟系統</span>：透過專屬 GitHub 網址進入系統。</li>
-                                            <li><span className="text-primary font-bold">匯入題庫</span>：第一次使用請至「現場考評」匯入 Word 或 Excel 範本。</li>
-                                            <li><span className="text-primary font-bold">進行考評</span>：選擇範本、輸入受測者姓名、點選符合/不符、提交存檔。</li>
-                                            <li><span className="text-primary font-bold">管理紀錄</span>：至「紀錄庫」查看、篩選、或匯出報表。</li>
-                                        </ol>
-                                    </section>
-
-                                    <section>
-                                        <h3 className="font-bold text-lg text-slate-800 mb-3 bg-blue-50 inline-block px-3 py-1 rounded-lg">二、 詳細功能操作說明</h3>
-                                        
-                                        <div className="mb-4">
-                                            <h4 className="font-bold text-base text-slate-700 mb-2 border-l-4 border-primary pl-2">1. 現場考評 (主作業區)</h4>
-                                            <ul className="list-disc pl-5 space-y-1 text-slate-600">
-                                                <li><strong className="text-slate-700">選擇範本</strong>：先利用頂部的「大項分類」與「子目錄」進行篩選，再於下拉選單選取要考評的項目。</li>
-                                                <li><strong className="text-slate-700">匯入新題庫</strong>：若下拉無所需項目，請先選擇匯入的分類，點選「選取 Word/Excel 檔案」，系統會自動解析並存入題庫。</li>
-                                                <li><strong className="text-slate-700">執行評分</strong>：輸入姓名，點選「符合/不符」，系統會自動計算總分。可針對個別項目填寫扣分原因。</li>
-                                                <li><strong className="text-slate-700">提交存檔</strong>：按下底部「儲存本次考評紀錄」，資料即刻存入紀錄庫。</li>
-                                            </ul>
-                                        </div>
-
-                                        <div className="mb-4">
-                                            <h4 className="font-bold text-base text-slate-700 mb-2 border-l-4 border-primary pl-2">2. 紀錄庫 (歸檔與匯出)</h4>
-                                            <ul className="list-disc pl-5 space-y-1 text-slate-600">
-                                                <li><strong className="text-slate-700">資料收納</strong>：紀錄會以「月份」及「技術項目」自動分類成資料夾。</li>
-                                                <li><strong className="text-slate-700">勾選匯出</strong>：勾選單筆或整個資料夾後，點擊「匯出勾選/篩選表」，可下載含加總函數的 Excel 報表。</li>
-                                                <li><strong className="text-slate-700">反向匯入</strong>：若更換電腦，可將之前匯出的 Excel 透過「匯入報表」重新倒回系統。</li>
-                                                <li><strong className="text-slate-700">刪除紀錄</strong>：勾選不需要的資料，按下紅色「刪除勾選」按鈕即可。</li>
-                                            </ul>
-                                        </div>
-
-                                        <div>
-                                            <h4 className="font-bold text-base text-slate-700 mb-2 border-l-4 border-primary pl-2">3. 分析報表 (品質管理)</h4>
-                                            <ul className="list-disc pl-5 space-y-1 text-slate-600">
-                                                <li><strong className="text-slate-700">年度總表</strong>：自動列出該年度所有評測項目的「每月平均分數」。</li>
-                                                <li><strong className="text-slate-700">閾值設定</strong>：手動輸入「閾值(%)」，系統會自動計算差異並以綠色(達標)或紅色(未達標)警示。</li>
-                                                <li><strong className="text-slate-700">檢討改善分析</strong>：直接在表格右側框內撰寫分析，系統會自動存檔。</li>
-                                                <li><strong className="text-slate-700">匯出總表</strong>：一鍵匯出符合品管會議格式的「年度品質監測管理總表」。</li>
-                                            </ul>
-                                        </div>
-                                    </section>
-
-                                    <section className="bg-amber-50 p-5 rounded-2xl border border-amber-200">
-                                        <h3 className="font-bold text-lg text-amber-800 mb-3 flex items-center gap-2">
-                                            ⚠️ 重要注意事項 (必讀)
-                                        </h3>
-                                        <ul className="list-disc pl-5 space-y-2 text-amber-900 font-medium">
-                                            <li><strong className="text-red-600">資料儲存位置</strong>：本系統資料是存在「這台電腦/手機」的「這一個瀏覽器」中，<strong className="underline">不同電腦間資料不互通</strong>。</li>
-                                            <li><strong className="text-red-600">安全性提醒</strong>：請勿執行「清除所有瀏覽紀錄」或「清空快取」，否則紀錄會消失。<strong className="bg-amber-200 px-1">建議每週定期匯出 Excel 總表作為外部備份。</strong></li>
-                                            <li><strong className="text-red-600">無須帳號登入</strong>：在地版不需要輸入帳號密碼，開啟網址即可作業。</li>
-                                        </ul>
-                                    </section>
-
-                                    <section>
-                                        <h3 className="font-bold text-lg text-slate-800 mb-3 bg-slate-100 inline-block px-3 py-1 rounded-lg">💡 常見問題排除</h3>
-                                        <div className="space-y-4 text-slate-600">
-                                            <div>
-                                                <p className="font-bold text-slate-700">Q：為什麼點擊「儲存」或「刪除」沒反應？</p>
-                                                <p>A：本系統已內建自訂對話框，若仍無反應，請檢查瀏覽器是否當機，重新整理頁面 (F5) 即可恢復。</p>
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-slate-700">Q：匯入 Word 範本失敗怎麼辦？</p>
-                                                <p>A：請確保 Word 表格中有一欄是「純數字的分數配分」，系統是靠數字來辨識考評項目的。</p>
-                                            </div>
-                                            <div>
-                                                <p className="font-bold text-slate-700">Q：換手機了，舊資料怎麼帶過去？</p>
-                                                <p>A：在舊手機點擊「紀錄庫」->「匯出」，在新手機點擊「紀錄庫」->「匯入報表」，選取該檔案即可完成移轉。</p>
-                                            </div>
-                                        </div>
-                                    </section>
-
-                                </div>
+                            <div className="animate-fade-in bg-white rounded-3xl border p-8 max-w-3xl mx-auto shadow-sm space-y-8 leading-relaxed">
+                                <h2 className="text-2xl font-bold text-primary flex items-center gap-2 border-b pb-4"><IconManual /> 系統使用手冊 (V8.9)</h2>
+                                <section><h3 className="font-bold text-lg text-slate-800 mb-3 bg-blue-50 inline-block px-3 py-1 rounded-lg">一、 三態評分邏輯</h3>
+                                    <ul className="list-disc pl-5 text-sm text-slate-600 space-y-3">
+                                        <li><strong>符合：</strong>該項目給予「全部分數」。</li>
+                                        <li><strong>部分：</strong>可手動輸入實際得分（不可超過配分）。</li>
+                                        <li><strong>不符：</strong>該項目分數歸 0（不給分）。</li>
+                                    </ul>
+                                </section>
+                                <section><h3 className="font-bold text-lg text-slate-800 mb-3 bg-blue-50 inline-block px-3 py-1 rounded-lg">二、 AN-1 鼻胃管灌食 (最新更新)</h3>
+                                    <p className="text-sm text-slate-600">本項目包含 20 個關鍵步驟，每個步驟 5 分。最後兩項為：<br/><strong>19. 洗手(時機一)</strong><br/><strong>20. 洗手(時機四)</strong></p>
+                                </section>
                             </div>
                         )}
                     </main>
 
-                    {/* 自訂對話框 Modal */}
                     {dialog.isOpen && (
                         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm flex items-center justify-center z-[9999] p-4 animate-fade-in">
-                            <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full border border-slate-100">
-                                <h3 className="font-bold text-lg mb-3 text-slate-800">{dialog.title}</h3>
-                                <p className="text-slate-600 mb-6 text-sm leading-relaxed whitespace-pre-line">{dialog.message}</p>
+                            <div className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full">
+                                <h3 className="font-bold text-lg mb-3">{dialog.title}</h3>
+                                <p className="text-slate-600 mb-6 text-sm whitespace-pre-line">{dialog.message}</p>
                                 <div className="flex justify-end gap-3">
-                                    {dialog.type === 'confirm' && (
-                                        <button onClick={() => setDialog({ ...dialog, isOpen: false })} className="px-5 py-2.5 bg-slate-100 text-slate-600 rounded-xl font-bold hover:bg-slate-200 transition-colors text-sm">取消</button>
-                                    )}
-                                    <button onClick={() => {
-                                        if (dialog.type === 'confirm' && dialog.onConfirm) dialog.onConfirm();
-                                        setDialog({ ...dialog, isOpen: false });
-                                    }} className={`px-5 py-2.5 rounded-xl font-bold transition-colors text-sm ${dialog.type === 'confirm' ? 'bg-red-600 text-white hover:bg-red-700 shadow-lg shadow-red-600/30' : 'bg-primary text-white hover:bg-blue-800 shadow-lg shadow-primary/30'}`}>
-                                        {dialog.type === 'confirm' ? '確定刪除' : '我知道了'}
-                                    </button>
+                                    {dialog.type === 'confirm' && <button onClick={() => setDialog({...dialog, isOpen:false})} className="px-5 py-2 bg-slate-100 rounded-xl font-bold text-sm text-slate-600">取消</button>}
+                                    <button onClick={() => { if(dialog.onConfirm) dialog.onConfirm(); setDialog({...dialog, isOpen:false}); }} className={`px-5 py-2 rounded-xl font-bold text-sm text-white ${dialog.type === 'confirm' ? 'bg-red-600' : 'bg-primary'}`}>{dialog.type === 'confirm' ? '確定刪除' : '我知道了'}</button>
                                 </div>
                             </div>
                         </div>
                     )}
-
-                    <footer className="p-8 text-center text-slate-300 text-[10px] font-medium tracking-widest uppercase">
-                        &copy; 2026 Smart Audit System for Nursing Care | Cleen-Fu Edition
-                    </footer>
                 </div>
             );
         };
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
     </script>
 </body>
 </html>
