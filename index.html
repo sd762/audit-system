@@ -25,6 +25,10 @@
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        /* 移除 number input 預設的上下箭頭 */
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 font-sans antialiased">
@@ -42,8 +46,12 @@
         const Storage = {
             saveRecords: (data) => localStorage.setItem('audit_records_v1', JSON.stringify(data)),
             getRecords: () => JSON.parse(localStorage.getItem('audit_records_v1') || '[]'),
-            saveTemplates: (data) => localStorage.setItem('audit_templates_v1', JSON.stringify(data)),
-            getTemplates: () => JSON.parse(localStorage.getItem('audit_templates_v1') || '[]'),
+            saveTemplates: (data) => localStorage.setItem('audit_templates_v2', JSON.stringify(data)),
+            getTemplates: () => {
+                let tpls = localStorage.getItem('audit_templates_v2');
+                if (!tpls) tpls = localStorage.getItem('audit_templates_v1');
+                return JSON.parse(tpls || '[]');
+            },
             saveSettings: (data) => localStorage.setItem('audit_settings_v1', JSON.stringify(data)),
             getSettings: () => JSON.parse(localStorage.getItem('audit_settings_v1') || '{}')
         };
@@ -53,13 +61,24 @@
         const SUB_CATEGORIES = ['護理類', '照服類', '護理照服類'];
 
         // ==========================================
-        // 🌟 預載題庫 (V1.0 更新：加入排程 schedule 與閾值 threshold)
+        // 🌟 預載題庫
         // ==========================================
         const DEFAULT_TEMPLATES = [
             // --- 護理照服類 ---
             {
+                id: 'tpl-wash-hands-compliance', name: '洗手遵從性、正確性稽核', mainCategory: '照護品質類技術考', subCategory: '護理照服類',
+                schedule: [1, 4, 7, 11], threshold: 90,
+                items: [
+                    { id: 'whc1', name: '洗手遵從性(接觸病人前)', maxScore: 20, score: 20, note: '' },
+                    { id: 'whc2', name: '洗手遵從性(執行清潔無菌操作前)', maxScore: 20, score: 20, note: '' },
+                    { id: 'whc3', name: '洗手遵從性(暴露病人體液風險後)', maxScore: 20, score: 20, note: '' },
+                    { id: 'whc4', name: '洗手遵從性(接觸病人後)', maxScore: 20, score: 20, note: '' },
+                    { id: 'whc5', name: '洗手遵從性(接觸病人環境後)', maxScore: 20, score: 20, note: '' }
+                ]
+            },
+            {
                 id: 'tpl-wash-hands-std', name: '洗手評核標準', mainCategory: '照護品質類技術考', subCategory: '護理照服類',
-                schedule: [2, 5, 10], threshold: 90,
+                schedule: [2, 5, 10], threshold: 100,
                 items: [
                     { id: 'wh1', name: '洗手類型與用劑標準(效期一個月內)', maxScore: 5, criteria: '濕洗手乳/75%酒精', score: 5, note: '' },
                     { id: 'wh2', name: '人員雙手準備(擦手紙補足/外袋移除)', maxScore: 5, criteria: '未檢查或未移除則扣分', score: 5, note: '' },
@@ -283,7 +302,126 @@
         const IconChart = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3v18h18"/><rect width="4" height="7" x="7" y="14" rx="1"/><rect width="4" height="12" x="15" y="9" rx="1"/></svg>;
         const IconTrash = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>;
         const IconDownload = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>;
+        const IconImport = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 5 17 10"/><line x1="12" y1="5" x2="12" y2="17"/></svg>;
         const IconManual = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>;
+        const IconEyeOff = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>;
+        const IconChevronDown = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>;
+        const IconChevronRight = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>;
+        const IconFolder = ({ color = "text-blue-500" }) => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" className={color} stroke="none"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>;
+
+        // ==========================================
+        // 報表區塊共用元件
+        // ==========================================
+        const ReportTable = ({ title, data, onManualScoreChange, onHideItem, onRestoreItem }) => (
+            <div className="bg-white p-6 rounded-3xl border shadow-sm overflow-hidden mb-6">
+                <h3 className="font-bold text-slate-700 text-lg mb-4">{title}</h3>
+                <div className="overflow-x-auto custom-scrollbar pb-2">
+                    <table className="w-full text-left text-[11px] min-w-[1000px]">
+                        <thead className="bg-slate-100 text-slate-600 font-bold uppercase">
+                            <tr>
+                                <th className="p-3 w-48">品管項目</th><th className="p-3 text-center w-12">閾值</th>
+                                {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => <th key={m} className="p-3 text-center w-12">{m}月</th>)}
+                                <th className="p-3 text-center bg-blue-100/50 w-16">年平均</th><th className="p-3 text-center w-12">差異</th>
+                                <th className="p-3 text-center w-12">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                            {data.visible.map((row) => (
+                                <tr key={row.id} className="hover:bg-slate-50 transition-colors group">
+                                    <td className="p-3 font-bold text-slate-700 truncate" title={row.itemName}>{row.itemName}</td>
+                                    <td className="p-2 text-center text-slate-500 font-medium">{row.threshold}%</td>
+                                    {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
+                                        const isScheduled = row.schedule.includes(m);
+                                        const val = row.mAvgs[m];
+                                        const bgClass = isScheduled ? 'bg-slate-200/80 border-slate-300 shadow-inner' : 'bg-transparent';
+                                        const textClass = val !== '' ? (val < row.threshold ? 'text-red-600 font-black' : 'text-primary font-black') : 'text-slate-400';
+                                        
+                                        return (
+                                            <td key={m} className={`p-1 text-center border-x border-slate-100 ${bgClass}`}>
+                                                <input 
+                                                    type="number" 
+                                                    max="100"
+                                                    min="0"
+                                                    value={val} 
+                                                    onChange={e => onManualScoreChange(row.id, m, e.target.value)}
+                                                    className={`w-full text-center outline-none focus:bg-white focus:ring-1 focus:ring-primary rounded py-1 bg-transparent transition-all ${textClass}`}
+                                                    placeholder={isScheduled ? '-' : ''}
+                                                    title="可點擊直接輸入分數"
+                                                />
+                                            </td>
+                                        );
+                                    })}
+                                    <td className="p-2 text-center font-black text-primary bg-blue-50/50">{row.avg}</td>
+                                    <td className="p-2 text-center">
+                                        {row.diff !== '-' && (
+                                            <span className={`px-2 py-1 rounded font-bold ${row.diff < 0 ? 'text-red-600 bg-red-100' : 'text-emerald-700 bg-emerald-100'}`}>
+                                                {row.diff > 0 ? '+' : ''}{row.diff}
+                                            </span>
+                                        )}
+                                        {row.diff === '-' && <span className="text-slate-300">-</span>}
+                                    </td>
+                                    <td className="p-2 text-center">
+                                        <button onClick={() => onHideItem(row.id)} className="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100" title="隱藏此項目">
+                                            <IconEyeOff />
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            {data.visible.length === 0 && (
+                                <tr><td colSpan="17" className="text-center p-6 text-slate-400">目前沒有顯示的品管項目</td></tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+                {data.hidden.length > 0 && (
+                    <div className="mt-4 pt-4 border-t border-slate-100">
+                        <span className="text-xs font-bold text-slate-500 mr-2 flex items-center gap-1"><IconEyeOff />已隱藏項目 (點擊可恢復顯示)：</span>
+                        <div className="flex flex-wrap gap-2 mt-3">
+                            {data.hidden.map(row => (
+                                <button key={row.id} onClick={() => onRestoreItem(row.id)} className="text-[11px] bg-slate-100 hover:bg-blue-100 text-slate-600 hover:text-blue-700 px-3 py-1.5 rounded-full flex items-center gap-1 transition-colors border border-slate-200">
+                                    {row.itemName} <span className="text-blue-500 text-sm font-black ml-1">↺</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+            </div>
+        );
+
+        // --- 日期智慧解析與標準化函式 ---
+        const normalizeDate = (val) => {
+            if (!val) return '';
+            // 如果已經是標準格式 YYYY-MM-DD 則直接回傳
+            if (/^\d{4}-\d{2}-\d{2}$/.test(String(val))) return String(val);
+            
+            let str = String(val).trim();
+            
+            // 處理 Excel 匯出可能造成的純數字序列日期 (例如 45400)
+            if (!isNaN(str) && Number(str) > 20000 && Number(str) < 50000) {
+                const dateObj = new Date(Math.round((Number(str) - 25569) * 86400 * 1000));
+                return dateObj.toISOString().split('T')[0];
+            }
+            
+            // 將常見的分隔符號 (斜線、小數點) 替換為 dash
+            str = str.replace(/[\/\.]/g, '-');
+            
+            const parts = str.split('-');
+            if (parts.length === 3) {
+                let [y, m, d] = parts;
+                
+                // 處理民國年 (例如 113 -> 2024, 98 -> 2009)
+                if (Number(y) < 1000) {
+                    y = String(Number(y) + 1911);
+                }
+                
+                // 補齊雙位數
+                m = m.padStart(2, '0');
+                d = d.padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+            
+            return str; // 如果解析失敗，原樣返回
+        };
 
         // --- 主應用程式 ---
         const App = () => {
@@ -296,14 +434,21 @@
             const [records, setRecords] = useState(() => Storage.getRecords());
             const [templates, setTemplates] = useState(() => {
                 const saved = Storage.getTemplates();
-                const uniqueSaved = saved.filter(s => !DEFAULT_TEMPLATES.some(d => d.id === s.id));
-                return [...DEFAULT_TEMPLATES, ...uniqueSaved];
+                const isMigrated = localStorage.getItem('tpl_migrated_v2');
+                if (!isMigrated) {
+                    const uniqueSaved = saved.filter(s => !DEFAULT_TEMPLATES.some(d => d.id === s.id));
+                    const merged = [...DEFAULT_TEMPLATES, ...uniqueSaved];
+                    localStorage.setItem('tpl_migrated_v2', 'true');
+                    return merged;
+                }
+                return saved;
             });
             const [reportSettings, setReportSettings] = useState(() => Storage.getSettings());
             
             const [filterMonth, setFilterMonth] = useState('');
             const [filterItem, setFilterItem] = useState('');
             const [selectedIds, setSelectedIds] = useState(new Set());
+            const [expandedFolders, setExpandedFolders] = useState(new Set());
             
             // 預設展開「照護品質類」 -> 「照服類」
             const [filterTplMainCat, setFilterTplMainCat] = useState('照護品質類技術考');
@@ -346,15 +491,102 @@
                 setFormData(p => ({ ...p, auditName: '一般綜合稽核', score: '' }));
             };
 
-            const updateCheckItem = (index, field, value) => {
-                const newList = [...checklist];
-                if (field === 'score' && value !== '') {
-                    const num = Number(value);
-                    if (num > newList[index].maxScore) value = newList[index].maxScore;
-                    if (num < 0) value = 0;
+            // --- 題庫表單匯入解析 ---
+            const parseRowToItem = (cells) => {
+                if (cells.length < 2) return null;
+                let maxScore = 100, scoreIndex = -1;
+                for(let i=0; i<cells.length; i++) {
+                    const cellVal = String(cells[i]).trim();
+                    const m = cellVal.match(/^(\d+)(分|%)?$/);
+                    if (m && Number(m[1]) <= 100 && Number(m[1]) > 0) { maxScore = Number(m[1]); scoreIndex = i; break; }
                 }
-                newList[index][field] = value;
-                setChecklist(newList);
+                if (scoreIndex === -1) return null;
+                const name = cells.slice(0, scoreIndex).filter(c => c && String(c).trim()).join(' - ');
+                const criteria = cells.slice(scoreIndex + 1).filter(c => c && String(c).trim()).join(' ');
+                if (!name) return null;
+                return { id: Math.random().toString(36).substr(2, 9), name, maxScore, criteria, score: maxScore, note: '', mode: 'full' };
+            };
+
+            const handleTemplateUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const fileExt = file.name.split('.').pop().toLowerCase();
+                const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+                const reader = new FileReader();
+                reader.onload = async (ev) => {
+                    const arrayBuffer = ev.target.result;
+                    let items = [];
+                    try {
+                        if (fileExt === 'docx') {
+                            const result = await window.mammoth.convertToHtml({ arrayBuffer });
+                            const doc = new DOMParser().parseFromString(result.value, 'text/html');
+                            doc.querySelectorAll('tr').forEach(tr => {
+                                const cells = Array.from(tr.querySelectorAll('td, th')).map(c => c.textContent.trim());
+                                const item = parseRowToItem(cells);
+                                if (item) items.push(item);
+                            });
+                        } else if (fileExt === 'xlsx' || fileExt === 'xls') {
+                            const wb = window.XLSX.read(new Uint8Array(arrayBuffer), { type: 'array' });
+                            const rows = window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, raw: false, defval: '' });
+                            rows.forEach(row => {
+                                const item = parseRowToItem(row.map(c => String(c || '')));
+                                if (item) items.push(item);
+                            });
+                        }
+                        
+                        if (items.length > 0) {
+                            const newTplId = 'tpl_' + Date.now().toString();
+                            const newTpl = {
+                                id: newTplId,
+                                name: fileNameWithoutExt,
+                                mainCategory: filterTplMainCat || MAIN_CATEGORIES[0],
+                                subCategory: filterTplSubCat || SUB_CATEGORIES[0],
+                                schedule: [],
+                                threshold: 90,
+                                items: items
+                            };
+                            setTemplates(prev => [...prev, newTpl]);
+                            setChecklist(items.map(i => ({...i, mode: 'full', score: i.maxScore})));
+                            setCurrentTemplateId(newTplId);
+                            setFormData(p => ({ ...p, auditName: fileNameWithoutExt, score: '' }));
+                            showAlert(`✅ 成功匯入表單「${fileNameWithoutExt}」，共 ${items.length} 個評核項目！\n\n新表單已建立於【${filterTplMainCat} - ${filterTplSubCat}】分類下。`);
+                        } else {
+                            showAlert('⚠️ 未能從檔案中辨識出評分項目，請確認格式(需包含項目名稱與分數數字)。');
+                        }
+                    } catch (err) { showAlert('解析發生錯誤：' + err.message); }
+                    e.target.value = '';
+                };
+                reader.readAsArrayBuffer(file);
+            };
+
+            const handleScoreModeChange = (index, mode, defaultScore) => {
+                setChecklist(prev => {
+                    const newList = [...prev];
+                    newList[index] = { ...newList[index], mode, score: defaultScore };
+                    return newList;
+                });
+            };
+
+            const handleScoreValueChange = (index, value) => {
+                setChecklist(prev => {
+                    const newList = [...prev];
+                    const item = { ...newList[index] };
+                    
+                    if (value === '') {
+                        item.score = '';
+                    } else {
+                        let num = Number(value);
+                        if (num > item.maxScore) {
+                            item.score = item.maxScore;
+                        } else if (num < 0) {
+                            item.score = 0;
+                        } else {
+                            item.score = value; 
+                        }
+                    }
+                    newList[index] = item;
+                    return newList;
+                });
             };
 
             const handleSubmit = (e) => {
@@ -368,112 +600,261 @@
                 showAlert('💾 紀錄已儲存！');
             };
 
+            // 紀錄庫 - 歷史紀錄匯入
+            const handleReverseImport = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    try {
+                        const wb = window.XLSX.read(new Uint8Array(ev.target.result), { type: 'array' });
+                        const data = window.XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { raw: true, defval: '' });
+                        const validData = data.filter(row => row['稽核人員'] !== '平均總分' && (row['稽核日期'] || row['日期']));
+                        const imported = validData.map((row, index) => ({
+                            id: 'import_' + Date.now().toString() + '_' + index + '_' + Math.random().toString(36).substr(2, 5), 
+                            date: normalizeDate(row['稽核日期'] || row['日期']), 
+                            auditName: String(row['稽核項目'] || row['項目']),
+                            unit: String(row['受稽單位'] || row['單位']), 
+                            target: String(row['受測對象(姓名)'] || row['受測對象']),
+                            auditor: String(row['稽核人員'] || row['稽核員']), 
+                            score: Number(row['總評分'] || 0), 
+                            notes: String(row['總結建議'] || ''), 
+                            checklist: []
+                        }));
+                        setRecords(prev => [...imported, ...prev]);
+                        showAlert(`✅ 成功匯入 ${imported.length} 筆資料，並自動校正日期格式！`);
+                    } catch (err) { showAlert('匯入失敗，請確認檔案格式是否正確。'); }
+                    e.target.value = '';
+                };
+                reader.readAsArrayBuffer(file);
+            };
+
+            const flatFilteredRecords = useMemo(() => {
+                return records.filter(r => (filterMonth ? r.date.startsWith(filterMonth) : true) && (filterItem ? r.auditName === filterItem : true));
+            }, [records, filterMonth, filterItem]);
+
+            // 分層資料夾群組化：Month -> Item
             const groupedRecords = useMemo(() => {
-                const filtered = records.filter(r => (filterMonth ? r.date.startsWith(filterMonth) : true) && (filterItem ? r.auditName === filterItem : true));
                 const groups = {};
-                filtered.forEach(r => {
+                flatFilteredRecords.forEach(r => {
                     const m = String(r.date).substring(0, 7) || '未知';
                     const it = r.auditName;
-                    if(!groups[m]) groups[m] = { items: {} };
+                    if(!groups[m]) groups[m] = { items: {}, totalCount: 0 };
                     if(!groups[m].items[it]) groups[m].items[it] = [];
                     groups[m].items[it].push(r);
+                    groups[m].totalCount++;
                 });
-                return groups;
-            }, [records, filterMonth, filterItem]);
+                // 排序月份
+                const sortedGroups = Object.keys(groups).sort().reverse().reduce((acc, key) => {
+                    acc[key] = groups[key];
+                    return acc;
+                }, {});
+                return sortedGroups;
+            }, [flatFilteredRecords]);
 
             const uniqueMonths = useMemo(() => [...new Set(records.map(r => String(r.date).substring(0, 7)))].sort().reverse(), [records]);
             const uniqueItems = useMemo(() => [...new Set(records.map(r => r.auditName))].sort(), [records]);
+
+            // 資料夾展開收合邏輯
+            const toggleFolder = (folderId) => {
+                setExpandedFolders(prev => {
+                    const next = new Set(prev);
+                    if (next.has(folderId)) next.delete(folderId);
+                    else next.add(folderId);
+                    return next;
+                });
+            };
+
+            // 紀錄勾選邏輯
+            const handleToggleSelect = (id) => {
+                const newIds = new Set(selectedIds);
+                if (newIds.has(id)) newIds.delete(id);
+                else newIds.add(id);
+                setSelectedIds(newIds);
+            };
+
+            const handleSelectAll = (e) => {
+                if (e.target.checked) {
+                    const newIds = new Set(selectedIds);
+                    flatFilteredRecords.forEach(r => newIds.add(r.id));
+                    setSelectedIds(newIds);
+                } else {
+                    const newIds = new Set(selectedIds);
+                    flatFilteredRecords.forEach(r => newIds.delete(r.id));
+                    setSelectedIds(newIds);
+                }
+            };
+
+            const handleToggleFolderSelect = (e, recsToToggle) => {
+                e.stopPropagation();
+                const isAllSelected = recsToToggle.every(r => selectedIds.has(r.id));
+                const newIds = new Set(selectedIds);
+                if (isAllSelected) {
+                    recsToToggle.forEach(r => newIds.delete(r.id));
+                } else {
+                    recsToToggle.forEach(r => newIds.add(r.id));
+                }
+                setSelectedIds(newIds);
+            };
+
+            const handleBatchDelete = () => {
+                if (selectedIds.size === 0) return showAlert('請先勾選要刪除的資料！');
+                showConfirm(`確定要刪除選取的 ${selectedIds.size} 筆資料嗎？`, () => {
+                    setRecords(prev => prev.filter(r => !selectedIds.has(r.id)));
+                    setSelectedIds(new Set());
+                    showAlert('✅ 刪除成功！');
+                });
+            };
 
             const availableYears = useMemo(() => {
                 const years = [...new Set(records.map(r => String(r.date).substring(0, 4)))].filter(y => y.length === 4).sort().reverse();
                 return years.length > 0 ? years : [new Date().getFullYear().toString()];
             }, [records]);
-            const [selectedYear, setSelectedYear] = useState(availableYears[0]);
+            const [selectedYear, setSelectedYear] = useState(availableYears[0] || new Date().getFullYear().toString());
 
-            // --- 報表數據產生邏輯 ---
-            const buildTableData = (categoryName) => {
-                return templates.filter(t => t.mainCategory === categoryName).map(tpl => {
-                    const yearRecords = records.filter(r => String(r.date).startsWith(selectedYear) && r.auditName === tpl.name);
-                    let totalScore = 0;
-                    let totalCount = 0;
-                    const months = Array(13).fill(null).map(() => ({ score: 0, count: 0 }));
-
-                    yearRecords.forEach(r => {
-                        const m = parseInt(r.date.split('-')[1]);
-                        if (m) { months[m].score += Number(r.score); months[m].count += 1; }
-                        totalScore += Number(r.score); totalCount += 1;
-                    });
-
-                    const mAvgs = Array(13).fill('').map((_, i) => months[i].count > 0 ? Math.round(months[i].score / months[i].count) : '');
-                    const avg = totalCount > 0 ? Math.round(totalScore / totalCount) : '-';
-                    const threshold = tpl.threshold || 90;
-                    const diff = totalCount > 0 ? avg - threshold : '-';
-
-                    return { itemName: tpl.name, schedule: tpl.schedule || [], threshold, mAvgs, avg, diff };
+            // --- 報表數據相關處理函式 ---
+            const handleManualScoreChange = (tplId, month, value) => {
+                const key = `${selectedYear}_${tplId}_${month}`;
+                setReportSettings(prev => {
+                    const newScores = { ...(prev.manualScores || {}) };
+                    if (value === '') {
+                        delete newScores[key];
+                    } else {
+                        let num = Number(value);
+                        if (num > 100) {
+                            newScores[key] = 100;
+                        } else if (num < 0) {
+                            newScores[key] = 0;
+                        } else {
+                            newScores[key] = value; 
+                        }
+                    }
+                    return { ...prev, manualScores: newScores };
                 });
             };
 
-            const careReportData = useMemo(() => buildTableData('照護品質類技術考'), [records, selectedYear, templates]);
-            const equipReportData = useMemo(() => buildTableData('儀器操作類技術考'), [records, selectedYear, templates]);
+            const handleHideItem = (tplId) => {
+                setReportSettings(prev => ({
+                    ...prev,
+                    hiddenItems: [...(prev.hiddenItems || []), tplId]
+                }));
+            };
+
+            const handleRestoreItem = (tplId) => {
+                setReportSettings(prev => ({
+                    ...prev,
+                    hiddenItems: (prev.hiddenItems || []).filter(id => id !== tplId)
+                }));
+            };
+
+            const buildTableData = (categoryName) => {
+                const hiddenItems = reportSettings.hiddenItems || [];
+                const manualScores = reportSettings.manualScores || {};
+
+                const allItems = templates.filter(t => t.mainCategory === categoryName).map(tpl => {
+                    const yearRecords = records.filter(r => String(r.date).startsWith(selectedYear) && r.auditName === tpl.name);
+                    const monthsData = Array(13).fill(null).map(() => ({ score: 0, count: 0 }));
+
+                    yearRecords.forEach(r => {
+                        const m = parseInt(r.date.split('-')[1]);
+                        if (m) { monthsData[m].score += Number(r.score); monthsData[m].count += 1; }
+                    });
+
+                    const mAvgs = Array(13).fill('');
+                    let sum = 0;
+                    let count = 0;
+
+                    for (let m = 1; m <= 12; m++) {
+                        const key = `${selectedYear}_${tpl.id}_${m}`;
+                        if (manualScores[key] !== undefined && manualScores[key] !== '') {
+                            const val = Number(manualScores[key]);
+                            mAvgs[m] = val;
+                            sum += val;
+                            count += 1;
+                        } else if (monthsData[m].count > 0) {
+                            const val = Math.round(monthsData[m].score / monthsData[m].count);
+                            mAvgs[m] = val;
+                            sum += val;
+                            count += 1;
+                        }
+                    }
+
+                    const avg = count > 0 ? Math.round(sum / count) : '-';
+                    const threshold = tpl.threshold || 90;
+                    const diff = count > 0 ? avg - threshold : '-';
+
+                    return { id: tpl.id, itemName: tpl.name, schedule: tpl.schedule || [], threshold, mAvgs, avg, diff, isHidden: hiddenItems.includes(tpl.id) };
+                });
+
+                return {
+                    visible: allItems.filter(item => !item.isHidden),
+                    hidden: allItems.filter(item => item.isHidden)
+                };
+            };
+
+            const careReportData = useMemo(() => buildTableData('照護品質類技術考'), [records, selectedYear, templates, reportSettings]);
+            const equipReportData = useMemo(() => buildTableData('儀器操作類技術考'), [records, selectedYear, templates, reportSettings]);
 
             const handleExportExcel = () => {
-                if (records.length === 0) return showAlert('沒有資料可匯出！');
-                const data = records.map(r => {
+                let targets = [];
+                if (selectedIds.size > 0) {
+                    targets = records.filter(r => selectedIds.has(r.id));
+                } else {
+                    targets = flatFilteredRecords;
+                }
+
+                if (targets.length === 0) return showAlert('沒有資料可匯出！');
+                const data = targets.map(r => {
                     const row = { '稽核日期': r.date, '稽核項目': r.auditName, '受稽單位': r.unit, '受測對象(姓名)': r.target, '稽核人員': r.auditor, '總評分': r.score };
                     (r.checklist || []).forEach((it, idx) => { row[`項${idx+1}_${it.name}`] = it.score; if (it.note) row[`項${idx+1}_備註`] = it.note; });
                     row['總結建議'] = r.notes; row['受測者簽名確認'] = ''; return row;
                 });
                 const ws = window.XLSX.utils.json_to_sheet(data);
+                
+                const wscols = [
+                    {wch: 12}, {wch: 25}, {wch: 15}, {wch: 15}, {wch: 12}, {wch: 8},
+                ];
+                ws['!cols'] = wscols;
+
                 const wb = window.XLSX.utils.book_new();
                 window.XLSX.utils.book_append_sheet(wb, ws, "稽核紀錄表");
-                window.XLSX.writeFile(wb, `稽核統計報表.xlsx`);
+                window.XLSX.writeFile(wb, `稽核紀錄明細表.xlsx`);
             };
 
-            // 報表區塊共用元件
-            const ReportTable = ({ title, data }) => (
-                <div className="bg-white p-6 rounded-3xl border shadow-sm overflow-hidden mb-6">
-                    <h3 className="font-bold text-slate-700 text-lg mb-4">{title}</h3>
-                    <div className="overflow-x-auto custom-scrollbar">
-                        <table className="w-full text-left text-[11px] min-w-[1000px]">
-                            <thead className="bg-slate-100 text-slate-600 font-bold uppercase">
-                                <tr>
-                                    <th className="p-3 w-48">品管項目</th><th className="p-3 text-center w-16">閾值</th>
-                                    {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => <th key={m} className="p-3 text-center">{m}月</th>)}
-                                    <th className="p-3 text-center bg-blue-100/50">年平均</th><th className="p-3 text-center">差異</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {data.map((row, idx) => (
-                                    <tr key={idx} className="hover:bg-slate-50 transition-colors">
-                                        <td className="p-3 font-bold text-slate-700 truncate" title={row.itemName}>{row.itemName}</td>
-                                        <td className="p-2 text-center text-slate-500 font-medium">{row.threshold}%</td>
-                                        {[1,2,3,4,5,6,7,8,9,10,11,12].map(m => {
-                                            const isScheduled = row.schedule.includes(m);
-                                            const val = row.mAvgs[m];
-                                            const bgClass = isScheduled ? 'bg-slate-200 border border-slate-300 shadow-inner' : '';
-                                            const textClass = val !== '' ? (val < row.threshold ? 'text-red-600 font-black' : 'text-primary font-black') : 'text-transparent';
-                                            return (
-                                                <td key={m} className={`p-2 text-center border-x border-slate-50 ${bgClass}`}>
-                                                    <span className={textClass}>{val !== '' ? val : (isScheduled ? '-' : '')}</span>
-                                                </td>
-                                            );
-                                        })}
-                                        <td className="p-2 text-center font-black text-primary bg-blue-50/50">{row.avg}</td>
-                                        <td className="p-2 text-center">
-                                            {row.diff !== '-' && (
-                                                <span className={`px-2 py-1 rounded font-bold ${row.diff < 0 ? 'text-red-600 bg-red-100' : 'text-emerald-700 bg-emerald-100'}`}>
-                                                    {row.diff > 0 ? '+' : ''}{row.diff}
-                                                </span>
-                                            )}
-                                            {row.diff === '-' && <span className="text-slate-300">-</span>}
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            );
+            const handleExportChartExcel = () => {
+                const formatDataForExcel = (data) => {
+                    return data.visible.map(row => {
+                        const out = { '品管項目': row.itemName, '閾值(%)': row.threshold };
+                        for (let m = 1; m <= 12; m++) {
+                            out[`${m}月`] = row.mAvgs[m] !== '' ? row.mAvgs[m] : '';
+                        }
+                        out['年平均'] = row.avg !== '-' ? row.avg : '';
+                        out['差異'] = row.diff !== '-' ? (row.diff > 0 ? `+${row.diff}` : row.diff) : '';
+                        return out;
+                    });
+                };
+
+                const careExcelData = formatDataForExcel(careReportData);
+                const equipExcelData = formatDataForExcel(equipReportData);
+
+                if (careExcelData.length === 0 && equipExcelData.length === 0) {
+                    return showAlert('沒有報表資料可匯出！');
+                }
+
+                const wb = window.XLSX.utils.book_new();
+
+                if (careExcelData.length > 0) {
+                    const wsCare = window.XLSX.utils.json_to_sheet(careExcelData);
+                    window.XLSX.utils.book_append_sheet(wb, wsCare, "照護品質監測");
+                }
+
+                if (equipExcelData.length > 0) {
+                    const wsEquip = window.XLSX.utils.json_to_sheet(equipExcelData);
+                    window.XLSX.utils.book_append_sheet(wb, wsEquip, "儀器操作監測");
+                }
+
+                window.XLSX.writeFile(wb, `${selectedYear}年度_稽核分析總表.xlsx`);
+            };
 
             return (
                 <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
@@ -508,6 +889,18 @@
                                                     <option value="">-- 請選擇稽核項目 --</option>
                                                     {filteredTemplates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                                                 </select>
+                                                {currentTemplateId && (
+                                                    <button type="button" onClick={() => showConfirm('確定要刪除這份表單嗎？刪除後無法復原！', () => {
+                                                        setTemplates(prev => prev.filter(t => t.id !== currentTemplateId));
+                                                        setCurrentTemplateId('');
+                                                        setChecklist([]);
+                                                        setFormData(p => ({ ...p, auditName: '一般綜合稽核', score: '' }));
+                                                    })} className="bg-red-50 text-red-600 px-3 py-2 rounded-lg border border-red-200 hover:bg-red-100 transition-colors shrink-0" title="刪除此表單"><IconTrash /></button>
+                                                )}
+                                                <label className="bg-emerald-50 text-emerald-700 px-3 py-2 rounded-lg border border-emerald-200 hover:bg-emerald-100 transition-colors cursor-pointer flex items-center gap-1 font-bold text-sm shrink-0" title="匯入 Word/Excel 表單">
+                                                    <IconImport /> 匯入新表單
+                                                    <input type="file" accept=".docx, .xlsx, .xls" onChange={handleTemplateUpload} className="hidden" />
+                                                </label>
                                             </div>
                                         </div>
                                         <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center bg-slate-50/50">
@@ -537,19 +930,26 @@
                                                     <span>{formData.auditName}</span>
                                                 </h3>
                                                 {checklist.map((it, idx) => (
-                                                    <div key={idx} className="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col gap-3 shadow-sm transition-all hover:shadow-md">
+                                                    <div key={it.id} className="bg-white p-4 rounded-2xl border border-slate-200 flex flex-col gap-3 shadow-sm transition-all hover:shadow-md">
                                                         <div className="flex flex-col sm:flex-row justify-between items-start gap-3">
                                                             <span className="text-sm font-bold text-slate-700 leading-tight flex-1">{idx+1}. {it.name} <span className="text-[10px] text-slate-400 font-normal ml-1">(配分: {it.maxScore}分)</span></span>
                                                             <div className="flex items-center gap-1 shrink-0 bg-slate-100 p-1 rounded-xl">
-                                                                <button type="button" onClick={() => updateCheckItem(idx, 'score', it.maxScore)} className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${it.score === it.maxScore ? 'bg-green-600 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}>符合</button>
-                                                                <button type="button" onClick={() => updateCheckItem(idx, 'score', Math.floor(it.maxScore/2))} className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${it.score !== it.maxScore && it.score !== 0 && it.score !== '' ? 'bg-amber-500 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}>部分</button>
-                                                                <button type="button" onClick={() => updateCheckItem(idx, 'score', 0)} className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${it.score === 0 ? 'bg-red-600 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}>不符</button>
+                                                                <button type="button" onClick={() => handleScoreModeChange(idx, 'full', it.maxScore)} className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${it.mode === 'full' ? 'bg-green-600 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}>符合</button>
+                                                                <button type="button" onClick={() => handleScoreModeChange(idx, 'partial', Math.floor(it.maxScore/2))} className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${it.mode === 'partial' ? 'bg-amber-500 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}>部分</button>
+                                                                <button type="button" onClick={() => handleScoreModeChange(idx, 'zero', 0)} className={`px-3 py-1.5 text-[10px] font-bold rounded-lg transition-all ${it.mode === 'zero' ? 'bg-red-600 text-white shadow-md' : 'text-slate-500 hover:bg-white'}`}>不符</button>
                                                             </div>
                                                         </div>
-                                                        {it.score !== it.maxScore && it.score !== 0 && (
-                                                            <div className="flex items-center gap-2 bg-amber-50 p-2 rounded-lg border border-amber-100">
+                                                        {it.mode === 'partial' && (
+                                                            <div className="flex items-center gap-2 bg-amber-50 p-2 rounded-lg border border-amber-100 mt-2">
                                                                 <label className="text-[10px] font-bold text-amber-700">自訂給分：</label>
-                                                                <input type="number" max={it.maxScore} min="0" value={it.score} onChange={e => updateCheckItem(idx, 'score', e.target.value)} className="w-16 p-1 border-b-2 border-amber-400 bg-transparent text-center font-black text-amber-800 outline-none" />
+                                                                <input 
+                                                                    type="number" 
+                                                                    max={it.maxScore} 
+                                                                    min="0" 
+                                                                    value={it.score} 
+                                                                    onChange={e => handleScoreValueChange(idx, e.target.value)} 
+                                                                    className="w-16 p-1 border-b-2 border-amber-400 bg-transparent text-center font-black text-amber-800 outline-none" 
+                                                                />
                                                                 <span className="text-[10px] text-amber-600">/ {it.maxScore} 分</span>
                                                             </div>
                                                         )}
@@ -570,37 +970,92 @@
                                 <div className="p-5 bg-slate-50 border-b flex flex-wrap justify-between items-center gap-4">
                                     <h2 className="font-bold text-slate-700 flex items-center gap-2">📂 歷史歸檔庫</h2>
                                     <div className="flex gap-2">
-                                        <button onClick={handleExportExcel} className="bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md hover:bg-green-700 transition-colors"><IconDownload /> 匯出全部報表</button>
+                                        <label className="bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md hover:bg-blue-700 transition-colors cursor-pointer">
+                                            <IconImport /> 匯入歷史資料
+                                            <input type="file" accept=".xlsx, .xls" onChange={handleReverseImport} className="hidden" />
+                                        </label>
+                                        <button onClick={handleBatchDelete} className="bg-red-50 text-red-600 border border-red-200 px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-sm hover:bg-red-100 transition-colors"><IconTrash /> 批次刪除</button>
+                                        <button onClick={handleExportExcel} className="bg-green-600 text-white px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md hover:bg-green-700 transition-colors"><IconDownload /> 匯出勾選/篩選報表</button>
                                     </div>
                                 </div>
-                                <div className="p-4 flex gap-3 border-b bg-slate-50/30">
+                                <div className="p-4 flex gap-3 border-b bg-slate-50/30 items-center">
                                     <select value={filterMonth} onChange={e => setFilterMonth(e.target.value)} className="p-2 border rounded-lg text-xs outline-none">{uniqueMonths.map(m => <option key={m} value={m}>{m || '所有月份'}</option>)}<option value="">所有月份</option></select>
                                     <select value={filterItem} onChange={e => setFilterItem(e.target.value)} className="p-2 border rounded-lg text-xs outline-none"><option value="">所有稽核項目</option>{uniqueItems.map(i => <option key={i} value={i}>{i}</option>)}</select>
+                                    <span className="text-xs text-slate-400 ml-auto">已勾選 {selectedIds.size} 筆</span>
                                 </div>
                                 <div className="overflow-x-auto max-h-[600px] custom-scrollbar">
                                     <table className="w-full text-left text-[11px]">
                                         <thead className="bg-slate-100 text-slate-500 font-bold sticky top-0 z-10 shadow-sm uppercase tracking-wider">
                                             <tr>
+                                                <th className="p-4 w-12 text-center">
+                                                    <input 
+                                                        type="checkbox" 
+                                                        onChange={handleSelectAll} 
+                                                        checked={flatFilteredRecords.length > 0 && selectedIds.size >= flatFilteredRecords.length}
+                                                        className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer"
+                                                    />
+                                                </th>
                                                 <th className="p-4">日期</th><th className="p-4">受測者</th><th className="p-4">項目</th><th className="p-4 text-center">分數</th><th className="p-4 text-center">操作</th>
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-slate-100">
-                                            {Object.entries(groupedRecords).map(([month, data]) => (
-                                                <React.Fragment key={month}>
-                                                    <tr className="bg-slate-50/80"><td colSpan="5" className="p-3 font-bold text-slate-500 text-[10px] border-y border-slate-100">{month} 月份資料</td></tr>
-                                                    {Object.entries(data.items).map(([itemName, recs]) => (
-                                                        recs.map(r => (
-                                                            <tr key={r.id} className="hover:bg-slate-50 transition-colors">
-                                                                <td className="p-4 whitespace-nowrap text-slate-500 font-medium">{r.date}</td>
-                                                                <td className="p-4 font-black text-primary">{r.target}</td>
-                                                                <td className="p-4 text-slate-600 truncate max-w-[150px]">{r.auditName}</td>
-                                                                <td className="p-4 text-center"><span className={`inline-block w-8 py-1 rounded-full font-black ${r.score < 80 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>{r.score}</span></td>
-                                                                <td className="p-4 text-center"><button onClick={() => showConfirm('確定刪除？', () => setRecords(prev => prev.filter(x => x.id !== r.id)))} className="text-red-300 hover:text-red-600"><IconTrash /></button></td>
-                                                            </tr>
-                                                        ))
-                                                    ))}
-                                                </React.Fragment>
-                                            ))}
+                                            {Object.entries(groupedRecords).map(([month, data]) => {
+                                                const isMonthExpanded = expandedFolders.has(month);
+                                                const allMonthRecs = Object.values(data.items).flat();
+                                                const isMonthSelected = allMonthRecs.length > 0 && allMonthRecs.every(r => selectedIds.has(r.id));
+                                                const isMonthPartial = !isMonthSelected && allMonthRecs.some(r => selectedIds.has(r.id));
+
+                                                return (
+                                                    <React.Fragment key={month}>
+                                                        <tr className="bg-slate-200/80 hover:bg-slate-300/80 transition-colors cursor-pointer" onClick={() => toggleFolder(month)}>
+                                                            <td className="p-3 text-center" onClick={e => e.stopPropagation()}>
+                                                                <input type="checkbox" checked={isMonthSelected} ref={el => el && (el.indeterminate = isMonthPartial)} onChange={(e) => handleToggleFolderSelect(e, allMonthRecs)} className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer" />
+                                                            </td>
+                                                            <td colSpan="5" className="p-3 font-bold text-slate-700 flex items-center gap-2">
+                                                                {isMonthExpanded ? <IconChevronDown /> : <IconChevronRight />}
+                                                                <IconFolder color="text-blue-600" /> {month} 月份紀錄 <span className="text-xs font-normal text-slate-500 ml-2">({allMonthRecs.length} 筆)</span>
+                                                            </td>
+                                                        </tr>
+
+                                                        {isMonthExpanded && Object.entries(data.items).map(([itemName, recs]) => {
+                                                            const itemFolderId = `${month}_${itemName}`;
+                                                            const isItemExpanded = expandedFolders.has(itemFolderId);
+                                                            const isItemSelected = recs.length > 0 && recs.every(r => selectedIds.has(r.id));
+                                                            const isItemPartial = !isItemSelected && recs.some(r => selectedIds.has(r.id));
+
+                                                            return (
+                                                                <React.Fragment key={itemFolderId}>
+                                                                    <tr className="bg-slate-100 hover:bg-slate-200/60 transition-colors cursor-pointer" onClick={() => toggleFolder(itemFolderId)}>
+                                                                        <td className="p-2 text-center" onClick={e => e.stopPropagation()}>
+                                                                            <input type="checkbox" checked={isItemSelected} ref={el => el && (el.indeterminate = isItemPartial)} onChange={(e) => handleToggleFolderSelect(e, recs)} className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer" />
+                                                                        </td>
+                                                                        <td colSpan="5" className="p-2 font-bold text-slate-600 flex items-center gap-2 pl-8">
+                                                                            {isItemExpanded ? <IconChevronDown /> : <IconChevronRight />}
+                                                                            <IconFolder color="text-amber-500" /> {itemName} <span className="text-xs font-normal text-slate-500 ml-2">({recs.length} 筆)</span>
+                                                                        </td>
+                                                                    </tr>
+
+                                                                    {isItemExpanded && recs.map(r => (
+                                                                        <tr key={r.id} className={`hover:bg-blue-50/40 transition-colors ${selectedIds.has(r.id) ? 'bg-blue-50/60' : ''}`}>
+                                                                            <td className="p-3 text-center">
+                                                                                <input type="checkbox" checked={selectedIds.has(r.id)} onChange={() => handleToggleSelect(r.id)} className="w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer" />
+                                                                            </td>
+                                                                            <td className="p-3 whitespace-nowrap text-slate-500 font-medium pl-14">{r.date}</td>
+                                                                            <td className="p-3 font-black text-primary">{r.target}</td>
+                                                                            <td className="p-3 text-slate-600 truncate max-w-[150px]">{r.auditName}</td>
+                                                                            <td className="p-3 text-center"><span className={`inline-block w-8 py-1 rounded-full font-black ${r.score < 80 ? 'bg-red-100 text-red-600' : 'bg-green-100 text-green-700'}`}>{r.score}</span></td>
+                                                                            <td className="p-3 text-center"><button onClick={() => showConfirm('確定刪除？', () => setRecords(prev => prev.filter(x => x.id !== r.id)))} className="text-red-300 hover:text-red-600"><IconTrash /></button></td>
+                                                                        </tr>
+                                                                    ))}
+                                                                </React.Fragment>
+                                                            );
+                                                        })}
+                                                    </React.Fragment>
+                                                );
+                                            })}
+                                            {flatFilteredRecords.length === 0 && (
+                                                <tr><td colSpan="6" className="p-8 text-center text-slate-400">目前沒有歷史紀錄</td></tr>
+                                            )}
                                         </tbody>
                                     </table>
                                 </div>
@@ -610,21 +1065,37 @@
                         {activeTab === 'chart' && (
                             <div className="animate-fade-in space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
-                                    <div className="bg-white p-8 rounded-3xl border shadow-sm"><p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2">年度考評總量</p><p className="text-5xl font-black text-slate-800">{records.length}</p></div>
-                                    <div className="bg-white p-8 rounded-3xl border shadow-sm"><p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2">全體達成率</p><p className="text-5xl font-black text-primary">{records.length > 0 ? (records.reduce((a,c)=>a+c.score,0)/records.length).toFixed(1) : 0}%</p></div>
+                                    <div className="bg-white p-8 rounded-3xl border shadow-sm"><p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2">系統內建總考評量</p><p className="text-5xl font-black text-slate-800">{records.length}</p></div>
+                                    <div className="bg-white p-8 rounded-3xl border shadow-sm"><p className="text-xs text-slate-400 font-bold uppercase tracking-widest mb-2">全體達標率概況</p><p className="text-5xl font-black text-primary">{records.length > 0 ? (records.reduce((a,c)=>a+c.score,0)/records.length).toFixed(1) : 0}%</p></div>
                                 </div>
                                 
-                                <div className="flex items-center gap-3 bg-white p-4 rounded-xl border shadow-sm">
+                                <div className="flex items-center gap-3 bg-white p-4 rounded-xl border shadow-sm flex-wrap">
                                     <label className="font-bold text-slate-700 text-sm">📅 選擇報表年度：</label>
                                     <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)} className="p-2 border border-slate-300 rounded-lg font-bold text-primary outline-none focus:ring-2 focus:ring-blue-200">
                                         {availableYears.map(y => <option key={y} value={y}>{y} 年度</option>)}
                                     </select>
-                                    <span className="text-[11px] text-slate-400 ml-auto">※ 表格中灰色底色代表「當月排定需監測項目」</span>
+                                    <div className="text-[11px] text-slate-500 ml-auto flex items-center gap-4">
+                                        <span className="flex items-center gap-1"><div className="w-3 h-3 bg-slate-200 border border-slate-300"></div> 灰底: 表定應監測月份</span>
+                                        <span className="flex items-center gap-1"><IconEyeOff /> 懸停表格最右側可隱藏項目</span>
+                                        <button onClick={handleExportChartExcel} className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-sm hover:bg-green-700 transition-colors"><IconDownload /> 匯出此分析表</button>
+                                    </div>
                                 </div>
 
-                                {/* 雙表呈現區塊 */}
-                                <ReportTable title="📈 照護品質監測年度管理總表" data={careReportData} />
-                                <ReportTable title="🔧 儀器操作監測年度管理總表" data={equipReportData} />
+                                {/* 雙表呈現區塊 (傳遞處理函式避免重新渲染跳出) */}
+                                <ReportTable 
+                                    title="📈 照護品質監測年度管理總表" 
+                                    data={careReportData} 
+                                    onManualScoreChange={handleManualScoreChange}
+                                    onHideItem={handleHideItem}
+                                    onRestoreItem={handleRestoreItem}
+                                />
+                                <ReportTable 
+                                    title="🔧 儀器操作監測年度管理總表" 
+                                    data={equipReportData} 
+                                    onManualScoreChange={handleManualScoreChange}
+                                    onHideItem={handleHideItem}
+                                    onRestoreItem={handleRestoreItem}
+                                />
                             </div>
                         )}
 
@@ -642,6 +1113,7 @@
                                             <h4 className="font-bold text-blue-800 text-lg mb-2">1. 【現場考評】模組：日常稽核打分</h4>
                                             <ul className="list-disc pl-5 text-slate-600 space-y-2 text-sm">
                                                 <li><strong>選取題庫</strong>：透過左上角的下拉選單，依序選擇主類別、子類別與考評項目，系統會自動載入評分細項。</li>
+                                                <li><strong>匯入與刪除題庫</strong>：您可以點擊「垃圾桶」刪除任何不需要的表單。點擊綠色「匯入新表單」按鈕，可直接上傳 Word 或 Excel，系統會自動解析表格並建檔。</li>
                                                 <li><strong>基本資料</strong>：請務必填寫「受測對象」姓名。右側的「總得分」會隨著您的打分**即時自動計算**。</li>
                                                 <li><strong>三態快速評分機制</strong>：
                                                     <ul className="list-none pl-0 mt-2 space-y-1">
@@ -655,11 +1127,12 @@
                                         </div>
 
                                         <div className="pl-4 border-l-4 border-emerald-400">
-                                            <h4 className="font-bold text-emerald-800 text-lg mb-2">2. 【紀錄庫】模組：歷史查詢與匯出</h4>
+                                            <h4 className="font-bold text-emerald-800 text-lg mb-2">2. 【紀錄庫】模組：歷史查詢、資料夾管理與匯出</h4>
                                             <ul className="list-disc pl-5 text-slate-600 space-y-2 text-sm">
-                                                <li><strong>條件篩選</strong>：可透過上方的「月份」及「稽核項目」快速找出特定紀錄。低於 80 分的紀錄會以紅字醒目標示。</li>
-                                                <li><strong>刪除與修改</strong>：若不慎打錯分數，可點擊右側的垃圾桶圖示刪除單筆紀錄後重新考評。</li>
-                                                <li><strong>匯出報表</strong>：點擊上方的綠色【匯出全部報表】按鈕，系統會將資料自動轉換成 Excel 格式下載，方便後續列印留存。</li>
+                                                <li><strong>雙層資料夾管理</strong>：紀錄會自動分類為「月份資料夾」>「項目資料夾」，點擊資料夾列即可展開或收合詳細紀錄。</li>
+                                                <li><strong>快速勾選</strong>：您可以直接勾選整個「月份」或單一「項目」，系統會自動全選該資料夾內的所有紀錄。</li>
+                                                <li><strong>智慧匯入</strong>：點擊「匯入歷史資料」可讀取之前備份的 Excel 檔案。系統會自動把民國年、斜線、Excel數字等日期轉換為標準格式。</li>
+                                                <li><strong>匯出報表</strong>：若有勾選資料，點擊「匯出勾選/篩選報表」只會匯出勾選的紀錄；若未勾選但有使用上方條件篩選，則匯出符合條件的紀錄。</li>
                                             </ul>
                                         </div>
 
@@ -668,7 +1141,9 @@
                                             <ul className="list-disc pl-5 text-slate-600 space-y-2 text-sm">
                                                 <li><strong>雙表呈現</strong>：報表已自動分為「照護品質監測」與「儀器操作監測」兩大區塊。</li>
                                                 <li><strong>排程提示（反灰區塊）</strong>：表格中**灰底色的格子**，代表該項目在「該月份」被排定為必須執行的監測項目。</li>
-                                                <li><strong>自動平均與達標判定</strong>：當您在該月完成考評，系統會自動算出平均分填入灰格中。若平均分數低於「閾值(及格標準)」，分數會變成紅色，提醒需要加強教育訓練。</li>
+                                                <li><strong>手動填寫/覆蓋成績</strong>：您可以**直接點擊表格內的月份儲存格，手動輸入數值**。若將輸入的數值刪除留空，系統會自動切換回本系統內的紀錄來計算平均。</li>
+                                                <li><strong>隱藏品管項目</strong>：若機構無此項儀器或不需評核，可將滑鼠懸停至表格最右側，點擊出現的「隱藏(眼睛)」圖示移除該項目。已隱藏項目會顯示於表格最下方，隨時可點擊恢復。</li>
+                                                <li><strong>匯出功能</strong>：點擊「匯出此分析表」可以把整個總表包含手填成績匯出成 Excel。</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -679,7 +1154,7 @@
                                     <div className="bg-red-50 p-5 rounded-xl border border-red-100 text-sm text-red-700 space-y-3 leading-relaxed">
                                         <p><strong>1. 無雲端自動備份機制：</strong><br/>本系統為「純前端單機版」，所有考評紀錄皆儲存在「您目前使用的這台裝置與瀏覽器中」。</p>
                                         <p><strong>2. 嚴禁清除瀏覽資料：</strong><br/>請絕對不要「清除瀏覽器快取/Cookie」或使用「無痕模式」，否則所有紀錄將會瞬間清空且無法救回！換一台電腦或更換瀏覽器（例如從 Chrome 換到 Edge）也無法看到之前的資料。</p>
-                                        <p><strong>3. 養成匯出備份好習慣：</strong><br/>強烈建議稽核人員定期（每週或每月）至「紀錄庫」點擊【匯出全部報表】，將 Excel 檔案另存至機構的共用資料夾或雲端硬碟作為備份。</p>
+                                        <p><strong>3. 養成匯出備份好習慣：</strong><br/>強烈建議稽核人員定期（每週或每月）至「紀錄庫」點擊【匯出全部報表】，將 Excel 檔案另存至機構的共用資料夾或雲端硬碟作為備份。若換電腦即可用【匯入歷史資料】還原。</p>
                                     </div>
                                 </section>
                             </div>
