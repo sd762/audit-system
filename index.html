@@ -668,27 +668,27 @@
             const [selectedYear, setSelectedYear] = useState(availableYears[0] || new Date().getFullYear().toString());
 
             const [templates, setTemplates] = useState(() => {
-                const saved = Storage.getTemplates();
-                // 升級遷移版本，以套用最完整的詳細細項考評表
-                const isMigrated = localStorage.getItem('tpl_migrated_v14');
-                if (!isMigrated) {
-                    const uniqueSaved = saved.filter(s => !DEFAULT_TEMPLATES.some(d => d.id === s.id));
-                    const merged = [...DEFAULT_TEMPLATES, ...uniqueSaved];
-                    localStorage.setItem('tpl_migrated_v14', 'true');
-                    Storage.saveTemplates(merged);
-                    return merged;
-                }
-                return saved;
-            });
+            const saved = Storage.getTemplates();
+            // 升級遷移版本：將 v14 改為 v15，強制系統讀取最新的 DEFAULT_TEMPLATES
+            const isMigrated = localStorage.getItem('tpl_migrated_v15');
+            if (!isMigrated) {
+                const uniqueSaved = saved.filter(s => !DEFAULT_TEMPLATES.some(d => d.id === s.id));
+                const merged = [...DEFAULT_TEMPLATES, ...uniqueSaved];
+                localStorage.setItem('tpl_migrated_v15', 'true');
+                Storage.saveTemplates(merged);
+                return merged;
+            }
+            return saved;
+        });
 
-            // 初始化時確保載入完整的範本 (解決重整時出現空陣列問題)
-            useEffect(() => {
-                const checkMigrated = localStorage.getItem('tpl_migrated_v14');
-                if (!checkMigrated) {
-                    setTemplates(DEFAULT_TEMPLATES);
-                    localStorage.setItem('tpl_migrated_v14', 'true');
-                }
-            }, []);
+        // 初始化時確保載入完整的範本 (解決重整時出現空陣列問題)
+        useEffect(() => {
+            const checkMigrated = localStorage.getItem('tpl_migrated_v15');
+            if (!checkMigrated) {
+                setTemplates(DEFAULT_TEMPLATES);
+                localStorage.setItem('tpl_migrated_v15', 'true');
+            }
+        }, []);
 
             useEffect(() => Storage.saveRecords(records), [records]);
             useEffect(() => Storage.saveTemplates(templates), [templates]);
