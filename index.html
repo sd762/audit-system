@@ -73,42 +73,409 @@
         const SUB_CATEGORIES = ['護理類', '照服類', '護理照服類'];
 
         // ==========================================
-        // 🌟 預載題庫 (V1.0 Final - 依 Excel 內容校正)
+        // 🌟 預載題庫 (V1.0 Final - 恢復所有細項 + 修正排程)
         // ==========================================
         const DEFAULT_TEMPLATES = [
             // --- 照護品質類 ---
-            { id: 'tpl-wash-hands-compliance', name: '洗手遵從性、正確性稽核', mainCategory: '照護品質類技術考', subCategory: '護理照服類', targetStaff: '全體', responsible: '感控專責', frequency: '4次/年', schedule: [1, 4, 7, 11], threshold: 90, items: [{id:'whc1', name:'洗手遵從性', maxScore:100, score:100}] },
-            { id: 'tpl-wash-hands-std', name: '洗手評核標準', mainCategory: '照護品質類技術考', subCategory: '護理照服類', targetStaff: 'AN+N', responsible: '組長', frequency: '3次/年', schedule: [2, 5, 10], threshold: 100, items: [{id:'whs1', name:'洗手正確程序', maxScore:100, score:100}] },
-            { id: 'tpl-isolation-gown', name: '穿脫隔離衣評核表', mainCategory: '照護品質類技術考', subCategory: '護理照服類', targetStaff: 'AN+N', responsible: '組長', frequency: '2次/年', schedule: [5, 10], threshold: 95, items: [{id:'ig1', name:'穿脫隔離衣技術', maxScore:100, score:100}] },
-            { id: 'tpl-n-cpr', name: 'CPR編組評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'AN+N', responsible: '品管組長', frequency: '2次/年', schedule: [2, 8], threshold: 90, items: [{id:'cpr1', name:'CPR操作技術', maxScore:100, score:100}] },
-            { id: 'tpl-n-gcs', name: '昏迷指數(GCS)評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N', responsible: '品管組長', frequency: '2次/年', schedule: [2, 8], threshold: 95, items: [{id:'gcs1', name:'GCS測量準確性', maxScore:100, score:100}] },
-            { id: 'tpl-n-suction', name: '抽痰技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N', responsible: '品管組長', frequency: '2次/年', schedule: [3, 9], threshold: 90, items: [{id:'suc1', name:'無菌抽痰技術', maxScore:100, score:100}] },
-            { id: 'tpl-n-med', name: '給藥及藥單書寫評核標準', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N', responsible: '品管組長', frequency: '2次/年', schedule: [4, 10], threshold: 90, items: [{id:'med1', name:'給藥及紀錄書寫', maxScore:100, score:100}] },
-            { id: 'tpl-n-wound', name: '傷口評估換藥護理評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N', responsible: '品管組長', frequency: '2次/年', schedule: [4, 10], threshold: 90, items: [{id:'wnd1', name:'傷口評估與換藥', maxScore:100, score:100}] },
-            { id: 'tpl-n-trach', name: '氣切造口護理技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N', responsible: '品管組長', frequency: '2次/年', schedule: [6, 12], threshold: 90, items: [{id:'tra1', name:'氣切護理技術', maxScore:100, score:100}] },
-            { id: 'tpl-n-stoma', name: '造口護理技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N', responsible: '品管組長', frequency: '2次/年', schedule: [6, 12], threshold: 90, items: [{id:'sto1', name:'造口護理操作', maxScore:100, score:100}] },
-            { id: 'tpl-n-foley', name: '導尿管置入評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N', responsible: '品管組長', frequency: '2次/年', schedule: [1, 7], threshold: 90, items: [{id:'fol1', name:'導尿管無菌置入', maxScore:100, score:100}] },
-            { id: 'tpl-n-ng-insert', name: '鼻胃管置入評核總表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N', responsible: '品管組長', frequency: '2次/年', schedule: [1, 7], threshold: 90, items: [{id:'ngi1', name:'鼻胃管置入技術', maxScore:100, score:100}] },
-            { id: 'tpl-n-insulin', name: '胰島素注射評核總表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N', responsible: '品管組長', frequency: '2次/年', schedule: [1, 7], threshold: 90, items: [{id:'ins1', name:'胰島素注射技術', maxScore:100, score:100}] },
-            { id: 'tpl-an-ng-std-v2', name: '鼻胃管灌食評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN', responsible: '照服組長', frequency: '2次/年', schedule: [4, 10], threshold: 90, items: [{id:'ngf1', name:'灌食標準程序', maxScore:100, score:100}] },
-            { id: 'tpl-an-feed', name: '備餐餵食評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN', responsible: '照服組長', frequency: '2次/年', schedule: [4, 10], threshold: 90, items: [{id:'fed1', name:'備餐餵食操作', maxScore:100, score:100}] },
-            { id: 'tpl-an-perineal', name: '會陰沖洗評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN', responsible: '照服組長', frequency: '2次/年', schedule: [1, 7], threshold: 90, items: [{id:'per1', name:'會陰沖洗技術', maxScore:100, score:100}] },
-            { id: 'tpl-an-wheelchair', name: '上下床輪椅使用評核', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN', responsible: '照服組長', frequency: '2次/年', schedule: [3, 9], threshold: 90, items: [{id:'wlc1', name:'上下床輪椅使用', maxScore:100, score:100}] },
-            { id: 'tpl-an-turn', name: '翻身拍背擺位評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN', responsible: '照服組長', frequency: '2次/年', schedule: [5, 11], threshold: 90, items: [{id:'tur1', name:'翻身拍背技術', maxScore:100, score:100}] },
-            { id: 'tpl-an-restraint', name: '保護性約束評核表', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN', responsible: '照服組長', frequency: '2次/年', schedule: [5, 11], threshold: 90, items: [{id:'res1', name:'保護性約束應用', maxScore:100, score:100}] },
-            { id: 'tpl-an-oral', name: '口腔清潔評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN', responsible: '照服組長', frequency: '2次/年', schedule: [6, 12], threshold: 90, items: [{id:'ora1', name:'口腔清潔操作', maxScore:100, score:100}] },
+            { 
+                id: 'tpl-wash-hands-std', name: '洗手評核標準', mainCategory: '照護品質類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '感控專責', frequency: '3次/年', schedule: [2, 5, 10], threshold: 100, 
+                items: [
+                    { id: 'wh1', name: '洗手類型與用劑標準(效期一個月內)', maxScore: 5, criteria: '濕洗手乳/75%酒精', score: 5, note: '' },
+                    { id: 'wh2', name: '人員雙手準備(擦手紙補足/外袋移除)', maxScore: 5, criteria: '未檢查或未移除則扣分', score: 5, note: '' },
+                    { id: 'wh3', name: '洗手五時機圖示張貼(濕洗手區必貼)', maxScore: 3, criteria: '乾洗手區未貼不扣分', score: 3, note: '' },
+                    { id: 'wh4', name: '移除手指與手腕飾品(玉環/戒指例外處理)', maxScore: 3, criteria: '確保清潔，無法移除需固定', score: 3, note: '' },
+                    { id: 'wh5', name: '時機一：接觸住民前', maxScore: 5, criteria: '口訴項目內容', score: 5, note: '' },
+                    { id: 'wh6', name: '時機二：執行清潔/無菌技術前', maxScore: 5, criteria: '口訴項目內容', score: 5, note: '' },
+                    { id: 'wh7', name: '時機三：接觸住民體液、血液之後', maxScore: 5, criteria: '口訴項目內容', score: 5, note: '' },
+                    { id: 'wh8', name: '時機四：接觸住民後', maxScore: 5, criteria: '口訴項目內容', score: 5, note: '' },
+                    { id: 'wh9', name: '時機五：接觸住民周遭環境後', maxScore: 5, criteria: '口訴項目內容', score: 5, note: '' },
+                    { id: 'wh10', name: '「內」- 手掌對手掌搓揉', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh11', name: '「外」- 手心對手背搓揉', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh12', name: '「夾」- 手指交互夾縫搓揉', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh13', name: '「弓」- 指背對手心搓揉', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh14', name: '「大」- 虎口對大拇指搓揉', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh15', name: '「立」- 指尖對手心搓揉', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh16', name: '「腕」- 手腕搓揉至手肘', maxScore: 7, criteria: '落實搓揉動作', score: 7, note: '' },
+                    { id: 'wh17', name: '沖水、捧水沖龍頭、擦乾', maxScore: 15, criteria: '捧水沖龍頭為關鍵步驟', score: 15, note: '' }
+                ] 
+            },
+            { 
+                id: 'tpl-isolation-gown', name: '穿脫隔離衣評核表', mainCategory: '照護品質類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '感控專責', frequency: '2次/年', schedule: [5, 10], threshold: 95, 
+                items: [
+                    { id: 'ig1', name: '洗手', maxScore: 5, criteria: '執行正確洗手', score: 5, note: '' },
+                    { id: 'ig2', name: '戴上外科口罩或N95口罩並做密合測試', maxScore: 10, criteria: '確保防護效果', score: 10, note: '' },
+                    { id: 'ig3', name: '戴上第一層手套', maxScore: 5, criteria: '基礎防護', score: 5, note: '' },
+                    { id: 'ig4', name: '穿連身防護衣(繫好頸後及腰帶)', maxScore: 10, criteria: '包覆完整', score: 10, note: '' },
+                    { id: 'ig5', name: '戴護目鏡(或面罩)', maxScore: 5, criteria: '面部防護', score: 5, note: '' },
+                    { id: 'ig6', name: '戴上第二層手套(需包覆袖口)', maxScore: 10, criteria: '完整封閉', score: 10, note: '' },
+                    { id: 'ig7', name: '脫第一層手套(內面朝外)', maxScore: 5, criteria: '避免污染', score: 5, note: '' },
+                    { id: 'ig8', name: '脫護目鏡(或面罩)', maxScore: 5, criteria: '依序移除', score: 5, note: '' },
+                    { id: 'ig9', name: '脫隔離衣(將污染面摺入)', maxScore: 10, criteria: '脫卸過程勿碰觸污染面', score: 10, note: '' },
+                    { id: 'ig10', name: '脫第二層手套(內面朝外)', maxScore: 5, criteria: '避免污染', score: 5, note: '' },
+                    { id: 'ig11', name: '脫外科口罩或N95(不觸摸外面)', maxScore: 10, criteria: '正確脫卸', score: 10, note: '' },
+                    { id: 'ig12', name: '垃圾分類(感染性垃圾袋)', maxScore: 5, criteria: '落實廢棄物管理', score: 5, note: '' },
+                    { id: 'ig13', name: '洗手', maxScore: 15, criteria: '最終清潔', score: 15, note: '' }
+                ] 
+            },
+            { 
+                id: 'tpl-n-cpr', name: 'CPR編組評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)+AN(照服)', responsible: '品管組長', frequency: '2次/年', schedule: [2, 8], threshold: 90, 
+                items: [ 
+                    { id: 'c1', name: '發現異常與呼救', maxScore: 5, score: 5 }, { id: 'c2', name: '協助平躺', maxScore: 5, score: 5 }, 
+                    { id: 'c3', name: '通報支援', maxScore: 5, score: 5 }, { id: 'c4', name: '安撫現場', maxScore: 5, score: 5 }, 
+                    { id: 'c5', name: '生命徵象測量', maxScore: 10, score: 10 }, { id: 'c6', name: '啟動CPR', maxScore: 10, score: 10 }, 
+                    { id: 'c7', name: '暢通呼吸道', maxScore: 10, score: 10 }, { id: 'c8', name: '交班', maxScore: 10, score: 10 }, 
+                    { id: 'c9', name: '推氧氣筒/抽痰機', maxScore: 10, score: 10 }, { id: 'c10', name: 'Ambu組裝與給氧', maxScore: 10, score: 10 }, 
+                    { id: 'c11', name: '推急救車與擺位', maxScore: 10, score: 10 }, { id: 'c12', name: '後續處置與紀錄', maxScore: 10, score: 10 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-gcs', name: '昏迷指數(GCS)評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [2, 8], threshold: 95, 
+                items: [ 
+                    { id: 'g1', name: '洗手(時機一)與解釋', maxScore: 10, score: 10 }, { id: 'g2', name: '睜眼反應(E)評估正確', maxScore: 25, score: 25 }, 
+                    { id: 'g3', name: '語言反應(V)評估正確', maxScore: 25, score: 25 }, { id: 'g4', name: '運動反應(M)評估正確', maxScore: 25, score: 25 }, 
+                    { id: 'g5', name: '洗手與紀錄', maxScore: 15, score: 15 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-suction', name: '抽痰技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [3, 9], threshold: 90, 
+                items: [ 
+                    { id: 's1', name: '洗手(時機一)與解釋', maxScore: 10, score: 10 }, { id: 's2', name: '協助正確擺位', maxScore: 10, score: 10 }, 
+                    { id: 's3', name: '開啟抽痰機(120-150mmHg)', maxScore: 5, score: 5 }, { id: 's4', name: '洗手(時機二)與無菌操作', maxScore: 10, score: 10 }, 
+                    { id: 's5', name: '由鼻腔/口腔間歇性抽吸', maxScore: 15, score: 15 }, { id: 's6', name: '抽吸時間不超過10-15秒', maxScore: 10, score: 10 }, 
+                    { id: 's7', name: '間隔1-3分鐘再次抽吸', maxScore: 10, score: 10 }, { id: 's8', name: '抽痰管包裹處理', maxScore: 10, score: 10 }, 
+                    { id: 's9', name: '沖淨管路、洗手(時機三)', maxScore: 10, score: 10 }, { id: 's10', name: '復原、洗手(時機五)與紀錄', maxScore: 10, score: 10 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-med', name: '給藥及藥單書寫評核標準', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [4, 10], threshold: 90, 
+                items: [ 
+                    { id: 'm1', name: '開鎖藥櫃與洗手', maxScore: 10, score: 10 }, { id: 'm2', name: '備藥流程(三讀五對)', maxScore: 40, score: 40 }, 
+                    { id: 'm3', name: '核對長輩身份與解釋', maxScore: 10, score: 10 }, { id: 'm4', name: '協助服藥並確認吞下', maxScore: 15, score: 15 }, 
+                    { id: 'm5', name: '給藥後洗手(時機四)', maxScore: 10, score: 10 }, { id: 'm6', name: '藥單書寫與簽章', maxScore: 15, score: 15 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-wound', name: '傷口評估換藥護理評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [4, 10], threshold: 90, 
+                items: [ 
+                    { id: 'w1', name: '洗手(時機一)與解釋', maxScore: 16, score: 16 }, { id: 'w2', name: '擺位與露出部位', maxScore: 24, score: 24 }, 
+                    { id: 'w3', name: '移除敷料、洗手(時機三二)', maxScore: 11, score: 11 }, { id: 'w4', name: '由內向外環狀消毒', maxScore: 10, score: 10 }, 
+                    { id: 'w5', name: '覆蓋固定、環境復原', maxScore: 14, score: 14 }, { id: 'w6', name: '洗手(時機三四)與紀錄', maxScore: 25, score: 25 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-trach', name: '氣切造口護理技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [6, 12], threshold: 90, 
+                items: [ 
+                    { id: 't1', name: '洗手(時機一)與說明', maxScore: 15, score: 15 }, { id: 't2', name: '固定外管與內管取出', maxScore: 10, score: 10 }, 
+                    { id: 't3', name: '洗手(時機三二)戴手套', maxScore: 10, score: 10 }, { id: 't4', name: '環形消毒氣切口與內管組合', maxScore: 30, score: 30 }, 
+                    { id: 't5', name: '放置Y紗與更換繫帶', maxScore: 15, score: 15 }, { id: 't6', name: '內管浸泡與清潔', maxScore: 10, score: 10 }, 
+                    { id: 't7', name: '洗手與紀錄', maxScore: 10, score: 10 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-stoma', name: '造口護理技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [6, 12], threshold: 90, 
+                items: [ 
+                    { id: 'so1', name: '洗手(時機一)與解釋', maxScore: 15, score: 15 }, { id: 'so2', name: '拉簾擺位與移除舊敷料', maxScore: 30, score: 30 }, 
+                    { id: 'so3', name: '環狀消毒與放置Y紗', maxScore: 30, score: 30 }, { id: 'so4', name: '敷料固定、復原、紀錄', maxScore: 25, score: 25 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-foley', name: '導尿管置入評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '1次/年', schedule: [7], threshold: 90, 
+                items: [ 
+                    { id: 'f1', name: '洗手解釋與擺位', maxScore: 15, score: 15 }, { id: 'f2', name: '無菌包開啟與消毒準備', maxScore: 28, score: 28 }, 
+                    { id: 'f3', name: '導尿管置入與尿液流出', maxScore: 20, score: 20 }, { id: 'f4', name: '固定水球、連接尿袋', maxScore: 19, score: 19 }, 
+                    { id: 'f5', name: '整理復原、洗手紀錄', maxScore: 18, score: 18 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-ng-insert', name: '鼻胃管置入評核總表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [1, 7], threshold: 90, 
+                items: [ 
+                    { id: 'ni1', name: '洗手解釋與擺位', maxScore: 23, score: 23 }, { id: 'ni2', name: '測量長度與潤滑', maxScore: 18, score: 18 }, 
+                    { id: 'ni3', name: '置入與聽診確認位置', maxScore: 30, score: 30 }, { id: 'ni4', name: '固定與復原洗手紀錄', maxScore: 29, score: 29 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-insulin', name: '胰島素注射評核總表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '1次/年', schedule: [7], threshold: 90, 
+                items: [ 
+                    { id: 'i1', name: '核對醫囑(五對)與洗手', maxScore: 15, score: 15 }, { id: 'i2', name: '評估血糖與注射部位', maxScore: 15, score: 15 }, 
+                    { id: 'i3', name: '再次核對與消毒', maxScore: 20, score: 20 }, { id: 'i4', name: '正確角度注射與按壓', maxScore: 25, score: 25 }, 
+                    { id: 'i5', name: '處理用物、簽章紀錄', maxScore: 25, score: 25 } 
+                ] 
+            },
+            
+            // --- 照服類 ---
+            { 
+                id: 'tpl-an-ng-std-v2', name: '鼻胃管灌食評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN(照服)', responsible: '照服組長', frequency: '2次/年', schedule: [1, 7], threshold: 90, 
+                items: [
+                    { id: 'an-ng1', name: '目的維護住民安全接受鼻胃管灌食', maxScore: 5, score: 5 }, { id: 'an-ng2', name: '向住民說明目的後至灌食準備區', maxScore: 5, score: 5 },
+                    { id: 'an-ng3', name: '洗手(時機二)，準備灌食用物、調製配方奶', maxScore: 5, score: 5 }, { id: 'an-ng4', name: '至住民單位，核對住民(姓名、奶量、水量)', maxScore: 5, score: 5 },
+                    { id: 'an-ng5', name: '洗手(時機一)', maxScore: 5, score: 5 }, { id: 'an-ng6', name: '調整姿勢及正確擺位', maxScore: 5, score: 5 },
+                    { id: 'an-ng7', name: '灌食前洗手(時機二)', maxScore: 5, score: 5 }, { id: 'an-ng8', name: '確定鼻胃管的刻度位置', maxScore: 5, score: 5 },
+                    { id: 'an-ng9', name: '反抽超過100cc推回處理', maxScore: 5, score: 5 }, { id: 'an-ng10', name: '異常反抽物處理', maxScore: 5, score: 5 },
+                    { id: 'an-ng11', name: '灌食前先灌入10cc溫開水', maxScore: 5, score: 5 }, { id: 'an-ng12', name: '適當流速灌食', maxScore: 5, score: 5 },
+                    { id: 'an-ng13', name: '適當流速灌食(灌食高度30-40公分)', maxScore: 5, score: 5 }, { id: 'an-ng14', name: '灌食過程中，如有異常(嘔吐、發          items: [ 
+                    { id: 'm1', name: '開鎖藥櫃與洗手', maxScore: 10, score: 10 }, { id: 'm2', name: '備藥流程(三讀五對)', maxScore: 40, score: 40 }, 
+                    { id: 'm3', name: '核對長輩身份與解釋', maxScore: 10, score: 10 }, { id: 'm4', name: '協助服藥並確認吞下', maxScore: 15, score: 15 }, 
+                    { id: 'm5', name: '給藥後洗手(時機四)', maxScore: 10, score: 10 }, { id: 'm6', name: '藥單書寫與簽章', maxScore: 15, score: 15 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-wound', name: '傷口評估換藥護理評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [4, 10], threshold: 90, 
+                items: [ 
+                    { id: 'w1', name: '洗手(時機一)與解釋', maxScore: 16, score: 16 }, { id: 'w2', name: '擺位與露出部位', maxScore: 24, score: 24 }, 
+                    { id: 'w3', name: '移除敷料、洗手(時機三二)', maxScore: 11, score: 11 }, { id: 'w4', name: '由內向外環狀消毒', maxScore: 10, score: 10 }, 
+                    { id: 'w5', name: '覆蓋固定、環境復原', maxScore: 14, score: 14 }, { id: 'w6', name: '洗手(時機三四)與紀錄', maxScore: 25, score: 25 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-trach', name: '氣切造口護理技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [6, 12], threshold: 90, 
+                items: [ 
+                    { id: 't1', name: '洗手(時機一)與說明', maxScore: 15, score: 15 }, { id: 't2', name: '固定外管與內管取出', maxScore: 10, score: 10 }, 
+                    { id: 't3', name: '洗手(時機三二)戴手套', maxScore: 10, score: 10 }, { id: 't4', name: '環形消毒氣切口與內管組合', maxScore: 30, score: 30 }, 
+                    { id: 't5', name: '放置Y紗與更換繫帶', maxScore: 15, score: 15 }, { id: 't6', name: '內管浸泡與清潔', maxScore: 10, score: 10 }, 
+                    { id: 't7', name: '洗手與紀錄', maxScore: 10, score: 10 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-stoma', name: '造口護理技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [6, 12], threshold: 90, 
+                items: [ 
+                    { id: 'so1', name: '洗手(時機一)與解釋', maxScore: 15, score: 15 }, { id: 'so2', name: '拉簾擺位與移除舊敷料', maxScore: 30, score: 30 }, 
+                    { id: 'so3', name: '環狀消毒與放置Y紗', maxScore: 30, score: 30 }, { id: 'so4', name: '敷料固定、復原、紀錄', maxScore: 25, score: 25 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-foley', name: '導尿管置入評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '1次/年', schedule: [7], threshold: 90, 
+                items: [ 
+                    { id: 'f1', name: '洗手解釋與擺位', maxScore: 15, score: 15 }, { id: 'f2', name: '無菌包開啟與消毒準備', maxScore: 28, score: 28 }, 
+                    { id: 'f3', name: '導尿管置入與尿液流出', maxScore: 20, score: 20 }, { id: 'f4', name: '固定水球、連接尿袋', maxScore: 19, score: 19 }, 
+                    { id: 'f5', name: '整理復原、洗手紀錄', maxScore: 18, score: 18 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-ng-insert', name: '鼻胃管置入評核總表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [1, 7], threshold: 90, 
+                items: [ 
+                    { id: 'ni1', name: '洗手解釋與擺位', maxScore: 23, score: 23 }, { id: 'ni2', name: '測量長度與潤滑', maxScore: 18, score: 18 }, 
+                    { id: 'ni3', name: '置入與聽診確認位置', maxScore: 30, score: 30 }, { id: 'ni4', name: '固定與復原洗手紀錄', maxScore: 29, score: 29 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-insulin', name: '胰島素注射評核總表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '1次/年', schedule: [7], threshold: 90, 
+                items: [ 
+                    { id: 'i1', name: '核對醫囑(五對)與洗手', maxScore: 15, score: 15 }, { id: 'i2', name: '評估血糖與注射部位', maxScore: 15, score: 15 }, 
+                    { id: 'i3', name: '再次核對與消毒', maxScore: 20, score: 20 }, { id: 'i4', name: '正確角度注射與按壓', maxScore: 25, score: 25 }, 
+                    { id: 'i5', name: '處理用物、簽章紀錄', maxScore: 25, score: 25 } 
+                ] 
+            },
+            
+            // --- 照服類 ---
+            { 
+                id: 'tpl-an-ng-std-v2', name: '鼻胃管灌食評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN(照服)', responsible: '照服組長', frequency: '2次/年', schedule: [1, 7], threshold: 90, 
+                items: [
+                    { id: 'an-ng1', name: '目的維護住民安全接受鼻胃管灌食', maxScore: 5, score: 5 }, { id: 'an-ng2', name: '向住民說明目的後至灌食準備區', maxScore: 5, score: 5 },
+                    { id: 'an-ng3', name: '洗手(時機二)，準備灌食用物、調製配方奶', maxScore: 5, score: 5 }, { id: 'an-ng4', name: '至住民單位，核對住民(姓名、奶量、水量)', maxScore: 5, score: 5 },
+                    { id: 'an-ng5', name: '洗手(時機一)', maxScore: 5, score: 5 }, { id: 'an-ng6', name: '調整姿勢及正確擺位，住民採半坐臥45-60              { id: 'w5', name: '覆蓋固定、環境復原', maxScore: 14, score: 14 }, { id: 'w6', name: '洗手(時機三四)與紀錄', maxScore: 25, score: 25 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-trach', name: '氣切造口護理技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [6, 12], threshold: 90, 
+                items: [ 
+                    { id: 't1', name: '洗手(時機一)與說明', maxScore: 15, score: 15 }, { id: 't2', name: '固定外管與內管取出', maxScore: 10, score: 10 }, 
+                    { id: 't3', name: '洗手(時機三二)戴手套', maxScore: 10, score: 10 }, { id: 't4', name: '環形消毒氣切口與內管組合', maxScore: 30, score: 30 }, 
+                    { id: 't5', name: '放置Y紗與更換繫帶', maxScore: 15, score: 15 }, { id: 't6', name: '內管浸泡與清潔', maxScore: 10, score: 10 }, 
+                    { id: 't7', name: '洗手與紀錄', maxScore: 10, score: 10 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-stoma', name: '造口護理技術評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [6, 12], threshold: 90, 
+                items: [ 
+                    { id: 'so1', name: '洗手(時機一)與解釋', maxScore: 15, score: 15 }, { id: 'so2', name: '拉簾擺位與移除舊敷料', maxScore: 30, score: 30 }, 
+                    { id: 'so3', name: '環狀消毒與放置Y紗', maxScore: 30, score: 30 }, { id: 'so4', name: '敷料固定、復原、紀錄', maxScore: 25, score: 25 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-foley', name: '導尿管置入評核表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '1次/年', schedule: [7], threshold: 90, 
+                items: [ 
+                    { id: 'f1', name: '洗手解釋與擺位', maxScore: 15, score: 15 }, { id: 'f2', name: '無菌包開啟與消毒準備', maxScore: 28, score: 28 }, 
+                    { id: 'f3', name: '導尿管置入與尿液流出', maxScore: 20, score: 20 }, { id: 'f4', name: '固定水球、連接尿袋', maxScore: 19, score: 19 }, 
+                    { id: 'f5', name: '整理復原、洗手紀錄', maxScore: 18, score: 18 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-ng-insert', name: '鼻胃管置入評核總表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [1, 7], threshold: 90, 
+                items: [ 
+                    { id: 'ni1', name: '洗手解釋與擺位', maxScore: 23, score: 23 }, { id: 'ni2', name: '測量長度與潤滑', maxScore: 18, score: 18 }, 
+                    { id: 'ni3', name: '置入與聽診確認位置', maxScore: 30, score: 30 }, { id: 'ni4', name: '固定與復原洗手紀錄', maxScore: 29, score: 29 } 
+                ] 
+            },
+            { 
+                id: 'tpl-n-insulin', name: '胰島素注射評核總表', mainCategory: '照護品質類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '1次/年', schedule: [7], threshold: 90, 
+                items: [ 
+                    { id: 'i1', name: '核對醫囑(五對)與洗手', maxScore: 15, score: 15 }, { id: 'i2', name: '評估血糖與注射部位', maxScore: 15, score: 15 }, 
+                    { id: 'i3', name: '再次核對與消毒', maxScore: 20, score: 20 }, { id: 'i4', name: '正確角度注射與按壓', maxScore: 25, score: 25 }, 
+                    { id: 'i5', name: '處理用物、簽章紀錄', maxScore: 25, score: 25 } 
+                ] 
+            },
+            
+            // --- 照服類 ---
+            { 
+                id: 'tpl-an-ng-std-v2', name: '鼻胃管灌食評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN(照服)', responsible: '照服組長', frequency: '2次/年', schedule: [1, 7], threshold: 90, 
+                items: [
+                    { id: 'an-ng1', name: '目的:維護住民安全接受鼻胃管灌食', maxScore: 5, score: 5 }, { id: 'an-ng2', name: '用物準備:灌食空針1個、管灌食物、杯子盛溫開水1杯、衛生紙或毛巾1條', maxScore: 5, score: 5 },
+                    { id: 'an-ng3', name: '洗手(時機二)，準備灌食用物、調製配方奶', maxScore: 5, score: 5 }, { id: 'an-ng4', name: '洗手(時機二)，準備灌食用物、調製配方奶', maxScore: 5, score: 5 },
+                    { id: 'an-ng5', name: '至住民單位，核對住民(姓名、奶量、水量)', maxScore: 5, score: 5 }, { id: 'an-ng6', name: '洗手(時機一)', maxScore: 5, score: 5 },
+                    { id: 'an-ng7', name: '調整姿勢及正確擺位，住民採半坐臥45-60°或坐姿90°', maxScore: 5, score: 5 }, { id: 'an-ng8', name: '灌食前洗手(時機二)', maxScore: 5, score: 5 },
+                    { id: 'an-ng9', name: '確定鼻胃管的刻度位置是否正確以及有無在口中纏繞', maxScore: 5, score: 5 }, { id: 'an-ng10', name: '反抽出咖啡色或黑色反抽物時，應立即報告護理人員', maxScore: 5, score: 5 },
+                    { id: 'an-ng11', name: '反抽超過100CC需將反抽物推回，減少灌食量', maxScore: 5, score: 5 }, { id: 'an-ng12', name: '灌食前先灌入10cc溫開水潤濕管壁', maxScore: 5, score: 5 },
+                    { id: 'an-ng13', name: '適當流速灌食(灌食高度30-40公分)', maxScore: 5, score: 5 }, { id: 'an-ng14', name: '灌食過程中，如有異常(嘔吐、咳嗽、發紺)，應立即停止灌食並通知護理人員', maxScore: 5, score: 5 },
+                    { id: 'an-ng15', name: '灌食時須注意勿使空氣進入', maxScore: 5, score: 5 }, { id: 'an-ng16', name: '灌食後少量溫開水沖淨管壁', maxScore: 5, score: 5 },
+                    { id: 'an-ng17', name: '拴緊蓋子', maxScore: 5, score: 5 }, { id: 'an-ng18', name: '灌食後住民繼續採半坐臥姿勢', maxScore: 5, score: 5 },
+                    { id: 'an-ng19', name: '洗手(時機一)整理住民單位並協助復位', maxScore: 5, score: 5 }, { id: 'an-ng20', name: '洗手(時機四)離開並記錄', maxScore: 5, score: 5 }
+                ] 
+            },
+            { 
+                id: 'tpl-an-feed', name: '備餐餵食評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN(照服)', responsible: '照服組長', frequency: '2次/年', schedule: [1, 7], threshold: 90, 
+                items: [ 
+                    { id: 'f1', name: '用物準備(圍兜、餐具等)', maxScore: 5, score: 5 }, { id: 'f2', name: '(洗手時機一)向住民說明', maxScore: 5, score: 5 }, 
+                    { id: 'f3', name: '(洗手時機二)備餐', maxScore: 5, score: 5 }, { id: 'f4', name: '協助坐正與按摩喚醒', maxScore: 10, score: 10 }, 
+                    { id: 'f5', name: '檢查口腔與假牙', maxScore: 5, score: 5 }, { id: 'f6', name: '核對餐食與溫度', maxScore: 10, score: 10 }, 
+                    { id: 'f7', name: '平視餵食、適量每口', maxScore: 10, score: 10 }, { id: 'f8', name: '觀察吞嚥確認吞下', maxScore: 10, score: 10 }, 
+                    { id: 'f9', name: '進食中給水與留意反應', maxScore: 10, score: 10 }, { id: 'f10', name: '餐後漱口與嘴部擦拭', maxScore: 10, score: 10 }, 
+                    { id: 'f11', name: '維持坐姿30分鐘', maxScore: 10, score: 10 }, { id: 'f12', name: '復原、洗手(時機四)與紀錄', maxScore: 10, score: 10 } 
+                ] 
+            },
+            { 
+                id: 'tpl-an-perineal', name: '會陰沖洗評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN(照服)', responsible: '照服組長', frequency: '3次/年', schedule: [3, 7, 9], threshold: 90, 
+                items: [ 
+                    { id: 'p1', name: '(洗手時機一)向住民說明', maxScore: 10, score: 10 }, { id: 'p2', name: '拉簾保護隱私', maxScore: 5, score: 5 }, 
+                    { id: 'p3', name: '手腕試水溫(41-43度)', maxScore: 10, score: 10 }, { id: 'p4', name: '(洗手時機二)調整水溫', maxScore: 10, score: 10 }, 
+                    { id: 'p5', name: '沖洗器開口朝床尾', maxScore: 10, score: 10 }, { id: 'p6', name: '正確擺位(仰臥/偏癱支撐)', maxScore: 10, score: 10 }, 
+                    { id: 'p7', name: '仔細清洗(內向外)', maxScore: 15, score: 15 }, { id: 'p8', name: '輕輕拍乾會陰部', maxScore: 10, score: 10 }, 
+                    { id: 'p9', name: '穿回衣物與復原', maxScore: 10, score: 10 }, { id: 'p10', name: '整理、洗手(時機三四)與紀錄', maxScore: 10, score: 10 } 
+                ] 
+            },
+            { 
+                id: 'tpl-an-wheelchair', name: '上下床輪椅使用評核', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN(照服)', responsible: '照服組長', frequency: '2次/年', schedule: [3, 9], threshold: 90, 
+                items: [ 
+                    { id: 'w1', name: '檢查輪椅安全', maxScore: 5, score: 5 }, { id: 'w2', name: '輪椅定位(平行或45度)', maxScore: 5, score: 5 }, 
+                    { id: 'w3', name: '固定輪子、收起踏板', maxScore: 5, score: 5 }, { id: 'w4', name: '(洗手時機一)', maxScore: 5, score: 5 }, 
+                    { id: 'w5', name: '評估意識與臉色', maxScore: 10, score: 10 }, { id: 'w6', name: '尿管反摺處理', maxScore: 5, score: 5 }, 
+                    { id: 'w7', name: '正確姿勢坐入輪椅', maxScore: 15, score: 15 }, { id: 'w8', name: '掛好尿袋', maxScore: 5, score: 5 }, 
+                    { id: 'w9', name: '放好踏板與雙腳', maxScore: 5, score: 5 }, { id: 'w10', name: '(洗手時機四)', maxScore: 5, score: 5 }, 
+                    { id: 'w11', name: '上床步驟操作', maxScore: 15, score: 15 }, { id: 'w12', name: '安全回床、洗手紀錄', maxScore: 20, score: 20 } 
+                ] 
+            },
+            { 
+                id: 'tpl-an-turn', name: '翻身拍背擺位評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN(照服)', responsible: '照服組長', frequency: '2次/年', schedule: [3, 9], threshold: 90, 
+                items: [ 
+                    { id: 't1', name: '用物準備(枕頭等)', maxScore: 5, score: 5 }, { id: 't2', name: '解釋與拉簾', maxScore: 5, score: 5 }, 
+                    { id: 't3', name: '站立正確方向', maxScore: 5, score: 5 }, { id: 't4', name: '(洗手時機一)擺位準備', maxScore: 5, score: 5 }, 
+                    { id: 't5', name: '正確翻身動作', maxScore: 5, score: 5 }, { id: 't6', name: '臉部墊毛巾', maxScore: 5, score: 5 }, 
+                    { id: 't7', name: '評估痰液聚集處', maxScore: 5, score: 5 }, { id: 't8', name: '胸前墊枕頭', maxScore: 5, score: 5 }, 
+                    { id: 't9', name: '扣擊部位墊衣物', maxScore: 5, score: 5 }, { id: 't10', name: '杯狀手、力量適中', maxScore: 5, score: 5 }, 
+                    { id: 't11', name: '先拍痰處1分鐘', maxScore: 10, score: 10 }, { id: 't12', name: '正確位置拍擊3-5分鐘', maxScore: 10, score: 10 }, 
+                    { id: 't13', name: '翻身擺位支撐', maxScore: 15, score: 15 }, { id: 't14', name: '復原、洗手(時機四)紀錄', maxScore: 15, score: 15 } 
+                ] 
+            },
+            { 
+                id: 'tpl-an-restraint', name: '保護性約束評核表', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN(照服)', responsible: '照服組長', frequency: '3次/年', schedule: [4, 9, 10], threshold: 90, 
+                items: [ 
+                    { id: 'r1', name: '說明目的與預防跌倒', maxScore: 6, score: 6 }, { id: 'r2', name: '與家屬討論並簽同意書', maxScore: 6, score: 6 }, 
+                    { id: 'r3', name: '選擇適當約束種類', maxScore: 5, score: 5 }, { id: 'r4', name: '評估生理需求', maxScore: 3, score: 3 }, 
+                    { id: 'r5', name: '約束前互動', maxScore: 10, score: 10 }, { id: 'r6', name: '評估約束帶配件完整', maxScore: 10, score: 10 }, 
+                    { id: 'r7', name: '過程中互動安撫', maxScore: 10, score: 10 }, { id: 'r8', name: '鬆緊度2橫指、平結固定', maxScore: 20, score: 20 }, 
+                    { id: 'r9', name: '每2小時鬆開評估皮膚', maxScore: 20, score: 20 }, { id: 'r10', name: '洗手(時機四)紀錄狀況', maxScore: 10, score: 10 } 
+                ] 
+            },
+            { 
+                id: 'tpl-an-oral', name: '口腔清潔評核標準', mainCategory: '照護品質類技術考', subCategory: '照服類', targetStaff: 'AN(照服)', responsible: '照服組長', frequency: '2次/年', schedule: [5, 11], threshold: 90, 
+                items: [ 
+                    { id: 'o1', name: '(洗手時機二)用物準備', maxScore: 5, score: 5 }, { id: 'o2', name: '(洗手時機一)解釋與安撫', maxScore: 5, score: 5 }, 
+                    { id: 'o3', name: '協助正確坐姿擺位', maxScore: 10, score: 10 }, { id: 'o4', name: '胸前墊毛巾防濕', maxScore: 5, score: 5 }, 
+                    { id: 'o5', name: '異常或牙關處理(口述)', maxScore: 5, score: 5 }, { id: 'o6', name: '刷牙方向口訣', maxScore: 5, score: 5 }, 
+                    { id: 'o7', name: '牙齦依序清潔與漱口', maxScore: 15, score: 15 }, { id: 'o8', name: '刷牙角度與方向注意事項', maxScore: 10, score: 10 }, 
+                    { id: 'o9', name: '牙齒每2顆刷擊', maxScore: 5, score: 5 }, { id: 'o10', name: '協助漱口與擦乾', maxScore: 10, score: 10 }, 
+                    { id: 'o11', name: '觀察黏膜與牙齦', maxScore: 10, score: 10 }, { id: 'o12', name: '復原與整理', maxScore: 10, score: 10 }, 
+                    { id: 'o13', name: '洗手(時機四)紀錄', maxScore: 5, score: 5 } 
+                ] 
+            },
 
             // --- 儀器操作類 ---
-            { id: 'tpl-eq-wheelchair-op', name: '輪椅使用操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '照服類', targetStaff: 'AN', responsible: '照服組長', frequency: '2次/年', schedule: [3, 9], threshold: 90, items: [{id:'eqw1', name:'輪椅維護操作', maxScore:100, score:100}] },
-            { id: 'tpl-eq-o2-cylinder', name: '氧氣鋼瓶操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N+AN', responsible: '品管組長', frequency: '2次/年', schedule: [2, 8], threshold: 95, items: [{id:'eqo1', name:'鋼瓶開關調整', maxScore:100, score:100}] },
-            { id: 'tpl-eq-elec-bed', name: '護理電動床操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N+AN', responsible: '照服組長', frequency: '1次/年', schedule: [7], threshold: 90, items: [{id:'eqe1', name:'電動床功能操作', maxScore:100, score:100}] },
-            { id: 'tpl-eq-bp-monitor', name: '血壓計操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N+AN', responsible: '組長/督導', frequency: '2次/年', schedule: [3, 9], threshold: 100, items: [{id:'eqb1', name:'血壓計操作', maxScore:100, score:100}] },
-            { id: 'tpl-eq-steam-inhaler', name: '蒸氣吸入機操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N+AN', responsible: '組長/督導', frequency: '2次/年', schedule: [5, 11], threshold: 90, items: [{id:'eqs1', name:'蒸氣吸入機操作', maxScore:100, score:100}] },
-            { id: 'tpl-eq-o2-maker', name: '氧氣製造機操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N+AN', responsible: '組長/督導', frequency: '2次/年', schedule: [5, 11], threshold: 90, items: [{id:'eqm1', name:'製氧機濃度調整', maxScore:100, score:100}] },
-            { id: 'tpl-eq-vital-signs', name: '生命量測儀操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N+AN', responsible: '組長/督導', frequency: '2次/年', schedule: [3, 9], threshold: 100, items: [{id:'eqv1', name:'量測儀器準確性', maxScore:100, score:100}] },
-            { id: 'tpl-eq-resuscitator', name: '甦醒球操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理類', targetStaff: 'N', responsible: '品管組長', frequency: '2次/年', schedule: [2, 8], threshold: 90, items: [{id:'eqr1', name:'甦醒球組裝給氧', maxScore:100, score:100}] },
-            { id: 'tpl-eq-suction', name: '抽痰機操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理類', targetStaff: 'N', responsible: '品管組長', frequency: '2次/年', schedule: [3, 9], threshold: 90, items: [{id:'eqsc1', name:'抽痰機壓力調整', maxScore:100, score:100}] },
-            { id: 'tpl-eq-laryngoscope', name: '喉頭鏡操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理類', targetStaff: 'N', responsible: '品管組長', frequency: '2次/年', schedule: [2, 8], threshold: 90, items: [{id:'eql1', name:'喉頭鏡組裝操作', maxScore:100, score:100}] }
+            { 
+                id: 'tpl-eq-wheelchair-op', name: '輪椅使用操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '照服類', targetStaff: 'AN(照服)', responsible: '照服組長', frequency: '2次/年', schedule: [3, 9], threshold: 90, 
+                items: [
+                    { id: 'eq-wc1', name: '正確說出腳踏板高度', maxScore: 20, score: 20 }, { id: 'eq-wc2', name: '知道輪椅防傾桿位置', maxScore: 15, score: 15 },
+                    { id: 'eq-wc3', name: '清楚說出手推輪圈', maxScore: 15, score: 15 }, { id: 'eq-wc4', name: '正確操作輪椅剎車與拆解腳踏板', maxScore: 20, score: 20 },
+                    { id: 'eq-wc5', name: '輪椅清潔每周清洗一次', maxScore: 10, score: 10 }, { id: 'eq-wc6', name: '私人輪椅異常聯繫流程', maxScore: 10, score: 10 },
+                    { id: 'eq-wc7', name: '公用輪椅異常報修流程', maxScore: 10, score: 10 }
+                ] 
+            },
+            { 
+                id: 'tpl-eq-o2-cylinder', name: '氧氣鋼瓶操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '品管組長', frequency: '2次/年', schedule: [2, 8], threshold: 95, 
+                items: [
+                    { id: 'eq-o2c1', name: '清楚認識開關功能及意義', maxScore: 10, score: 10 }, { id: 'eq-o2c2', name: '正確操作鋼瓶開關，調節流量', maxScore: 10, score: 10 },
+                    { id: 'eq-o2c3', name: '蒸餾水倒入潮濕瓶(低於一半)', maxScore: 15, score: 15 }, { id: 'eq-o2c4', name: '使用完畢後潮濕瓶清潔方法', maxScore: 15, score: 15 },
+                    { id: 'eq-o2c5', name: '壓力表代表意義', maxScore: 15, score: 15 }, { id: 'eq-o2c6', name: '壓力表低於50Kg時須更新', maxScore: 15, score: 15 },
+                    { id: 'eq-o2c7', name: '清楚說出擺放地點', maxScore: 10, score: 10 }, { id: 'eq-o2c8', name: '故障情況申請維修處理流程', maxScore: 10, score: 10 }
+                ] 
+            },
+            { 
+                id: 'tpl-eq-elec-bed', name: '護理電動床操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '照服組長', frequency: '1次/年', schedule: [7], threshold: 90, 
+                items: [
+                    { id: 'eq-bed1', name: '認識及說出開關按鈕功能', maxScore: 20, score: 20 }, { id: 'eq-bed2', name: '正確操作開關按鈕', maxScore: 20, score: 20 },
+                    { id: 'eq-bed3', name: '消毒操作方法及步驟', maxScore: 20, score: 20 }, { id: 'eq-bed4', name: '異常情況排除', maxScore: 20, score: 20 },
+                    { id: 'eq-bed5', name: '故障維修處理流程', maxScore: 20, score: 20 }
+                ] 
+            },
+            { 
+                id: 'tpl-eq-steam-inhaler', name: '蒸氣吸入機操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '品管組長/照服組長', frequency: '2次/年', schedule: [5, 11], threshold: 90, 
+                items: [
+                    { id: 'eq-si1', name: '認識及說出開關按鈕功能', maxScore: 10, score: 10 }, { id: 'eq-si2', name: '清楚擺放地點', maxScore: 10, score: 10 },
+                    { id: 'eq-si3', name: '正確組裝拆解及清洗', maxScore: 15, score: 15 }, { id: 'eq-si4', name: '正確操作蒸氣吸入機', maxScore: 15, score: 15 },
+                    { id: 'eq-si5', name: '正確添加藥物及步驟', maxScore: 15, score: 15 }, { id: 'eq-si6', name: '回答使用目的', maxScore: 15, score: 15 },
+                    { id: 'eq-si7', name: '異常情況排除', maxScore: 10, score: 10 }, { id: 'eq-si8', name: '故障維修處理流程', maxScore: 10, score: 10 }
+                ] 
+            },
+            { 
+                id: 'tpl-eq-o2-maker', name: '氧氣製造機操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '品管組長/照服組長', frequency: '2次/年', schedule: [5, 11], threshold: 90, 
+                items: [
+                    { id: 'eq-om1', name: '指出擺放地點', maxScore: 10, score: 10 }, { id: 'eq-om2', name: '開啟開機按鈕', maxScore: 10, score: 10 },
+                    { id: 'eq-om3', name: '正確操作濃度調整', maxScore: 15, score: 15 }, { id: 'eq-om4', name: '潮濕瓶目的及添加規定', maxScore: 20, score: 20 },
+                    { id: 'eq-om5', name: '使用完畢清潔方法', maxScore: 20, score: 20 }, { id: 'eq-om6', name: '故障報修流程', maxScore: 15, score: 15 },
+                    { id: 'eq-om7', name: '平日保養辦法(清洗過濾棉)', maxScore: 10, score: 10 }
+                ] 
+            },
+            { 
+                id: 'tpl-eq-vital-signs', name: '生命量測儀操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '品管組長/照服組長', frequency: '2次/年', schedule: [3, 9], threshold: 100, 
+                items: [
+                    { id: 'eq-vs1', name: '認識及說出開關按鈕功能', maxScore: 15, score: 15 }, { id: 'eq-vs2', name: '清楚擺放地點', maxScore: 15, score: 15 },
+                    { id: 'eq-vs3', name: '正確操作量測步驟', maxScore: 25, score: 25 }, { id: 'eq-vs4', name: '消毒操作方法及步驟', maxScore: 15, score: 15 },
+                    { id: 'eq-vs5', name: '維護及保養方法及步驟', maxScore: 15, score: 15 }, { id: 'eq-vs6', name: '判斷異常警示並處理(沒電)', maxScore: 15, score: 15 }
+                ] 
+            },
+            { 
+                id: 'tpl-eq-resuscitator', name: '甦醒球操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [2, 8], threshold: 90, 
+                items: [
+                    { id: 'eq-rs1', name: '清楚說出放置地點', maxScore: 20, score: 20 }, { id: 'eq-rs2', name: '正確組裝拆裝甦醒球', maxScore: 20, score: 20 },
+                    { id: 'eq-rs3', name: '正確銜接氧氣鋼瓶及面罩', maxScore: 20, score: 20 }, { id: 'eq-rs4', name: '正確拆解並清洗', maxScore: 20, score: 20 },
+                    { id: 'eq-rs5', name: '清楚使用與計價原則', maxScore: 20, score: 20 }
+                ] 
+            },
+            { 
+                id: 'tpl-eq-suction', name: '抽痰機操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [3, 9], threshold: 90, 
+                items: [
+                    { id: 'eq-sc1', name: '說出擺放地點', maxScore: 10, score: 10 }, { id: 'eq-sc2', name: '正確組裝抽痰機', maxScore: 10, score: 10 },
+                    { id: 'eq-sc3', name: '正確銜接各管路位置', maxScore: 25, score: 25 }, { id: 'eq-sc4', name: '收集瓶漂白水消毒', maxScore: 15, score: 15 },
+                    { id: 'eq-sc5', name: '平日清水擦拭外觀清潔', maxScore: 15, score: 15 }, { id: 'eq-sc6', name: '抽痰前確認壓力與排除異常', maxScore: 10, score: 10 },
+                    { id: 'eq-sc7', name: '故障維修處理流程', maxScore: 15, score: 15 }
+                ] 
+            },
+            { 
+                id: 'tpl-eq-laryngoscope', name: '喉頭鏡操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [2, 8], threshold: 90, 
+                items: [
+                    { id: 'eq-ls1', name: '知道放置位置', maxScore: 15, score: 15 }, { id: 'eq-ls2', name: '正確組裝喉頭鏡', maxScore: 15, score: 15 },
+                    { id: 'eq-ls3', name: '正確拆下喉頭鏡把', maxScore: 20, score: 20 }, { id: 'eq-ls4', name: '正確更換電池', maxScore: 15, score: 15 },
+                    { id: 'eq-ls5', name: '清楚長短使用對象', maxScore: 20, score: 20 }, { id: 'eq-ls6', name: '使用完畢清潔方法', maxScore: 15, score: 15 }
+                ] 
+            }
         ];
 
         // --- 報表表格組件 ---
@@ -207,22 +574,23 @@
 
         // --- 主應用程式 ---
         const App = () => {
-            // 狀態定義
             const [activeTab, setActiveTab] = useState('form');
             const [records, setRecords] = useState(() => Storage.getRecords());
             const [reportSettings, setReportSettings] = useState(() => Storage.getSettings());
             const [dialog, setDialog] = useState({ isOpen: false, type: 'alert', title: '', message: '', onConfirm: null });
+            
             const [filterMonth, setFilterMonth] = useState('');
             const [filterItem, setFilterItem] = useState('');
             const [selectedIds, setSelectedIds] = useState(new Set());
             const [expandedFolders, setExpandedFolders] = useState(new Set());
+            
             const [filterTplMainCat, setFilterTplMainCat] = useState('照護品質類技術考');
             const [filterTplSubCat, setFilterTplSubCat] = useState('護理照服類');
             const [currentTemplateId, setCurrentTemplateId] = useState('');
+            
             const [formData, setFormData] = useState({ date: new Date().toISOString().split('T')[0], auditor: '', unit: '', target: '', score: '', notes: '', auditName: '一般綜合稽核' });
             const [checklist, setChecklist] = useState([]);
 
-            // 年份計算
             const availableYears = useMemo(() => {
                 const years = [...new Set(records.map(r => String(r.date).substring(0, 4)))].filter(y => y.length === 4).sort().reverse();
                 return years.length > 0 ? years : [new Date().getFullYear().toString()];
@@ -230,21 +598,29 @@
 
             const [selectedYear, setSelectedYear] = useState(availableYears[0] || new Date().getFullYear().toString());
 
-            // 題庫遷移與載入
             const [templates, setTemplates] = useState(() => {
                 const saved = Storage.getTemplates();
-                const isMigrated = localStorage.getItem('tpl_migrated_v7');
+                // 升級遷移版本，以套用最完整的詳細細項考評表
+                const isMigrated = localStorage.getItem('tpl_migrated_v14');
                 if (!isMigrated) {
                     const uniqueSaved = saved.filter(s => !DEFAULT_TEMPLATES.some(d => d.id === s.id));
                     const merged = [...DEFAULT_TEMPLATES, ...uniqueSaved];
-                    localStorage.setItem('tpl_migrated_v7', 'true');
+                    localStorage.setItem('tpl_migrated_v14', 'true');
                     Storage.saveTemplates(merged);
                     return merged;
                 }
                 return saved;
             });
 
-            // 副作用
+            // 初始化時確保載入完整的範本 (解決重整時出現空陣列問題)
+            useEffect(() => {
+                const checkMigrated = localStorage.getItem('tpl_migrated_v14');
+                if (!checkMigrated) {
+                    setTemplates(DEFAULT_TEMPLATES);
+                    localStorage.setItem('tpl_migrated_v14', 'true');
+                }
+            }, []);
+
             useEffect(() => Storage.saveRecords(records), [records]);
             useEffect(() => Storage.saveTemplates(templates), [templates]);
             useEffect(() => Storage.saveSettings(reportSettings), [reportSettings]);
@@ -257,46 +633,6 @@
                     setFormData(p => ({ ...p, score: totalMax > 0 ? Math.round((totalCur / totalMax) * 100) : 0 }));
                 }
             }, [checklist]);
-
-            // 輔助函式與處理器
-            const showAlert = (message, title = '系統提示') => setDialog({ isOpen: true, type: 'alert', title, message, onConfirm: null });
-            const showConfirm = (message, onConfirm, title = '⚠️ 確認操作') => setDialog({ isOpen: true, type: 'confirm', title, message, onConfirm });
-
-            const handleSubmit = (e) => {
-                e.preventDefault();
-                if (!formData.target) return showAlert('請輸入受測對象姓名！');
-                if (formData.score === '') return showAlert('請輸入或計算總得分！');
-                const newRec = { ...formData, id: Date.now().toString() + Math.random().toString(36).substr(2, 5), checklist };
-                setRecords(prev => [newRec, ...prev]);
-                setFormData(p => ({ ...p, target: '', score: '', notes: '' }));
-                setChecklist(checklist.map(i => ({ ...i, score: i.maxScore, note: '', mode: 'full' })));
-                showAlert('💾 紀錄已儲存！');
-            };
-
-            const handleManualScoreChange = (tplId, month, value) => {
-                const key = `${selectedYear}_${tplId}_${month}`;
-                setReportSettings(prev => {
-                    const newScores = { ...(prev.manualScores || {}) };
-                    if (value === '') delete newScores[key];
-                    else {
-                        let num = Number(value);
-                        newScores[key] = num > 100 ? 100 : (num < 0 ? 0 : value);
-                    }
-                    return { ...prev, manualScores: newScores };
-                });
-            };
-
-            const handleAnalysisTextChange = (tplId, value) => {
-                const key = `${selectedYear}_${tplId}`;
-                setReportSettings(prev => {
-                    const newTexts = { ...(prev.analysisTexts || {}) };
-                    if (value === '') delete newTexts[key]; else newTexts[key] = value;
-                    return { ...prev, analysisTexts: newTexts };
-                });
-            };
-
-            const handleHideItem = (tplId) => setReportSettings(prev => ({ ...prev, hiddenItems: [...(prev.hiddenItems || []), tplId] }));
-            const handleRestoreItem = (tplId) => setReportSettings(prev => ({ ...prev, hiddenItems: (prev.hiddenItems || []).filter(id => id !== tplId) }));
 
             const buildTableData = useCallback((categoryName) => {
                 const hiddenItems = reportSettings.hiddenItems || [];
@@ -334,12 +670,48 @@
             const careReportData = useMemo(() => buildTableData('照護品質類技術考'), [buildTableData]);
             const equipReportData = useMemo(() => buildTableData('儀器操作類技術考'), [buildTableData]);
 
+            const showAlert = (message, title = '系統提示') => setDialog({ isOpen: true, type: 'alert', title, message, onConfirm: null });
+            const showConfirm = (message, onConfirm, title = '⚠️ 確認操作') => setDialog({ isOpen: true, type: 'confirm', title, message, onConfirm });
+
+            const handleManualScoreChange = (tplId, month, value) => {
+                const key = `${selectedYear}_${tplId}_${month}`;
+                setReportSettings(prev => {
+                    const newScores = { ...(prev.manualScores || {}) };
+                    if (value === '') delete newScores[key];
+                    else {
+                        let num = Number(value);
+                        newScores[key] = num > 100 ? 100 : (num < 0 ? 0 : value);
+                    }
+                    return { ...prev, manualScores: newScores };
+                });
+            };
+
+            const handleAnalysisTextChange = (tplId, value) => {
+                const key = `${selectedYear}_${tplId}`;
+                setReportSettings(prev => {
+                    const newTexts = { ...(prev.analysisTexts || {}) };
+                    if (value === '') delete newTexts[key]; else newTexts[key] = value;
+                    return { ...prev, analysisTexts: newTexts };
+                });
+            };
+
+            const handleHideItem = (tplId) => setReportSettings(prev => ({ ...prev, hiddenItems: [...(prev.hiddenItems || []), tplId] }));
+            const handleRestoreItem = (tplId) => setReportSettings(prev => ({ ...prev, hiddenItems: (prev.hiddenItems || []).filter(id => id !== tplId) }));
+
             const handleTplFilterChange = (type, value) => {
                 if (type === 'main') setFilterTplMainCat(value);
                 if (type === 'sub') setFilterTplSubCat(value);
                 setCurrentTemplateId(''); setChecklist([]);
                 setFormData(p => ({ ...p, auditName: '一般綜合稽核', score: '' }));
             };
+
+            const availableTemplates = useMemo(() => {
+                return templates.filter(t => {
+                    const matchMain = filterTplMainCat ? t.mainCategory === filterTplMainCat : true;
+                    const matchSub = filterTplSubCat ? t.subCategory === filterTplSubCat : true;
+                    return matchMain && matchSub;
+                });
+            }, [templates, filterTplMainCat, filterTplSubCat]);
 
             const handleTemplateUpload = (e) => {
                 const file = e.target.files[0]; if (!file) return;
@@ -395,6 +767,17 @@
                     item.score = num > item.maxScore ? item.maxScore : (num < 0 ? 0 : val);
                 }
                 setChecklist(nl);
+            };
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                if (!formData.target) return showAlert('請輸入受測對象姓名！');
+                if (formData.score === '') return showAlert('請輸入或計算總得分！');
+                const newRec = { ...formData, id: Date.now().toString() + Math.random().toString(36).substr(2, 5), checklist };
+                setRecords(prev => [newRec, ...prev]);
+                setFormData(p => ({ ...p, target: '', score: '', notes: '' }));
+                setChecklist(checklist.map(i => ({ ...i, score: i.maxScore, note: '', mode: 'full' })));
+                showAlert('💾 紀錄已儲存！');
             };
 
             const handleReverseImport = (e) => {
@@ -505,22 +888,13 @@
                 window.XLSX.writeFile(wb, `${selectedYear}年度_稽核分析總表.xlsx`);
             };
 
-            const filteredTemplatesList = useMemo(() => {
-                return templates.filter(t => {
-                    const matchMain = filterTplMainCat ? t.mainCategory === filterTplMainCat : true;
-                    const matchSub = filterTplSubCat ? t.subCategory === filterTplSubCat : true;
-                    return matchMain && matchSub;
-                });
-            }, [templates, filterTplMainCat, filterTplSubCat]);
-
             return (
                 <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
                     <nav className="bg-primary text-white p-4 shadow-lg sticky top-0 z-50 flex justify-between items-center">
-                        <div className="flex flex-col"><h1 className="font-bold text-lg tracking-tight">清福技術考稽核系統</h1><span className="text-[9px] bg-white/20 px-2 py-0.5 rounded self-start uppercase">V1.0 Standard</span></div>
+                        <div className="flex flex-col"><h1 className="font-bold text-lg tracking-tight">清福技術考稽核系統</h1><span className="text-[9px] bg-white/20 px-2 py-0.5 rounded self-start uppercase">V1.0 Final</span></div>
                     </nav>
 
                     <main className="max-w-7xl mx-auto w-full p-4 flex-1">
-                        {/* 導覽列 */}
                         <div className="flex flex-wrap sm:flex-nowrap gap-1 mb-6 bg-white p-1 rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                             <button onClick={() => setActiveTab('form')} className={`flex-1 min-w-[80px] py-3 rounded-lg font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all ${activeTab === 'form' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'}`}><IconForm /> 現場考評</button>
                             <button onClick={() => setActiveTab('history')} className={`flex-1 min-w-[80px] py-3 rounded-lg font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all ${activeTab === 'history' ? 'bg-primary text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'}`}><IconHistory /> 紀錄庫</button>
@@ -528,7 +902,6 @@
                             <button onClick={() => setActiveTab('manual')} className={`flex-1 min-w-[80px] py-3 rounded-lg font-bold flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-2 transition-all ${activeTab === 'manual' ? 'bg-teal-600 text-white shadow-lg' : 'text-slate-400 hover:bg-slate-50'}`}><IconManual /> 使用手冊</button>
                         </div>
 
-                        {/* 內容區塊 */}
                         {activeTab === 'form' && (
                             <div className="animate-fade-in space-y-6">
                                 <div className="bg-white p-6 rounded-xl border shadow-sm">
@@ -546,7 +919,7 @@
                                                     else { setChecklist([]); setFormData({...formData, auditName: '一般綜合稽核', score: ''}); }
                                                 }} className="flex-1 p-2 border border-blue-300 rounded-lg bg-white font-bold text-sm">
                                                     <option value="">-- 請選擇稽核項目 --</option>
-                                                    {filteredTemplatesList.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
+                                                    {availableTemplates.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                                                 </select>
                                                 {currentTemplateId && (
                                                     <button type="button" onClick={() => showConfirm('確定要刪除這份表單？', () => {
@@ -688,7 +1061,7 @@
                                 </div>
                                 <div className="flex items-center gap-3 bg-white p-4 rounded-xl border shadow-sm flex-wrap">
                                     <label className="font-bold text-slate-700 text-sm">📅 選擇報表年度：</label>
-                                    <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)} className="p-2 border border-slate-300 rounded-lg font-bold text-primary">
+                                    <select value={selectedYear} onChange={e => setSelectedYear(e.target.value)} className="p-2 border border-slate-300 rounded-lg font-bold text-primary outline-none">
                                         {availableYears.map(y => <option key={y} value={y}>{y} 年度</option>)}
                                     </select>
                                     <div className="text-[11px] text-slate-500 ml-auto flex items-center gap-4">
@@ -712,17 +1085,61 @@
                         {activeTab === 'manual' && (
                             <div className="animate-fade-in bg-white rounded-3xl border p-8 max-w-4xl mx-auto shadow-sm space-y-8 leading-relaxed">
                                 <div className="border-b pb-6 text-center">
-                                    <h2 className="text-3xl font-black text-primary flex items-center justify-center gap-3"><IconManual /> 系統操作手冊 <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full">版本：V1.0</span></h2>
-                                    <p className="text-slate-500 mt-2 text-sm">歡迎使用清福技術考稽核系統！本系統已依據您提供的 Excel 年度總表內容完成配置。</p>
+                                    <h2 className="text-3xl font-black text-primary flex items-center justify-center gap-3"><IconManual /> 系統操作手冊 <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full">版本：V1.0 Final</span></h2>
+                                    <p className="text-slate-500 mt-2 text-sm">歡迎使用清福技術考稽核系統！這是一套專為減輕一線主管行政負擔所設計的無紙化打分系統。請詳閱以下說明以快速上手。</p>
                                 </div>
-                                <section className="space-y-4">
-                                    <h3 className="font-bold text-xl text-slate-800 bg-blue-50 px-4 py-2 rounded-lg border-l-4 border-blue-600">📊 管理報表功能說明</h3>
-                                    <ul className="list-disc pl-5 text-slate-600 space-y-3 text-sm">
-                                        <li><strong>多維度管理欄位</strong>：新增被稽核人員、負責人、監測頻率，完整對應機構管理體制。</li>
-                                        <li><strong>監測月份(灰格)</strong>：依照 Excel 同步。氧氣鋼瓶/喉頭鏡(2,8月)、血壓計/生命量測(3,9月)等。</li>
-                                        <li><strong>手動數據填入</strong>：您可以直接點擊表格月份欄位，手動覆蓋或補填紙本時代的平均成績。</li>
-                                        <li><strong>檢討分析欄位</strong>：提供文字輸入區域，方便品質管理組員紀錄改善對策。</li>
-                                    </ul>
+
+                                <section>
+                                    <h3 className="font-bold text-xl text-slate-800 mb-4 bg-blue-50 inline-block px-4 py-2 rounded-lg border-l-4 border-blue-600">📱 第一部分：模組功能與介面操作</h3>
+                                    <div className="space-y-6">
+                                        {/* 1. 現場考評 */}
+                                        <div className="pl-4 border-l-4 border-blue-400">
+                                            <h4 className="font-bold text-blue-800 text-lg mb-2">1. 【現場考評】模組：日常稽核打分</h4>
+                                            <ul className="list-disc pl-5 text-slate-600 space-y-2 text-sm">
+                                                <li><strong>選取與管理題庫</strong>：透過左上角的下拉選單選擇類別與項目。您可以點擊「垃圾桶」刪除不需要的表單，或點擊「匯入表單」上傳 Word/Excel 自建新題庫。</li>
+                                                <li><strong>基本資料</strong>：請確實填寫「受測對象」姓名。右側「總得分」會隨打分結果即時自動計算。</li>
+                                                <li><strong>三態快速評分</strong>：
+                                                    <ul className="list-none pl-0 mt-2 space-y-1">
+                                                        <li>✅ <span className="bg-green-100 text-green-700 px-2 py-0.5 rounded text-xs font-bold">符合</span>：直接給予該題滿分。</li>
+                                                        <li>⚠️ <span className="bg-amber-100 text-amber-700 px-2 py-0.5 rounded text-xs font-bold">部分</span>：點擊後會出現「自訂給分」欄位，可依現場狀況微調扣分（具備防呆機制，無法輸入超過滿分）。</li>
+                                                        <li>❌ <span className="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs font-bold">不符</span>：該題直接給予 0 分。</li>
+                                                    </ul>
+                                                </li>
+                                                <li><strong>備註與儲存</strong>：每題皆有「情況紀錄」欄，最下方可填寫綜合建議，完成後點擊大按鈕儲存。</li>
+                                            </ul>
+                                        </div>
+
+                                        {/* 2. 紀錄庫 */}
+                                        <div className="pl-4 border-l-4 border-emerald-400">
+                                            <h4 className="font-bold text-emerald-800 text-lg mb-2">2. 【紀錄庫】模組：歷史資料夾與管理</h4>
+                                            <ul className="list-disc pl-5 text-slate-600 space-y-2 text-sm">
+                                                <li><strong>雙層資料夾檢視</strong>：歷史紀錄自動以「月份 &gt; 稽核項目」分層歸檔，點擊即可展開或收合。</li>
+                                                <li><strong>多重勾選與批次刪除</strong>：可直接勾選「整個月份」、「單一項目」或「單筆紀錄」，點擊「批次刪除」一次清理錯誤資料。</li>
+                                                <li><strong>智慧匯入與備份</strong>：點擊「匯入歷史」可將先前匯出的 Excel 備份檔讀回系統，並會自動校正日期格式；點擊「匯出報表」可將勾選的資料匯出成 Excel。</li>
+                                            </ul>
+                                        </div>
+
+                                        {/* 3. 分析報表 */}
+                                        <div className="pl-4 border-l-4 border-purple-400">
+                                            <h4 className="font-bold text-purple-800 text-lg mb-2">3. 【分析報表】模組：管理階層視覺化儀表板</h4>
+                                            <ul className="list-disc pl-5 text-slate-600 space-y-2 text-sm">
+                                                <li><strong>多維度管理欄位</strong>：內建顯示「被稽核人員」、「負責人」、「監測頻率」及「閾值」，完美對接機構評鑑要求。</li>
+                                                <li><strong>排程提示（灰底區塊）</strong>：表格中的灰底色月份，代表該項目表定應執行的稽核月。</li>
+                                                <li><strong>手動數據覆蓋</strong>：可直接點擊表格月份欄位，手動輸入紙本成績。刪除留空則自動切換回系統平均。</li>
+                                                <li><strong>檢討改善分析</strong>：當月分數未達標時，可直接於表格右側輸入文字框紀錄原因與對策。</li>
+                                                <li><strong>隱藏與匯出</strong>：可懸停表格最右側點擊「隱藏」圖示移除不需考核的項目。點擊「匯出分析總表」可將完整報表產出。</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <h3 className="font-bold text-xl text-red-800 mb-4 bg-red-50 inline-block px-4 py-2 rounded-lg border border-red-200">⚠️ 第二部分：系統重大資料安全提醒 (新手必讀)</h3>
+                                    <div className="bg-red-50 p-5 rounded-xl border border-red-100 text-sm text-red-700 space-y-3 leading-relaxed">
+                                        <p><strong>1. 無雲端自動備份機制：</strong><br/>本系統為「純前端單機版」，所有的考評紀錄、您匯入的新題庫、手填的成績，皆儲存在「您目前使用的這台裝置與瀏覽器中」。</p>
+                                        <p><strong>2. 嚴禁清除瀏覽資料：</strong><br/>請絕對不要「清除瀏覽器快取/Cookie」或使用「無痕模式」，否則所有資料將瞬間清空且無法救回！換一台電腦或更換瀏覽器（例如從 Chrome 換到 Edge）也無法看到之前的資料。</p>
+                                        <p><strong>3. 養成匯出備份好習慣：</strong><br/>強烈建議稽核人員定期（每週或每月）至「紀錄庫」點擊【匯出報表】，並至「分析報表」點擊【匯出分析總表】，將 Excel 檔案另存至機構的共用資料夾或雲端硬碟作為備份。若未來更換電腦，即可用【匯入歷史】將資料還原。</p>
+                                    </div>
                                 </section>
                             </div>
                         )}
