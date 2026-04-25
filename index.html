@@ -4,14 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>清福技術考稽核系統</title>
-    <!-- 引入核心套件 -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <!-- Mammoth 用於 Word 解析 / SheetJS 用於 Excel 解析與匯出 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.4.21/mammoth.browser.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -80,28 +77,28 @@
             { 
                 id: 'tpl-wash-hands-std', name: '洗手評核標準', mainCategory: '照護品質類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '感控專責', frequency: '3次/年', schedule: [2, 5, 10], threshold: 100, 
                 items: [
-                    { id: 'wh1', name: '洗手類型與用劑標準：▫ 濕洗手使用 洗手乳 ▫ 乾洗手使用 75% 酒精', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh1', name: '洗手類型與用劑標準： ▫ 濕洗手使用 洗手乳（貼紙效期須為一個月內） ▫ 乾洗手使用 75% 酒精（貼紙效期須為一個月內）', maxScore: 5, score: 5, note: '' },
                     { id: 'wh2', name: '擦手紙已補充，外袋已移除', maxScore: 5, score: 5, note: '' },
                     { id: 'wh3', name: '執行濕洗手者，需張貼洗手五時機圖示', maxScore: 3, score: 3, note: '' },
-                    { id: 'wh4', name: '請移除手指與手腕飾品（如戒指、手鍊、手錶）以確保清潔', maxScore: 3, score: 3, note: '' },
-                    { id: 'wh5', name: '時機一.接觸住民前', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh6', name: '時機二.執行清潔/無菌技術前', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh7', name: '時機三.接觸住民體液、血液之後', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh8', name: '時機四.接觸住民後', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh9', name: '時機五.接觸住民環境後(如床、床旁桌、住民的輪椅)', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh10', name: '濕洗手時保持雙手位置低於手肘（若使用 酒精乾洗手 ，則不在此限制）', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh11', name: '( 內 )掌心對掌心互相搓擦，至少搓洗5-10下。', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh12', name: '( 外 )掌背對掌心互相搓擦，至少搓洗5-10下。', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh13', name: '( 夾 )指縫間互相搓擦，至少搓洗5-10下。（固定同一節扣分）', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh14', name: '( 弓 )指背對掌心互相搓揉，至少搓洗5-10下。（拳頭直對掌心扣分）', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh15', name: '( 大 )虎口姆指做輪狀旋轉搓擦，至少搓洗5-10下。', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh16', name: '( 立 )指尖集中於掌心互相搓擦，至少搓洗5-10下。（旋轉或直線均可）', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh17', name: '( 腕 )旋轉搓擦雙手手腕，至少搓洗5-10下。', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh18', name: '洗手時長標準： ▫ 濕洗手：約 40–60 秒 ▫ 乾洗手：約 20–30 秒', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh19', name: '沖洗、擦手與關水流程 ▫ 使用流動清水徹底沖洗雙手 ▫ 使用拋棄式紙巾擦乾雙手 ▫ 非感應式水龍頭：請以擦拭過的紙巾關閉水龍頭後再丟棄', maxScore: 5, score: 5, note: '' },
-                    { id: 'wh20', name: '情境1：將輪椅推離房間? (時機5-接觸住民環境後)', maxScore: 3, score: 3, note: '' },
-                    { id: 'wh21', name: '情境2：鼻胃管灌食前? (時機2-執行清潔/無菌技術前)', maxScore: 3, score: 3, note: '' },
-                    { id: 'wh22', name: '情境3：協助住民換尿布後(時機3接觸住民體液、血液之後或4-接觸住民後，回答其一則給分)', maxScore: 3, score: 3, note: '' }
+                    { id: 'wh4', name: '4. 請移除手指與手腕飾品（如戒指、手鍊、手錶）以確保清潔　※ 若玉環無法移除，請拉至可固定處；戒指卡住則不勉強移除', maxScore: 3, score: 3, note: '' },
+                    { id: 'wh5', name: '5. 時機一.接觸住民前', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh6', name: '6. 時機二.執行清潔/無菌技術前', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh7', name: '7. 時機三.接觸住民體液、血液之後', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh8', name: '8. 時機四.接觸住民後', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh9', name: '9. 時機五.接觸住民環境後(如床、床旁桌、住民的輪椅)', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh10', name: '10. 濕洗手時保持雙手位置低於手肘（若使用 酒精乾洗手 ，則不在此限制）', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh11', name: '11. ( 內 )掌心對掌心互相搓擦，至少搓洗5-10下。', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh12', name: '12. ( 外 )掌背對掌心互相搓擦，至少搓洗5-10下。', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh13', name: '13. ( 夾 )指縫間互相搓擦，至少搓洗5-10下。（固定同一節扣分）', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh14', name: '14. ( 弓 )指背對掌心互相搓揉，至少搓洗5-10下。（拳頭直對掌心扣分）', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh15', name: '15. ( 大 )虎口姆指做輪狀旋轉搓擦，至少搓洗5-10下。', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh16', name: '16. ( 立 )指尖集中於掌心互相搓擦，至少搓洗5-10下。（旋轉或直線均可）', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh17', name: '17. ( 腕 )旋轉搓擦雙手手腕，至少搓洗5-10下。', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh18', name: '18. 洗手時長標準：　 ▫  濕洗手：約 40–60 秒　 ▫  乾洗手：約 20–30 秒', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh19', name: '19. 沖洗、擦手與關水流程　 ▫  使用流動清水徹底沖洗雙手　 ▫  使用拋棄式紙巾擦乾雙手　 ▫  非感應式水龍頭：請以擦拭過的紙巾關閉水龍頭後再丟棄', maxScore: 5, score: 5, note: '' },
+                    { id: 'wh20', name: '20. 情境1：將輪椅推離房間? (時機5-接觸住民環境後)', maxScore: 3, score: 3, note: '' },
+                    { id: 'wh21', name: '21. 情境2：鼻胃管灌食前? (時機2-執行清潔/無菌技術前)', maxScore: 3, score: 3, note: '' },
+                    { id: 'wh22', name: '22. 情境3：協助住民換尿布後(時機3接觸住民體液、血液之後或4-接觸住民後，回答其一則給分)', maxScore: 3, score: 3, note: '' }
                 ] 
             },
             { 
@@ -480,15 +477,53 @@
                 ] 
             },
             { 
-                id: 'tpl-eq-steam-inhaler', name: '蒸氣吸入機操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '品管組長/照服組長', frequency: '2次/年', schedule: [5, 11], threshold: 90, 
+                id: 'tpl-eq-bp-monitor', name: '血壓計操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '品管組長', frequency: '2次/年', schedule: [3, 9], threshold: 100, 
+                items: [
+                    { id: 'eq-bp1', name: '1.能清楚認識及說出每一個開關按鈕功能', maxScore: 15, score: 15, note: '' },
+                    { id: 'eq-bp2', name: '2.能清楚血壓計擺放地點', maxScore: 15, score: 15, note: '' },
+                    { id: 'eq-bp3', name: '3.能正確操作血壓計量測步驟', maxScore: 25, score: 25, note: '' },
+                    { id: 'eq-bp4', name: '4.能清楚說出血壓計消毒操作方法及步驟', maxScore: 15, score: 15, note: '' },
+                    { id: 'eq-bp5', name: '5.能清楚說出血壓計維護及保養方法及步驟', maxScore: 15, score: 15, note: '' },
+                    { id: 'eq-bp6', name: '6.能判斷易常警示。並正確處理，如：電池沒電', maxScore: 15, score: 15, note: '' }
+                ] 
+            },
+            { 
+                id: 'tpl-eq-steam-inhaler', name: '蒸氣吸入機操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '品管組長', frequency: '2次/年', schedule: [5, 11], threshold: 90, 
                 items: [
                     { id: 'eq-si1', name: '能清楚認識及說出每一個開關按鈕功能', maxScore: 10, score: 10, note: '' },
                     { id: 'eq-si2', name: '能清楚說出蒸氣吸入機擺放地點', maxScore: 10, score: 10, note: '' },
                     { id: 'eq-si3', name: '能正確組裝拆解蒸氣吸入機及清洗', maxScore: 15, score: 15, note: '' },
                     { id: 'eq-si4', name: '4.能正確操作蒸氣吸入機', maxScore: 15, score: 15, note: '' },
-                    { id: 'eq-si5', name: '5.能正確於蒸氣吸入機添加藥物及步驟', maxScore: 15, score: 15,
+                    { id: 'eq-si5', name: '5.能正確於蒸氣吸入機添加藥物及步驟', maxScore: 15, score: 15, note: '' },
+                    { id: 'eq-si6', name: '6.能回答蒸氣吸入機使用目的', maxScore: 15, score: 15, note: '' },
+                    { id: 'eq-si7', name: '7 .能清楚說出蒸氣吸入機及液體收集槽異常情況排除', maxScore: 10, score: 10, note: '' },
+                    { id: 'eq-si8', name: '8.能清楚說出蒸氣吸入機故障情況申請維修處理流程', maxScore: 10, score: 10, note: '' }
+                ] 
+            },
             { 
-               { 
+                id: 'tpl-eq-o2-maker', name: '氧氣製造機操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '品管組長', frequency: '2次/年', schedule: [5, 11], threshold: 90, 
+                items: [
+                    { id: 'eq-om1', name: '1.能指出機構內氧氣製造機擺放地點', maxScore: 10, score: 10, note: '' },
+                    { id: 'eq-om2', name: '2.能開啟開機按鈕 。', maxScore: 10, score: 10, note: '' },
+                    { id: 'eq-om3', name: '3.能正確操作製氧機濃度調整', maxScore: 15, score: 15, note: '' },
+                    { id: 'eq-om4', name: '4.能正確說出潮濕瓶的目的及潮溼瓶內添加蒸餾水及蒸餾水不可超過1/2潮濕瓶身', maxScore: 20, score: 20, note: '' },
+                    { id: 'eq-om5', name: '5.能說出氧氣製造機使用完畢清潔方法=外殼使用清水擦拭、潮濕瓶洗淨晾乾', maxScore: 20, score: 20, note: '' },
+                    { id: 'eq-om6', name: '6.能清楚說出氧氣製造機及潮濕瓶故障時請儀器廠商初步確認問題後請POS報修', maxScore: 15, score: 15, note: '' },
+                    { id: 'eq-om7', name: '7.能說出平日保養辦法  每週開機30分鐘，並清洗過濾棉', maxScore: 10, score: 10, note: '' }
+                ] 
+            },
+            { 
+                id: 'tpl-eq-vital-signs', name: '生命量測儀操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '品管組長', frequency: '2次/年', schedule: [3, 9], threshold: 100, 
+                items: [
+                    { id: 'eq-vs1', name: '1.能清楚認識及說出每一個開關按鈕功能', maxScore: 15, score: 15, note: '' },
+                    { id: 'eq-vs2', name: '2.能清楚生命量測儀擺放地點', maxScore: 15, score: 15, note: '' },
+                    { id: 'eq-vs3', name: '3.能正確操作生命量測儀(含額溫槍、血氧機、血壓計)量測步驟', maxScore: 25, score: 25, note: '' },
+                    { id: 'eq-vs4', name: '4.能清楚說出(含額溫槍、血氧機、血壓計)消毒操作方法及步驟', maxScore: 15, score: 15, note: '' },
+                    { id: 'eq-vs5', name: '5.能清楚說出(含額溫槍、血氧機、血壓計)維護及保養方法及步驟', maxScore: 15, score: 15, note: '' },
+                    { id: 'eq-vs6', name: '6.能判斷異常警示，並正確處理，如：機器沒電', maxScore: 15, score: 15, note: '' }
+                ] 
+            },
+            { 
                 id: 'tpl-eq-resuscitator', name: '甦醒球操作技術評核表', mainCategory: '儀器操作類技術考', subCategory: '護理類', targetStaff: 'N(護理)', responsible: '品管組長', frequency: '2次/年', schedule: [2, 8], threshold: 90, 
                 items: [
                     { id: 'eq-rs1', name: '能清楚說出甦醒球放置地點', maxScore: 20, score: 20, note: '' },
@@ -979,7 +1014,7 @@
                                             </div>
                                         </div>
                                         <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center bg-slate-50/50 text-center">
-                                            <p className="text-[10px] text-slate-400">系統已內建全院核心技術考評標準。<br/>若有新表單需求，請點擊「匯入表單」上傳。</p>
+                                            <p className="text-[10px] text-slate-400">系統已內建全全院核心技術考評標準。<br/>若有新表單需求，請點擊「匯入表單」上傳。</p>
                                         </div>
                                     </div>
                                     <form onSubmit={handleSubmit} className="space-y-4">
