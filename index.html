@@ -79,7 +79,7 @@
         };
 
         // ==========================================
-        // 🌟 預載題庫
+        // 🌟 預載題庫 (修復結構遺漏版)
         // ==========================================
         const DEFAULT_TEMPLATES = [
             // --- 雙指標特殊項目 ---
@@ -87,7 +87,10 @@
                 id: 'tpl-hand-hygiene-dual', name: '洗手遵從性及正確性', mainCategory: '照護品質類技術考', subCategory: '護理照服類', targetStaff: '全體人員', responsible: '感控專責', frequency: '4次/年', schedule: [1, 4, 7, 11], threshold: 90, isDual: true, items: [] 
             },
             // --- 照護品質類 ---
-            {  id: 'wh1', name: '洗手類型與用劑標準： ▫ 濕洗手使用 洗手乳（貼紙效期須為一個月內） ▫ 乾洗手使用 75% 酒精（貼紙效期須為一個月內）', maxScore: 5, score: 5, note: '' },
+            { 
+                id: 'tpl-wash-hands-std', name: '洗手評核標準', mainCategory: '照護品質類技術考', subCategory: '護理照服類', targetStaff: 'N(護理)+AN(照服)', responsible: '感控專責', frequency: '3次/年', schedule: [2, 5, 10], threshold: 100, 
+                items: [
+                    { id: 'wh1', name: '洗手類型與用劑標準： ▫ 濕洗手使用 洗手乳（貼紙效期須為一個月內） ▫ 乾洗手使用 75% 酒精（貼紙效期須為一個月內）', maxScore: 5, score: 5, note: '' },
                     { id: 'wh2', name: '擦手紙已補充，外袋已移除', maxScore: 5, score: 5, note: '' },
                     { id: 'wh3', name: '執行濕洗手者，需張貼洗手五時機圖示', maxScore: 3, score: 3, note: '' },
                     { id: 'wh4', name: '請移除手指與手腕飾品（如戒指、手鍊、手錶）以確保清潔　※ 若玉環無法移除，請拉至可固定處；戒指卡住則不勉強移除', maxScore: 3, score: 3, note: '' },
@@ -697,12 +700,12 @@
 
             const [templates, setTemplates] = useState(() => {
                 const saved = Storage.getTemplates();
-                // 升級遷移版本，以套用最新負責人及自訂頻率 (版本升級至 v17)
-                const isMigrated = localStorage.getItem('tpl_migrated_v17');
+                // 升級遷移版本，以套用最新負責人及自訂頻率 (版本升級至 v18)
+                const isMigrated = localStorage.getItem('tpl_migrated_v18');
                 if (!isMigrated) {
                     const uniqueSaved = saved.filter(s => !DEFAULT_TEMPLATES.some(d => d.id === s.id));
                     const merged = [...DEFAULT_TEMPLATES, ...uniqueSaved];
-                    localStorage.setItem('tpl_migrated_v17', 'true');
+                    localStorage.setItem('tpl_migrated_v18', 'true');
                     Storage.saveTemplates(merged);
                     return merged;
                 }
@@ -710,10 +713,10 @@
             });
 
             useEffect(() => {
-                const checkMigrated = localStorage.getItem('tpl_migrated_v17');
+                const checkMigrated = localStorage.getItem('tpl_migrated_v18');
                 if (!checkMigrated) {
                     setTemplates(DEFAULT_TEMPLATES);
-                    localStorage.setItem('tpl_migrated_v17', 'true');
+                    localStorage.setItem('tpl_migrated_v18', 'true');
                 }
             }, []);
 
@@ -1084,7 +1087,7 @@
             return (
                 <div className="min-h-screen flex flex-col bg-slate-50 text-slate-800">
                     <nav className="bg-primary text-white p-4 shadow-lg sticky top-0 z-50 flex justify-between items-center">
-                        <div className="flex flex-col"><h1 className="font-bold text-lg tracking-tight">清福技術考稽核系統</h1><span className="text-[9px] bg-white/20 px-2 py-0.5 rounded self-start uppercase">V1.2</span></div>
+                        <div className="flex flex-col"><h1 className="font-bold text-lg tracking-tight">清福技術考稽核系統</h1><span className="text-[9px] bg-white/20 px-2 py-0.5 rounded self-start uppercase">V1.3 修復版</span></div>
                     </nav>
 
                     <main className="max-w-7xl mx-auto w-full p-4 flex-1">
