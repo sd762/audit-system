@@ -1135,22 +1135,68 @@
                         {activeTab === 'manual' && (
                             <div className="animate-fade-in bg-white rounded-3xl border p-8 max-w-4xl mx-auto shadow-sm space-y-8 leading-relaxed">
                                 <div className="border-b pb-6 text-center">
-                                    <h2 className="text-3xl font-black text-primary flex items-center justify-center gap-3"><IconManual /> 系統操作手冊 <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full">版本：V1.4 防呆自動修復版</span></h2>
-                                    <p className="text-slate-500 mt-2 text-sm">歡迎使用清福技術考稽核系統！這是一套專為減輕一線主管行政負擔所設計的無紙化打分系統。請詳閱以下說明以快速上手。</p>
+                                    <h2 className="text-3xl font-black text-primary flex items-center justify-center gap-3"><IconManual /> 系統操作手冊 <span className="bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full">版本：V1.4 完整版</span></h2>
+                                    <p className="text-slate-500 mt-2 text-sm">歡迎使用清福技術考稽核系統！本系統專為減輕一線主管行政負擔設計，具備無紙化評分、自動統計與評鑑報表產出功能。請詳閱以下操作指南以確保流暢使用。</p>
                                 </div>
+
                                 <section>
-                                    <h3 className="font-bold text-xl text-slate-800 mb-4 bg-blue-50 inline-block px-4 py-2 rounded-lg border-l-4 border-blue-600">📱 雙指標表單 (洗手遵從性) 特別說明</h3>
-                                    <div className="space-y-3 text-sm text-slate-600 pl-4 border-l-4 border-blue-200">
-                                        <p>✅ <strong>獨立選擇技術與自訂時機：</strong> 選擇「其他」技術時，可完全手動新增洗手時機（從時機一到時機五自由搭配），數量與種類完全由您決定。</p>
-                                        <p>✅ <strong>精準報表產出：</strong> 在紀錄庫中勾選洗手紀錄並點擊「匯出報表」時，系統會自動生成符合官方規範的 Excel，包含 A、B、C、D 次數統計與時機 1~5 的總次數。</p>
+                                    <h3 className="font-bold text-xl text-slate-800 mb-4 bg-blue-50 inline-block px-4 py-2 rounded-lg border-l-4 border-blue-600">📝 一、現場考評 (日常打分作業)</h3>
+                                    <div className="space-y-4 text-sm text-slate-600 pl-4 border-l-4 border-blue-200">
+                                        <p><strong>1. 題庫選擇與管理：</strong> 利用左上方選單篩選「主類別」與「子類別」來快速找到考評表。若有不適用的舊表單，可選取後點擊旁邊的「垃圾桶」刪除。若需新增，點擊「匯入表單」上傳自建的 Word 或 Excel 檔即可自動解析建檔。</p>
+                                        <p><strong>2. 快速計分機制：</strong> 
+                                            <ul className="list-disc pl-5 mt-1 space-y-1">
+                                                <li><span className="text-green-600 font-bold">符合：</span>該題拿滿分。</li>
+                                                <li><span className="text-amber-500 font-bold">部分：</span>自動折半給分，並展開「自訂分數」欄位讓您微調（具防呆機制，不可大於滿分）。</li>
+                                                <li><span className="text-red-500 font-bold">不符：</span>該題 0 分。</li>
+                                            </ul>
+                                        </p>
+                                        <div className="bg-blue-50/50 p-3 rounded-lg border border-blue-100 mt-2">
+                                            <p className="font-bold text-blue-800 mb-1">🔍 雙指標表單 (洗手遵從性及正確性) 特別說明：</p>
+                                            <ul className="list-disc pl-5 space-y-1 text-blue-900">
+                                                <li><strong>獨立技術選擇：</strong> 必須先點選對應的技術 (如：抽痰、傷口護理)，系統會自動展開法規要求的法定洗手時機。</li>
+                                                <li><strong>彈性時機擴充：</strong> 若技術選「其他」，您可以透過下拉選單手動無限次新增「時機一」至「時機五」，且可單獨刪除，完全貼合現場突發狀況。</li>
+                                                <li><strong>防呆連動：</strong> 若「遵從性(行動)」勾選了「沒洗手」，系統將自動鎖定正確性，避免邏輯矛盾。</li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </section>
+
                                 <section>
-                                    <h3 className="font-bold text-xl text-red-800 mb-4 bg-red-50 inline-block px-4 py-2 rounded-lg border border-red-200">⚠️ 系統重大資料安全提醒 (新手必讀)</h3>
+                                    <h3 className="font-bold text-xl text-slate-800 mb-4 bg-emerald-50 inline-block px-4 py-2 rounded-lg border-l-4 border-emerald-500">📂 二、紀錄庫 (歷史資料與備份)</h3>
+                                    <div className="space-y-3 text-sm text-slate-600 pl-4 border-l-4 border-emerald-200">
+                                        <p><strong>1. 智慧分層檢視：</strong> 所有歷史資料會自動按「月份 &gt; 稽核項目」歸檔，點擊列即可展開或收合，方便快速找查特定紀錄。</p>
+                                        <p><strong>2. 批次管理：</strong> 可勾選「整個月份」、「單一項目」或「單筆資料」進行批次刪除，清理錯誤輸入的測試資料。</p>
+                                        <p><strong>3. 匯出報表與還原 (極重要)：</strong> 
+                                            <ul className="list-disc pl-5 mt-1 space-y-1">
+                                                <li>點擊「匯出報表」可將勾選的資料下載為 Excel。</li>
+                                                <li><strong>雙指標專屬格式：</strong> 若全選「洗手遵從性」紀錄匯出，系統會自動切換為對接評鑑的專業統計表 (包含 A/B/C/D 參數與時機次數統計)。</li>
+                                                <li>若換電腦或重灌，點擊「匯入歷史」將備份的 Excel 上傳，即可無縫還原所有考評紀錄。</li>
+                                            </ul>
+                                        </p>
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <h3 className="font-bold text-xl text-slate-800 mb-4 bg-purple-50 inline-block px-4 py-2 rounded-lg border-l-4 border-purple-500">📊 三、分析報表 (評鑑總表動態儀表板)</h3>
+                                    <div className="space-y-3 text-sm text-slate-600 pl-4 border-l-4 border-purple-200">
+                                        <p><strong>1. 自動月平均與達標計算：</strong> 系統會抓取當年度所有紀錄，自動計算各月份平均分數及年平均。低於設定閾值(預設90%)的分數會以<span className="text-red-600 font-bold">紅字</span>警示。</p>
+                                        <p><strong>2. 靈活的手動覆蓋與編輯：</strong> 
+                                            <ul className="list-disc pl-5 mt-1 space-y-1">
+                                                <li><strong>自訂頻率：</strong> 報表中的「監測頻率」欄位可直接點擊修改（例如將 4次/年 改為 每月）。</li>
+                                                <li><strong>紙本成績覆蓋：</strong> 表格內的 1~12 月空格，若有紙本補測成績，可直接點擊輸入。手動輸入的值會優先取代系統自動計算的值；刪除留空則恢復自動計算。</li>
+                                                <li><strong>改善分析：</strong> 最右側欄位可直接輸入該項目的未達標檢討與改善對策。</li>
+                                            </ul>
+                                        </p>
+                                        <p><strong>3. 隱藏無用項目：</strong> 針對貴單位未施測的技術，滑鼠移至最右側點擊「眼睛」圖示即可隱藏，維持報表整潔。點擊最下方的恢復區即可復原。</p>
+                                    </div>
+                                </section>
+                                
+                                <section>
+                                    <h3 className="font-bold text-xl text-red-800 mb-4 bg-red-50 inline-block px-4 py-2 rounded-lg border border-red-200">⚠️ 四、系統重大資料安全提醒 (新手必讀)</h3>
                                     <div className="bg-red-50 p-5 rounded-xl border border-red-100 text-sm text-red-700 space-y-3 leading-relaxed">
-                                        <p><strong>1. 無雲端自動備份機制：</strong>本系統為「純前端單機版」，所有的考評紀錄、您匯入的新題庫、手填的成績，皆儲存在「您目前使用的這台裝置與瀏覽器中」。</p>
-                                        <p><strong>2. 嚴禁清除瀏覽資料：</strong>請絕對不要「清除瀏覽器快取/Cookie」或使用「無痕模式」，否則所有資料將瞬間清空且無法救回！換一台電腦或更換瀏覽器（例如從 Chrome 換到 Edge）也無法看到之前的資料。</p>
-                                        <p><strong>3. 養成匯出備份好習慣：</strong>強烈建議稽核人員定期（每週或每月）至「紀錄庫」點擊【匯出報表】，並至「分析報表」點擊【匯出分析總表】，將 Excel 檔案另存至機構的共用資料夾或雲端硬碟作為備份。若未來更換電腦，即可用【匯入歷史】將資料還原。</p>
+                                        <p><strong>1. 無雲端自動備份機制：</strong><br/>本系統為確保隱私與極速操作，採「純前端單機版」設計。所有的考評紀錄、您匯入的新題庫、手填的成績與頻率，<strong>皆儲存在「您目前使用的這台裝置與瀏覽器快取中」</strong>。</p>
+                                        <p><strong>2. 嚴禁清除瀏覽資料：</strong><br/>請絕對不要執行「清除瀏覽器快取/Cookie」或使用「無痕模式」，否則所有資料將瞬間清空且無法救回！此外，換一台電腦或更換瀏覽器（例如從 Chrome 換到 Edge）也無法看到之前的資料。</p>
+                                        <p><strong>3. 養成匯出備份的好習慣：</strong><br/>強烈建議稽核人員定期（每週或每月）：<br/> 👉 至「紀錄庫」點擊【匯出報表】<br/> 👉 至「分析報表」點擊【匯出分析總表】<br/>將 Excel 檔案另存至機構的共用資料夾或公務雲端硬碟作為備份。只要有 Excel 檔，隨時都能透過【匯入歷史】將資料還原至任何電腦。</p>
                                     </div>
                                 </section>
                             </div>
